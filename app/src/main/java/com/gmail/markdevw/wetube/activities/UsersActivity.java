@@ -3,13 +3,16 @@ package com.gmail.markdevw.wetube.activities;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -48,6 +51,12 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.models.WeTubeUser;
 import com.parse.ui.ParseLoginBuilder;
+import com.sinch.android.rtc.PushPair;
+import com.sinch.android.rtc.messaging.Message;
+import com.sinch.android.rtc.messaging.MessageClient;
+import com.sinch.android.rtc.messaging.MessageClientListener;
+import com.sinch.android.rtc.messaging.MessageDeliveryInfo;
+import com.sinch.android.rtc.messaging.MessageFailureInfo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +86,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private DrawerLayout drawerLayout;
     private NavigationDrawerAdapter navigationDrawerAdapter;
     RecyclerView navigationRecyclerView;
+    private ServiceConnection serviceConnection = new MyServiceConnection();
+    private MessageService.MessageServiceInterface messageService;
+    private MessageClientListener messageClientListener = new MyMessageClientListener();
 
 
     @Override
@@ -143,6 +155,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }else{
             startService(serviceIntent);
             showSpinner();
+            bindService(new Intent(this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
             getLoggedInUsers();
             getFriends();
             getUserTags();
@@ -296,8 +309,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     WeTubeApplication.getSharedDataSource().setCurrentRecipient(userItem.getId());
                     Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                     startActivity(intent);
-                }
-                else{
+                } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error: " + e + ". Failed to start session with " + userItem.getName(),
                             Toast.LENGTH_LONG).show();
@@ -326,6 +338,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public void onDestroy(){
+        messageService.removeMessageClientListener(messageClientListener);
+        unbindService(serviceConnection);
         super.onDestroy();
         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
         user.setLoggedStatus(false);
@@ -450,7 +464,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
                     WeTubeUser user = (WeTubeUser) userList.get(0);
-                    if (user.getList("tags")!=null) {
+                    if (user.getList("tags") != null) {
                         List<String> tags = user.getList("tags");
                         adapter.addAll(tags);
                         adapter.notifyDataSetChanged();
@@ -544,5 +558,65 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private class MyServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            messageService = (MessageService.MessageServiceInterface) iBinder;
+            messageService.addMessageClientListener(messageClientListener);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            messageService = null;
+        }
+    }
+
+    private class MyMessageClientListener implements MessageClientListener {
+
+        @Override
+        public void onMessageFailed(MessageClient client, Message message,
+                                    MessageFailureInfo failureInfo) {
+            Toast.makeText(UsersActivity.this, "Message failed to send.", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onIncomingMessage(MessageClient client, Message message) {
+            String msg = message.getTextBody();
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+            builder.setTitle("Invitation from ");
+
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+        }
+
+        @Override
+        public void onMessageSent(MessageClient client, Message message, String recipientId) {
+
+        }
+
+        @Override
+        public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
+
+        }
+
+        @Override
+        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
 }

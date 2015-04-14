@@ -8,13 +8,15 @@ public class UserItem {
     String id;
     boolean isInSession;
     boolean isLoggedIn;
+    boolean isFriend;
 
-    public UserItem(String name, String id, boolean isInSession, boolean isLoggedIn){
+    public UserItem(String name, String id, boolean isInSession, boolean isLoggedIn, boolean isFriend){
 
         setName(name);
         setId(id);
         setSessionStatus(isInSession);
         setOnlineStatus(isLoggedIn);
+        setFriendStatus(isFriend);
     }
 
     public String getName() { return name;}
@@ -25,5 +27,7 @@ public class UserItem {
     public void setSessionStatus(boolean isInSession) {this.isInSession = isInSession; }
     public boolean getOnlineStatus() { return isLoggedIn; }
     public void setOnlineStatus(boolean isLoggedIn) {this.isLoggedIn = isLoggedIn; }
+    public void setFriendStatus(boolean isFriend) {this.isFriend = isFriend;}
+    public boolean getFriendStatus() { return this.isFriend; }
 
 }

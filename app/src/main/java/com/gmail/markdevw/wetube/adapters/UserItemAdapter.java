@@ -57,6 +57,7 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
 
         TextView name;
         ImageView status;
+        ImageView friend;
         UserItem userItem;
 
         public ItemAdapterViewHolder(View itemView) {
@@ -64,6 +65,7 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
 
             name = (TextView) itemView.findViewById(R.id.user_item_name);
             status = (ImageView) itemView.findViewById(R.id.user_item_status);
+            friend = (ImageView) itemView.findViewById(R.id.user_item_friend);
 
             itemView.setOnClickListener(this);
         }
@@ -76,6 +78,12 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
                 status.setImageResource(R.drawable.unavailable);
             }else{
                 status.setImageResource(R.drawable.available);
+            }
+
+            if(userItem.getFriendStatus()){
+                friend.setVisibility(View.VISIBLE);
+            }else{
+                friend.setVisibility(View.GONE);
             }
         }
 

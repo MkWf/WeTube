@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -64,7 +65,7 @@ import java.util.List;
 /**
  * Created by Mark on 4/2/2015.
  */
-public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate, View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate, View.OnClickListener, AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener {
 
     private Intent serviceIntent;
     private ProgressDialog progressDialog;
@@ -219,15 +220,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         query.whereEqualTo("friends", id);
                         query.findInBackground(new FindCallback<ParseUser>() {
                             public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                               if(userList.size() == 0){
-                                   WeTubeApplication.getSharedDataSource().getUsers()
-                                           .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
-                                   userItemAdapter.notifyDataSetChanged();
-                               }else{
-                                   WeTubeApplication.getSharedDataSource().getUsers()
-                                           .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), true));
-                                   userItemAdapter.notifyDataSetChanged();
-                               }
+                                if (userList.size() == 0) {
+                                    WeTubeApplication.getSharedDataSource().getUsers()
+                                            .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
+                                    userItemAdapter.notifyDataSetChanged();
+                                } else {
+                                    WeTubeApplication.getSharedDataSource().getUsers()
+                                            .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), true));
+                                    userItemAdapter.notifyDataSetChanged();
+                                }
                             }
                         });
                         swipeRefreshLayout.setRefreshing(false);
@@ -310,9 +311,16 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     @Override
-    public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem) {
+    public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, View view) {
 
-
+        PopupMenu popMenu = new PopupMenu(this, view);
+        if(userItem.getFriendStatus()){
+            getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+        }else{
+            getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
+        }
+        popMenu.setOnMenuItemClickListener(this);
+        popMenu.show();
 
        /* HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("recipientId", userItem.getId());
@@ -331,6 +339,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             }
         });*/
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        return false;
     }
 
     @Override
@@ -524,11 +537,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         query.whereEqualTo("friends", id);
                         query.findInBackground(new FindCallback<ParseUser>() {
                             public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                                if(userList.size() == 0){
+                                if (userList.size() == 0) {
                                     WeTubeApplication.getSharedDataSource().getUsers()
                                             .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
                                     userItemAdapter.notifyDataSetChanged();
-                                }else{
+                                } else {
                                     WeTubeApplication.getSharedDataSource().getUsers()
                                             .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), true));
                                     userItemAdapter.notifyDataSetChanged();
@@ -571,11 +584,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         query.whereEqualTo("friends", id);
                         query.findInBackground(new FindCallback<ParseUser>() {
                             public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                                if(userList.size() == 0){
+                                if (userList.size() == 0) {
                                     WeTubeApplication.getSharedDataSource().getUsers()
                                             .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
                                     userItemAdapter.notifyDataSetChanged();
-                                }else{
+                                } else {
                                     WeTubeApplication.getSharedDataSource().getUsers()
                                             .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), true));
                                     userItemAdapter.notifyDataSetChanged();

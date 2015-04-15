@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item android:id="@+id/popup_navigate"
+        android:title="Invite to session"
+        android:orderInCategory="0"/>
+
+
+    <item android:id="@+id/popup_choose_category"
+        android:title="Send friend invite"
+        android:orderInCategory="1"/>
+
+
+    <item android:id="@+id/popup_edit_note"
+        android:title="Block user"
+        android:orderInCategory="2"/>
+
+</menu>

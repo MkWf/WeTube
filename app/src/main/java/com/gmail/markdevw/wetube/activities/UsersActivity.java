@@ -343,6 +343,16 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.popup_session :
+                break;
+            case R.id.popup_add :
+                break;
+            case R.id.popup_block:
+                break;
+            case R.id.popup_remove :
+                break;
+        }
         return false;
     }
 

@@ -2,12 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:id="@+id/popup_navigate"
+    <item android:id="@+id/popup_session"
         android:title="Invite to session"
         android:orderInCategory="0"/>
 
 
-    <item android:id="@+id/popup_choose_category"
+    <item android:id="@+id/popup_remove"
         android:title="Remove this friend"
         android:orderInCategory="1"/>
 

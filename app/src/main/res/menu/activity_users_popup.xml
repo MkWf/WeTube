@@ -2,17 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:id="@+id/popup_navigate"
+    <item android:id="@+id/popup_session"
         android:title="Invite to session"
         android:orderInCategory="0"/>
 
 
-    <item android:id="@+id/popup_choose_category"
+    <item android:id="@+id/popup_add"
         android:title="Send friend invite"
         android:orderInCategory="1"/>
 
 
-    <item android:id="@+id/popup_edit_note"
+    <item android:id="@+id/popup_block"
         android:title="Block user"
         android:orderInCategory="2"/>
 

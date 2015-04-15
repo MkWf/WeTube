@@ -62,11 +62,30 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_nav_activity_users"
+    <LinearLayout
         android:layout_width="280dp"
         android:layout_height="match_parent"
-        android:background="?android:windowBackground"
-        android:layout_gravity="left"/>
+        android:orientation="vertical"
+        android:layout_gravity="start">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Friends"
+            android:textSize="40sp"
+            android:paddingLeft="60dp"
+            android:background="@color/white"
+            android:textStyle="bold"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_nav_activity_users"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="?android:windowBackground"
+            android:layout_gravity="left"/>
+
+
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

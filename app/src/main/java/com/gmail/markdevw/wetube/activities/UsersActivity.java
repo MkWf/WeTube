@@ -24,6 +24,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,9 +48,11 @@ import com.gmail.markdevw.wetube.services.MessageService;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
+import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.models.WeTubeUser;
 import com.parse.ui.ParseLoginBuilder;
 import com.sinch.android.rtc.PushPair;
@@ -59,6 +62,8 @@ import com.sinch.android.rtc.messaging.MessageClientListener;
 import com.sinch.android.rtc.messaging.MessageDeliveryInfo;
 import com.sinch.android.rtc.messaging.MessageFailureInfo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -90,6 +95,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private ServiceConnection serviceConnection = new MyServiceConnection();
     private MessageService.MessageServiceInterface messageService;
     private MessageClientListener messageClientListener = new MyMessageClientListener();
+    private UserItem clickedUser;
 
 
     @Override
@@ -113,7 +119,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
         navigationRecyclerView.setAdapter(navigationDrawerAdapter);
 
-        serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+        serviceIntent = new Intent(this, MessageService.class);
 
         userItemAdapter = new UserItemAdapter();
         userItemAdapter.setDelegate(this);
@@ -141,8 +147,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         handler = new Handler();
 
-        ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
-        startActivityForResult(builder.build(), 0);
+        if(savedInstanceState == null){
+            ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+            startActivityForResult(builder.build(), 0);
+        }
     }
 
     @Override
@@ -154,7 +162,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }else{
             startService(serviceIntent);
             showSpinner();
-            bindService(new Intent(this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
+
             getLoggedInUsers();
             getFriends();
             getUserTags();
@@ -192,6 +200,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     user.setLoggedStatus(true);
                     user.setSessionStatus(false);
                     user.saveInBackground();
+                    bindService(new Intent(UsersActivity.this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
+
                 }
             }
         };
@@ -213,7 +223,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    for (int i=0; i<userList.size(); i++) {
+                    for (int i = 0; i < userList.size(); i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
                         String id = user.getObjectId();
                         ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -257,20 +267,20 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
                     WeTubeUser user = (WeTubeUser) userList.get(0);
-                    if (user.getList("friends")!=null) {
+                    if (user.getList("friends") != null) {
                         List<String> friends = user.getList("friends");
 
-                        for(int i = 0; i<friends.size(); i++){
+                        for (int i = 0; i < friends.size(); i++) {
                             ParseQuery<ParseUser> query2 = ParseUser.getQuery();
                             query2.whereEqualTo("objectId", friends.get(i));
                             query2.findInBackground(new FindCallback<ParseUser>() {
                                 public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                                    if(e == null){
+                                    if (e == null) {
                                         WeTubeUser friend = (WeTubeUser) userList.get(0);
                                         WeTubeApplication.getSharedDataSource().getFriends()
                                                 .add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                                         friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                                    }else{
+                                    } else {
                                         Toast.makeText(WeTubeApplication.getSharedInstance(),
                                                 "Error loading a user",
                                                 Toast.LENGTH_LONG).show();
@@ -280,7 +290,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             });
                         }
                     }
-                }else{
+                } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading friends list",
                             Toast.LENGTH_LONG).show();
@@ -312,6 +322,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, View view) {
+
+        clickedUser = userItem;
 
         PopupMenu popMenu = new PopupMenu(this, view);
         if(userItem.getFriendStatus()){
@@ -345,8 +357,26 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.popup_session :
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("recipientId", clickedUser.getId());
+                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("startSession", params, new FunctionCallback<String>() {
+                    @Override
+                    public void done(String mapObject, com.parse.ParseException e) {
+                        if (e == null) {
+                            WeTubeApplication.getSharedDataSource().setCurrentRecipient(clickedUser.getId());
+                            Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(WeTubeApplication.getSharedInstance(),
+                                    "Error: " + e + ". Failed to start session with " + clickedUser.getName(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
                 break;
             case R.id.popup_add :
+                messageService.sendMessage(clickedUser.getId(), "^friendadd" + ParseUser.getCurrentUser().getUsername() + "^" + ParseUser.getCurrentUser().getObjectId());
                 break;
             case R.id.popup_block:
                 break;
@@ -376,12 +406,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public void onDestroy(){
+        stopService(new Intent(this, MessageService.class));
         messageService.removeMessageClientListener(messageClientListener);
         unbindService(serviceConnection);
-        super.onDestroy();
         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
         user.setLoggedStatus(false);
         user.saveInBackground();
+        super.onDestroy();
     }
 
     @Override
@@ -526,7 +557,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         String currentUserId = ParseUser.getCurrentUser().getObjectId();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereNotEqualTo("objectId", currentUserId);
-        query.whereEqualTo("tags", searchField.getText().toString());
+        ArrayList<String> tokens = new ArrayList<String>(Arrays.asList(searchField.getText().toString().split(" ")));
+        query.whereContainedIn("tags", tokens);
+        Log.i(getClass().getSimpleName(), tokens.toString());
         query.whereEqualTo("isLoggedIn", true);
         query.orderByAscending("username");
         query.findInBackground(new FindCallback<ParseUser>() {
@@ -653,33 +686,87 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
             String msg = message.getTextBody();
+            if(msg.startsWith("^friendadd")){
+                int separator = msg.lastIndexOf("^");
+                String name = msg.substring(10, separator);
+                final String id = msg.substring(separator+1);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle("Invitation from ");
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle("Friend request from " + name);
 
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+                builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                        messageService.sendMessage(id, "^friendaccept" + user.getUsername() + "^" + user.getObjectId());
 
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.show();
+                        user.add("friends", id);
+                        user.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                navigationDrawerAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+                        dialog.cancel();
+                    }
+                });
+                builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        messageService.sendMessage(clickedUser.getId(), "^frienddecline" + ParseUser.getCurrentUser().getUsername());
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }else if(msg.startsWith("^frienddecline")){
+                String name = msg.substring(15);
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " has declined your friend request");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }else if(msg.startsWith("^friendaccept")){
+                int separator = msg.lastIndexOf("^");
+                String name = msg.substring(13, separator);
+                String id = msg.substring(separator+1);
+
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                user.add("friends", id);
+                user.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        navigationDrawerAdapter.notifyDataSetChanged();
+                    }
+                });
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " accepted your friend request");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
         }
 
         @Override
         public void onMessageSent(MessageClient client, Message message, String recipientId) {
-
+            Toast.makeText(UsersActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
-
+            Toast.makeText(UsersActivity.this, "Message delivered.", Toast.LENGTH_SHORT).show();
         }
 
         @Override

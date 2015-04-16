@@ -31,7 +31,7 @@ public class WeTubeApplication extends Application {
         dataSource = new DataSource(this);
 
         ParseObject.registerSubclass(WeTubeUser.class);
-        //Parse.enableLocalDatastore(this);
+        Parse.enableLocalDatastore(this);
         Parse.initialize(this, getResources().getString(R.string.parse_app_id), getResources().getString(R.string.parse_client_key));
         ParseInstallation.getCurrentInstallation().saveInBackground();
 

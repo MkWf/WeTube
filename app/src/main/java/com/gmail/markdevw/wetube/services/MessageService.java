@@ -137,4 +137,3 @@ public class MessageService extends Service implements SinchClientListener {
         }
     }
 }
-

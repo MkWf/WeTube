@@ -687,7 +687,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         public void onIncomingMessage(MessageClient client, Message message) {
             ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
             if(msg.get(0).equals("friendadd")){
-                String name = msg.get(1);
+                final String name = msg.get(1);
                 final String id = msg.get(2);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
@@ -712,6 +712,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                         WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                                 friend.getSessionStatus(), friend.getLoggedStatus(), true));
                                         navigationDrawerAdapter.notifyDataSetChanged();
+
+                                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
+                                            if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
+                                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
+                                                userItemAdapter.notifyItemChanged(i);
+                                            }
+                                        }
                                     }
                                 });
                             }
@@ -741,7 +748,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 });
                 builder.show();
             }else if(msg.get(0).equals("friendaccept")){
-                String name = msg.get(1);
+                final String name = msg.get(1);
                 final String id = msg.get(2);
 
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
@@ -758,6 +765,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                         friend.getSessionStatus(), friend.getLoggedStatus(), true));
                                 navigationDrawerAdapter.notifyDataSetChanged();
+
+                                for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
+                                    if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
+                                        WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
+                                        userItemAdapter.notifyItemChanged(i);
+                                    }
+                                }
                             }
                         });
                     }

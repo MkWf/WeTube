@@ -80,3 +80,38 @@ Parse.Cloud.define("removeTag", function(request, response) {
 		}
 	})	
 });
+
+Parse.Cloud.define("removeFriend", function(request, response) {
+	
+  var userId = request.params.userId;
+  var friend = request.params.friend;
+  
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("friends");
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					if(array[i] == friend){
+						array.splice(i, 1);
+						break;
+					}
+				}
+			}
+			
+			Parse.Object.saveAll(results, {
+				success: function(list) {
+					response.success("friend removed")
+				},
+				error: function(error){
+					
+				}
+            })
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});

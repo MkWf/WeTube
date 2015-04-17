@@ -381,6 +381,23 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             case R.id.popup_block:
                 break;
             case R.id.popup_remove :
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle("Are you sure you want to remove " + clickedUser.getName() + " ?");
+
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        messageService.sendMessage(clickedUser.getId(), "friendremove-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                        dialog.cancel();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
                 break;
         }
         return false;
@@ -777,7 +794,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
 
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                 builder.setTitle(name + " accepted your friend request");
 
@@ -788,12 +804,67 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.show();
+            }else if(msg.get(0).equals("friendremove")){
+                final String id = msg.get(2);
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("friend", id);
+                params.put("userId", user.getObjectId());
+                ParseCloud.callFunctionInBackground("removeFriend", params, new FunctionCallback<String>() {
+                    @Override
+                    public void done(String mapObject, com.parse.ParseException e) {
+                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getFriends().size(); i++){
+                            if(WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(id)){
+                                WeTubeApplication.getSharedDataSource().getFriends().remove(i);
+                                navigationDrawerAdapter.notifyItemRemoved(i);
+                                break;
+                            }
+                        }
+                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
+                            if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(id)){
+                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
+                                userItemAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                });
             }
         }
 
         @Override
-        public void onMessageSent(MessageClient client, Message message, String recipientId) {
+        public void onMessageSent(MessageClient client, Message message, final String recipientId) {
             Toast.makeText(UsersActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
+            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
+            if (msg.get(0).equals("friendremove")) {
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("friend", recipientId);
+                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("removeFriend", params, new FunctionCallback<String>() {
+                    @Override
+                    public void done(String mapObject, com.parse.ParseException e) {
+                        Toast.makeText(UsersActivity.this, "Friend removed", Toast.LENGTH_SHORT).show();
+
+                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getFriends().size(); i++){
+                            if(WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(recipientId)){
+                                WeTubeApplication.getSharedDataSource().getFriends().remove(i);
+                                navigationDrawerAdapter.notifyItemRemoved(i);
+                                break;
+                            }
+                        }
+                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
+                            if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(recipientId)){
+                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
+                                userItemAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         @Override

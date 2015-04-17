@@ -70,7 +70,9 @@ import java.util.List;
 /**
  * Created by Mark on 4/2/2015.
  */
-public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate, View.OnClickListener, AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener {
+public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate, View.OnClickListener,
+        AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
+        NavigationDrawerAdapter.Delegate {
 
     private Intent serviceIntent;
     private ProgressDialog progressDialog;
@@ -114,6 +116,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         drawerLayout.setDrawerListener(drawerToggle);
 
         navigationDrawerAdapter = new NavigationDrawerAdapter();
+        navigationDrawerAdapter.setDelegate(this);
         navigationRecyclerView = (RecyclerView) findViewById(R.id.rv_nav_activity_users);
         navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -351,6 +354,17 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             }
         });*/
+    }
+
+    @Override
+    public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, UserItem userItem, View view) {
+        clickedUser = userItem;
+
+        PopupMenu popMenu = new PopupMenu(this, view);
+        getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+
+        popMenu.setOnMenuItemClickListener(this);
+        popMenu.show();
     }
 
     @Override

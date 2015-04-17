@@ -20,7 +20,7 @@ import java.lang.ref.WeakReference;
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onItemClicked(NavigationDrawerAdapter itemAdapter, UserItem userItem);
+        public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, UserItem userItem, View view);
     }
 
     private WeakReference<Delegate> delegate;
@@ -83,7 +83,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         @Override
         public void onClick(View view) {
-            getDelegate().onItemClicked(NavigationDrawerAdapter.this, userItem);
+            getDelegate().onNavItemClicked(NavigationDrawerAdapter.this, userItem, view);
         }
     }
 }

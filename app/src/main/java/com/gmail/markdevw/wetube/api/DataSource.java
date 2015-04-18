@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
+import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.api.model.VideoItem;
 import com.google.api.client.http.HttpRequest;
@@ -37,6 +38,8 @@ public class DataSource {
     private final long NUMBER_OF_VIDEOS_RETURNED = 20;
     private List<MessageItem> messages = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
+    private List<TagItem> commonTags = new ArrayList<>();
+    private List<TagItem> uncommonTags = new ArrayList<>();
 
     public DataSource(Context context){
         videos = new ArrayList<VideoItem>();
@@ -63,6 +66,8 @@ public class DataSource {
         }
     }
 
+    public List<TagItem> getCommonTags() { return commonTags; }
+    public List<TagItem> getUncommonTags() { return uncommonTags; }
     public List<String> getTags() { return tags; }
     public List<MessageItem> getMessages() { return messages;}
     public void setCurrentRecipient(String recipient){ this.currentRecipient = recipient;}

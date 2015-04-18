@@ -42,7 +42,9 @@ import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.adapters.NavigationDrawerAdapter;
 import com.gmail.markdevw.wetube.adapters.UserItemAdapter;
+import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
+import com.gmail.markdevw.wetube.fragments.ProfileDialogFragment;
 import com.gmail.markdevw.wetube.services.MessageService;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
@@ -369,9 +371,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
+        HashMap<String, Object> params = new HashMap<String, Object>();
         switch (menuItem.getItemId()) {
             case R.id.popup_session :
-                HashMap<String, Object> params = new HashMap<String, Object>();
                 params.put("recipientId", clickedUser.getId());
                 params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
                 ParseCloud.callFunctionInBackground("startSession", params, new FunctionCallback<String>() {
@@ -391,6 +393,47 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 break;
             case R.id.popup_add :
                 messageService.sendMessage(clickedUser.getId(), "friendadd-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                break;
+            case R.id.popup_profile:
+                params.put("clickedId", clickedUser.getId());
+                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("commonTags", params, new FunctionCallback<List<String>>() {
+                    @Override
+                    public void done(final List<String> comTags, com.parse.ParseException e) {
+                        if (e == null) {
+                            HashMap<String, Object> params = new HashMap<String, Object>();
+                            params.put("clickedId", clickedUser.getId());
+                            params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                            ParseCloud.callFunctionInBackground("uncommonTags", params, new FunctionCallback<List<String>>() {
+                                @Override
+                                public void done(List<String> uncomTags, com.parse.ParseException e) {
+                                    if (e == null) {
+                                        WeTubeApplication.getSharedDataSource().getCommonTags().clear();
+                                        for(int i = 0; i<comTags.size(); i++){
+                                            WeTubeApplication.getSharedDataSource().getCommonTags().add(new TagItem(comTags.get(i)));
+                                        }
+
+                                        WeTubeApplication.getSharedDataSource().getUncommonTags().clear();
+                                        for(int i = 0; i<uncomTags.size(); i++){
+                                            WeTubeApplication.getSharedDataSource().getUncommonTags().add(new TagItem(uncomTags.get(i)));
+                                        }
+
+                                        ProfileDialogFragment pdf = new ProfileDialogFragment();
+                                        pdf.show(getFragmentManager(), "Profile");
+                                    } else {
+                                        Toast.makeText(WeTubeApplication.getSharedInstance(),
+                                                "Error: " + e + ". Failed to start session with " + clickedUser.getName(),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(WeTubeApplication.getSharedInstance(),
+                                    "Error: " + e + ". Failed to start session with " + clickedUser.getName(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
                 break;
             case R.id.popup_block:
                 break;

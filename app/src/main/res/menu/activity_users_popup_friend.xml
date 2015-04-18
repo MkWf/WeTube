@@ -3,12 +3,15 @@
 
 
     <item android:id="@+id/popup_session"
-        android:title="Invite to session"
+        android:title="Invite to Session"
         android:orderInCategory="0"/>
 
+    <item android:id="@+id/popup_profile"
+        android:title="View Profile"
+        android:orderInCategory="1"/>
 
     <item android:id="@+id/popup_remove"
-        android:title="Remove this friend"
-        android:orderInCategory="1"/>
+        android:title="Remove this Friend"
+        android:orderInCategory="2"/>
 
 </menu>

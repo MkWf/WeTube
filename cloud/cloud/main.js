@@ -137,6 +137,8 @@ Parse.Cloud.define("commonTags", function(request, response) {
 		    query2.find({
 				success: function(results){
 					clickedArray = results[0].get("tags");
+					
+					if(clickedArray.)
 				
 					for(var i = 0; i<clickedArray.length; i++){
 						for(var j = 0; j<userArray.length; j++){

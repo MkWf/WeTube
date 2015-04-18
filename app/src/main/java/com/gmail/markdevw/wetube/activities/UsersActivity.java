@@ -419,6 +419,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                         }
 
                                         ProfileDialogFragment pdf = new ProfileDialogFragment();
+                                        pdf.setCancelable(false);
                                         pdf.show(getFragmentManager(), "Profile");
                                     } else {
                                         Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -809,6 +810,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         dialog.cancel();
                     }
                 });
+                builder.setCancelable(false);
                 builder.show();
             }else if(msg.get(0).equals("frienddecline")){
                 String name = msg.get(1);
@@ -821,6 +823,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         dialog.cancel();
                     }
                 });
+                builder.setCancelable(false);
                 builder.show();
             }else if(msg.get(0).equals("friendaccept")){
                 final String name = msg.get(1);
@@ -861,6 +864,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         dialog.cancel();
                     }
                 });
+                builder.setCancelable(false);
                 builder.show();
             }else if(msg.get(0).equals("friendremove")){
                 final String id = msg.get(2);

@@ -36,6 +36,8 @@ import com.parse.ParseException;
 import com.parse.SignUpCallback;
 import com.parse.models.WeTubeUser;
 
+import org.json.JSONArray;
+
 /**
  * Fragment for the user signup screen.
  */
@@ -183,6 +185,11 @@ public class ParseSignupFragment extends ParseLoginFragmentBase implements OnCli
       user.setEmail(email);
       user.setLoggedStatus(true);
       user.setSessionStatus(false);
+
+      JSONArray arr = new JSONArray();
+      user.setDefaultFriends(arr);
+      user.setDefaultTags(arr);
+      user.setDefaultBlocked(arr);
 
                 // Set additional custom fields only if the user filled it out
                 if (name.length() != 0) {

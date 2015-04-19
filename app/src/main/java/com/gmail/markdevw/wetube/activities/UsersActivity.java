@@ -339,7 +339,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 if(e == null){
                     if(mapObject.equals("You blocked this user")){
                         AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                        builder.setTitle("You have " + clickedUser.getName() + "blocked Do you want to unblock this user?");
+                        builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
 
                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override

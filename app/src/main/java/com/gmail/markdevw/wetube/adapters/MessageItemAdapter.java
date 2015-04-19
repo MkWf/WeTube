@@ -54,13 +54,15 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView message;
+        TextView messageIn;
+        TextView messageOut;
         MessageItem messageItem;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
-            message = (TextView) itemView.findViewById(R.id.message_item_message);
+            messageIn = (TextView) itemView.findViewById(R.id.message_item_message_incoming);
+            messageOut = (TextView) itemView.findViewById(R.id.message_item_message_outgoing);
 
             itemView.setOnClickListener(this);
         }
@@ -68,7 +70,13 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         void update(MessageItem messageItem) {
            this.messageItem = messageItem;
 
-           message.setText(messageItem.getMessage());
+           if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+               messageOut.setText(messageItem.getMessage());
+               messageIn.setVisibility(View.GONE);
+           }else{
+               messageIn.setText(messageItem.getMessage());
+               messageOut.setVisibility(View.GONE);
+           }
         }
 
         @Override

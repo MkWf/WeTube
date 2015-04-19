@@ -11,12 +11,16 @@ public class UserItem {
     boolean isFriend;
 
     public UserItem(String name, String id, boolean isInSession, boolean isLoggedIn, boolean isFriend){
-
         setName(name);
         setId(id);
         setSessionStatus(isInSession);
         setOnlineStatus(isLoggedIn);
         setFriendStatus(isFriend);
+    }
+
+    public UserItem(String name, String id){
+        setName(name);
+        setId(id);
     }
 
     public String getName() { return name;}

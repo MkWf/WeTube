@@ -77,7 +77,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private final int VIDEO_SEEK = 4;
     private final int VIDEO_BUFFER = 5;
 
-
     private int messageType;
     private boolean isPaused = false;
 

@@ -12,6 +12,7 @@ public class MessageItem {
 
     public MessageItem(String message, int type){
         setMessage(message);
+        setType(type);
     }
 
     public void setMessage(String message) {this.message = message;}

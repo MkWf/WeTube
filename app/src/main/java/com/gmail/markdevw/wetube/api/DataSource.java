@@ -60,10 +60,6 @@ public class DataSource {
         }catch(IOException e){
             Log.d("YC", "Could not initialize: " + e);
         }
-
-        for(int i = 0; i<10; i++){
-            messages.add(new MessageItem("Message " + i, MessageItem.INCOMING_MSG));
-        }
     }
 
     public List<TagItem> getCommonTags() { return commonTags; }

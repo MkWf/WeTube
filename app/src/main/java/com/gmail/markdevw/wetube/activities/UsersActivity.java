@@ -421,22 +421,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         HashMap<String, Object> params = new HashMap<String, Object>();
         switch (menuItem.getItemId()) {
             case R.id.popup_session :
-                params.put("recipientId", clickedUser.getId());
-                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
-                ParseCloud.callFunctionInBackground("startSession", params, new FunctionCallback<String>() {
-                    @Override
-                    public void done(String mapObject, com.parse.ParseException e) {
-                        if (e == null) {
-                            WeTubeApplication.getSharedDataSource().setCurrentRecipient(clickedUser.getId());
-                            Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(WeTubeApplication.getSharedInstance(),
-                                    "Error: " + e + ". Failed to start session with " + clickedUser.getName(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                messageService.sendMessage(clickedUser.getId(), "startsession-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
                 break;
             case R.id.popup_add :
                 messageService.sendMessage(clickedUser.getId(), "friendadd-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
@@ -1008,6 +993,83 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         builder.show();
                     }
                 });
+            }else if(msg.get(0).equals("startsession")){
+                final String name = msg.get(1);
+                final String id = msg.get(2);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle("Session request from " + name);
+
+                builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                        user.setSessionStatus(true);
+                        user.saveInBackground();
+                        messageService.sendMessage(id, "sessionaccept-" + user.getUsername() + "-" + user.getObjectId());
+                        dialog.cancel();
+
+                        WeTubeApplication.getSharedDataSource().setCurrentRecipient(id);
+                        Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        messageService.sendMessage(id, "sessiondecline-" + ParseUser.getCurrentUser().getUsername());
+                        dialog.cancel();
+                    }
+                });
+                builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle("Are you sure you want to block " + name + " ?");
+
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                messageService.sendMessage(id, "blockuser-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                                user.add("blockedUsers", id);
+                                user.saveInBackground();
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        builder.show();
+                    }
+                });
+                builder.setCancelable(false);
+                builder.show();
+            }else if(msg.get(0).equals("sessiondecline")){
+                String name = msg.get(1);
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " has declined your session request");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setCancelable(false);
+                builder.show();
+            }else if(msg.get(0).equals("sessionaccept")){
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                user.setSessionStatus(true);
+                user.saveInBackground();
+
+                WeTubeApplication.getSharedDataSource().setCurrentRecipient(msg.get(2));
+                Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
+                startActivity(intent);
             }
 
         }

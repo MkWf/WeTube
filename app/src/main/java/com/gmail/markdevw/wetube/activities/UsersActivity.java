@@ -326,19 +326,66 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     @Override
-    public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, View view) {
+    public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, final View view) {
 
         clickedUser = userItem;
 
-        PopupMenu popMenu = new PopupMenu(this, view);
-        if(userItem.getFriendStatus()){
-            getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
-        }else{
-            getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
-        }
-        popMenu.setOnMenuItemClickListener(this);
-        popMenu.show();
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("clickedId", clickedUser.getId());
+        params.put("userId", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("isBlocked", params, new FunctionCallback<String>() {
+            @Override
+            public void done(String mapObject, com.parse.ParseException e) {
+                if(e == null){
+                    if(mapObject.equals("You blocked this user")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle("You have " + clickedUser.getName() + "blocked Do you want to unblock this user?");
 
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                messageService.sendMessage(clickedUser.getId(), "unblock-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        builder.show();
+                    }else if(mapObject.equals("You are blocked by this user")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle(clickedUser.getName() + " has you blocked");
+
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        builder.show();
+                    }else if(mapObject.equals("No block")){
+                        PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
+                        if(userItem.getFriendStatus()){
+                            getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+                        }else{
+                            getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
+                        }
+                        popMenu.setOnMenuItemClickListener(UsersActivity.this);
+                        popMenu.show();
+                    }
+                }else{
+                    Toast.makeText(WeTubeApplication.getSharedInstance(),
+                            "Error: " + e + ". Failed to start session with " + clickedUser.getName(),
+                            Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
        /* HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("recipientId", userItem.getId());
         params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
@@ -455,6 +502,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         dialog.cancel();
                     }
                 });
+                builder.setCancelable(false);
                 builder.show();
                 break;
         }
@@ -810,6 +858,32 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         dialog.cancel();
                     }
                 });
+                builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle("Are you sure you want to block " + name + " ?");
+
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                messageService.sendMessage(id, "blockuser-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                                user.add("blockedUsers", id);
+                                user.saveInBackground();
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        builder.show();
+                    }
+                });
                 builder.setCancelable(false);
                 builder.show();
             }else if(msg.get(0).equals("frienddecline")){
@@ -892,7 +966,50 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         }
                     }
                 });
+            }else if(msg.get(0).equals("blockuser")){
+                final String name = msg.get(1);
+                final String id = msg.get(2);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " has blocked you");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setCancelable(false);
+                builder.show();
+
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                user.add("blockedBy", id);
+                user.saveInBackground();
+            }else if(msg.get(0).equals("unblock")){
+                final String name = msg.get(1);
+                final String id = msg.get(2);
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("clickedId", id);
+                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("unblockedBy", params, new FunctionCallback<String>() {
+                    @Override
+                    public void done(String mapObject, com.parse.ParseException e) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle(name + " has unblocked you");
+
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        builder.show();
+                    }
+                });
             }
+
         }
 
         @Override
@@ -924,6 +1041,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 break;
                             }
                         }
+                    }
+                });
+            }else if(msg.get(0).equals("unblock")){
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("clickedId", recipientId);
+                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("unblock", params, new FunctionCallback<String>() {
+                    @Override
+                    public void done(String mapObject, com.parse.ParseException e) {
+                        Toast.makeText(UsersActivity.this, "User unblocked", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

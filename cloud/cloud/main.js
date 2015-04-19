@@ -199,3 +199,114 @@ Parse.Cloud.define("uncommonTags", function(request, response) {
 	})	
 });
 
+Parse.Cloud.define("isBlocked", function(request, response) {
+	
+  var userId = request.params.userId;
+  var clickedId = request.params.clickedId;
+  var userArray;
+
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+
+  query.find({
+		success: function(results){
+			userArray = results[0].get("blockedUsers");
+			
+			var done = 0;
+			
+			for(var i = 0; i<userArray.length; i++){
+				if(userArray[i] == clickedId){
+					response.success("You blocked this user");
+					done = done + 1;
+				}
+			}
+			
+			if(done == 0){
+				userArray = results[0].get("blockedBy");
+				for(var j = 0; j<userArray.length; j++){
+					if(userArray[j] == clickedId){
+						response.success("You are blocked by this user");
+						done = done + 1;
+					}
+				}
+			}
+			
+			if(done == 0){
+				response.success("No block");
+			}
+		},
+		error: function(){
+		}
+	})	
+});
+
+Parse.Cloud.define("unblock", function(request, response) {
+	
+  var userId = request.params.userId;
+  var clickedId = request.params.clickedId;
+  
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("blockedUsers");
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					if(array[i] == clickedId){
+						array.splice(i, 1);
+						break;
+					}
+				}
+			}
+			
+			Parse.Object.saveAll(results, {
+				success: function(list) {
+					response.success("user unblocked")
+				},
+				error: function(error){
+					
+				}
+            })
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+
+Parse.Cloud.define("unblockedBy", function(request, response) {
+	
+  var userId = request.params.userId;
+  var clickedId = request.params.clickedId;
+  
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("blockedBy");
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					if(array[i] == clickedId){
+						array.splice(i, 1);
+						break;
+					}
+				}
+			}
+			
+			Parse.Object.saveAll(results, {
+				success: function(list) {
+					response.success("user unblocked")
+				},
+				error: function(error){
+					
+				}
+            })
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+

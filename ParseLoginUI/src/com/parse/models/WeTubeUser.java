@@ -26,6 +26,7 @@ public class WeTubeUser extends ParseUser {
     public boolean getSessionStatus() { return getBoolean("isInSession"); }
     public void setDefaultFriends(JSONArray array) { put("friends", array); }
     public void setDefaultTags(JSONArray array) { put("tags", array); }
-    public void setDefaultBlocked(JSONArray array) { put("blockedUsers", array); }
+    public void setDefaultBlockedUsers(JSONArray array) { put("blockedUsers", array); }
+    public void setDefaultBlockedBy(JSONArray array) { put("blockedUsers", array); }
 }
 

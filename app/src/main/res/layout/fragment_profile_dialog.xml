@@ -11,7 +11,7 @@
         android:layout_weight="1"/>
 
     <TextView
-        android:text="Uncommon Tags"
+        android:text="Other Tags"
         android:layout_marginLeft="14dp"
         android:textColor="@android:color/holo_blue_light"
         android:textSize="22sp"

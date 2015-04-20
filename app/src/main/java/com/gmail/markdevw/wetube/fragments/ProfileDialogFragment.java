@@ -31,7 +31,7 @@ public class ProfileDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getDialog().setTitle("Common Tags");
+        getDialog().setTitle("Shared Tags");
 
         View view = inflater.inflate(R.layout.fragment_profile_dialog, container);
         commonRecyclerView= (RecyclerView) view.findViewById(R.id.rv_fragment_profile_dialog_common);

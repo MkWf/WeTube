@@ -468,8 +468,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 break;
-            case R.id.popup_block:
-                break;
             case R.id.popup_remove :
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                 builder.setTitle("Are you sure you want to remove " + clickedUser.getName() + " ?");

@@ -14,9 +14,4 @@
     <item android:id="@+id/popup_profile"
         android:title="View Profile"
         android:orderInCategory="2"/>
-
-    <item android:id="@+id/popup_block"
-        android:title="Block User"
-        android:orderInCategory="3"/>
-
 </menu>

@@ -451,7 +451,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                         }
 
                                         ProfileDialogFragment pdf = new ProfileDialogFragment();
-                                        pdf.setCancelable(false);
                                         pdf.show(getFragmentManager(), "Profile");
                                     } else {
                                         Toast.makeText(WeTubeApplication.getSharedInstance(),

@@ -66,14 +66,16 @@ import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by Mark on 4/2/2015.
  */
 public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate, View.OnClickListener,
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
-        NavigationDrawerAdapter.Delegate {
+        NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener {
 
     private Intent serviceIntent;
     private ProgressDialog progressDialog;
@@ -99,6 +101,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private MessageService.MessageServiceInterface messageService;
     private MessageClientListener messageClientListener = new MyMessageClientListener();
     private UserItem clickedUser;
+    private Queue<Message> messageQueue = new LinkedList<>();
+    private AlertDialog dialog;
+    boolean firstMessage = true;
 
 
     @Override
@@ -791,7 +796,77 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
+            messageQueue.add(message);
+
+            if(!firstMessage){
+                if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
+                    showNextMessage();
+                }
+            }else{
+                firstMessage = false;
+                showNextMessage();
+            }
+        }
+
+        @Override
+        public void onMessageSent(MessageClient client, Message message, final String recipientId) {
+            Toast.makeText(UsersActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
             ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
+            if (msg.get(0).equals("friendremove")) {
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("friend", recipientId);
+                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("removeFriend", params, new FunctionCallback<String>() {
+                    @Override
+                    public void done(String mapObject, com.parse.ParseException e) {
+                        Toast.makeText(UsersActivity.this, "Friend removed", Toast.LENGTH_SHORT).show();
+
+                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getFriends().size(); i++){
+                            if(WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(recipientId)){
+                                WeTubeApplication.getSharedDataSource().getFriends().remove(i);
+                                navigationDrawerAdapter.notifyItemRemoved(i);
+                                break;
+                            }
+                        }
+                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
+                            if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(recipientId)){
+                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
+                                userItemAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                });
+            }else if(msg.get(0).equals("unblock")){
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("clickedId", recipientId);
+                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("unblock", params, new FunctionCallback<String>() {
+                    @Override
+                    public void done(String mapObject, com.parse.ParseException e) {
+                        Toast.makeText(UsersActivity.this, "User unblocked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
+            Toast.makeText(UsersActivity.this, "Message delivered.", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+    public void showNextMessage() {
+        Message message = messageQueue.poll();
+
+        ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
             if(msg.get(0).equals("friendadd")){
                 final String name = msg.get(1);
                 final String id = msg.get(2);
@@ -863,11 +938,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             }
                         });
                         builder.setCancelable(false);
-                        builder.show();
+                        dialog = builder.create();
+                        dialog.show();
                     }
                 });
                 builder.setCancelable(false);
-                builder.show();
+                dialog = builder.create();
+                dialog.show();
             }else if(msg.get(0).equals("frienddecline")){
                 String name = msg.get(1);
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
@@ -880,7 +957,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                builder.show();
+                dialog = builder.create();
+                dialog.show();
             }else if(msg.get(0).equals("friendaccept")){
                 final String name = msg.get(1);
                 final String id = msg.get(2);
@@ -921,7 +999,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                builder.show();
+                dialog = builder.create();
+                dialog.show();
             }else if(msg.get(0).equals("friendremove")){
                 final String id = msg.get(2);
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
@@ -962,7 +1041,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                builder.show();
+                dialog = builder.create();
+                dialog.show();
 
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                 user.add("blockedBy", id);
@@ -987,7 +1067,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             }
                         });
                         builder.setCancelable(false);
-                        builder.show();
+                        dialog = builder.create();
+                        dialog.show();
                     }
                 });
             }else if(msg.get(0).equals("startsession")){
@@ -1041,11 +1122,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             }
                         });
                         builder.setCancelable(false);
-                        builder.show();
+                        dialog = builder.create();
+                        dialog.show();
                     }
                 });
                 builder.setCancelable(false);
-                builder.show();
+                dialog = builder.create();
+                dialog.show();
             }else if(msg.get(0).equals("sessiondecline")){
                 String name = msg.get(1);
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
@@ -1058,7 +1141,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                builder.show();
+                dialog = builder.create();
+                dialog.show();
             }else if(msg.get(0).equals("sessionaccept")){
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                 user.setSessionStatus(true);
@@ -1068,61 +1152,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                 startActivity(intent);
             }
+        dialog.setOnDismissListener(this);
+    }
 
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        if(!messageQueue.isEmpty()){
+            showNextMessage();
         }
-
-        @Override
-        public void onMessageSent(MessageClient client, Message message, final String recipientId) {
-            Toast.makeText(UsersActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
-            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
-            if (msg.get(0).equals("friendremove")) {
-                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("friend", recipientId);
-                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
-                ParseCloud.callFunctionInBackground("removeFriend", params, new FunctionCallback<String>() {
-                    @Override
-                    public void done(String mapObject, com.parse.ParseException e) {
-                        Toast.makeText(UsersActivity.this, "Friend removed", Toast.LENGTH_SHORT).show();
-
-                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getFriends().size(); i++){
-                            if(WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(recipientId)){
-                                WeTubeApplication.getSharedDataSource().getFriends().remove(i);
-                                navigationDrawerAdapter.notifyItemRemoved(i);
-                                break;
-                            }
-                        }
-                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
-                            if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(recipientId)){
-                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
-                                userItemAdapter.notifyDataSetChanged();
-                                break;
-                            }
-                        }
-                    }
-                });
-            }else if(msg.get(0).equals("unblock")){
-                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("clickedId", recipientId);
-                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
-                ParseCloud.callFunctionInBackground("unblock", params, new FunctionCallback<String>() {
-                    @Override
-                    public void done(String mapObject, com.parse.ParseException e) {
-                        Toast.makeText(UsersActivity.this, "User unblocked", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
-            Toast.makeText(UsersActivity.this, "Message delivered.", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
 }

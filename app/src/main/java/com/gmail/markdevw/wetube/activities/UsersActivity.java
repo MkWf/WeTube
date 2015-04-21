@@ -66,9 +66,9 @@ import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Mark on 4/2/2015.
@@ -101,9 +101,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private MessageService.MessageServiceInterface messageService;
     private MessageClientListener messageClientListener = new MyMessageClientListener();
     private UserItem clickedUser;
-    private Queue<Message> messageQueue = new LinkedList<>();
+    private Queue<Message> messageQueue = new LinkedBlockingQueue<>();
     private AlertDialog dialog;
-    boolean firstMessage = true;
+    boolean isFirstMessage = true;
+    boolean isBlocking = false;
 
 
     @Override
@@ -798,12 +799,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         public void onIncomingMessage(MessageClient client, Message message) {
             messageQueue.add(message);
 
-            if(!firstMessage){
+            if(!isFirstMessage){
                 if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
                     showNextMessage();
                 }
             }else{
-                firstMessage = false;
+                isFirstMessage = false;
                 showNextMessage();
             }
         }
@@ -918,6 +919,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        isBlocking = true;
                         AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                         builder.setTitle("Are you sure you want to block " + name + " ?");
 
@@ -928,7 +930,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                                 user.add("blockedUsers", id);
                                 user.saveInBackground();
-                                dialog.cancel();
+
+                                clearDialogsById(id);
+                                dialog.dismiss();
                             }
                         });
                         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -1155,11 +1159,26 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         dialog.setOnDismissListener(this);
     }
 
+    public void clearDialogsById(String id){
+
+        Message msgToRemove;
+
+        for(Message message : messageQueue) {
+            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
+            if(msg.get(2).equals(id)){
+                messageQueue.remove(message);
+            }
+        }
+        isBlocking = false;
+    }
+
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
-        if(!messageQueue.isEmpty()){
+
+        if(!messageQueue.isEmpty() && !isBlocking){
             showNextMessage();
         }
+
     }
 }

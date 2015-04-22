@@ -1106,6 +1106,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        isBlocking = true;
                         AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                         builder.setTitle("Are you sure you want to block " + name + " ?");
 
@@ -1170,6 +1171,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             }
         }
         isBlocking = false;
+        if(!messageQueue.isEmpty()){
+            showNextMessage();
+        }
     }
 
 

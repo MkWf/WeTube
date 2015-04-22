@@ -71,11 +71,13 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
            this.messageItem = messageItem;
 
            if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+               messageIn.setVisibility(View.INVISIBLE);
+               messageOut.setVisibility(View.VISIBLE);
                messageOut.setText(messageItem.getMessage());
-               messageIn.setVisibility(View.GONE);
            }else{
+               messageOut.setVisibility(View.INVISIBLE);
+               messageIn.setVisibility(View.VISIBLE);
                messageIn.setText(messageItem.getMessage());
-               messageOut.setVisibility(View.GONE);
            }
         }
 

@@ -19,6 +19,7 @@ import com.google.api.services.youtube.model.SearchResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by Mark on 3/26/2015.
@@ -36,7 +37,7 @@ public class DataSource {
     private String currentSearch;
     private String currentRecipient;
     private final long NUMBER_OF_VIDEOS_RETURNED = 20;
-    private List<MessageItem> messages = new ArrayList<>();
+    private List<MessageItem> messages = new Vector<>();
     private List<String> tags = new ArrayList<>();
     private List<TagItem> commonTags = new ArrayList<>();
     private List<TagItem> uncommonTags = new ArrayList<>();
@@ -60,6 +61,7 @@ public class DataSource {
         }catch(IOException e){
             Log.d("YC", "Could not initialize: " + e);
         }
+
     }
 
     public List<TagItem> getCommonTags() { return commonTags; }

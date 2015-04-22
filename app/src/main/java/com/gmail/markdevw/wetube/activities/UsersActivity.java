@@ -1157,7 +1157,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                 startActivity(intent);
             }
-        dialog.setOnDismissListener(this);
+        if(dialog != null){
+            dialog.setOnDismissListener(this);
+        }
     }
 
     public void clearDialogsById(String id){

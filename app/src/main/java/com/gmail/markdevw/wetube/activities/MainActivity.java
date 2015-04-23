@@ -408,9 +408,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 youTubePlayer.play();
             }else if(msg.startsWith("/seek$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())) {
                 youTubePlayer.seekToMillis(Integer.parseInt(msg.substring(6)));
-            }
-
-            if (message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())) {
+            }else if(message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())) {
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);

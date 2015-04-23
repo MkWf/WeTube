@@ -125,8 +125,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         sendMessage = (Button) findViewById(R.id.activity_main_send_button);
         sendMessage.setOnClickListener(this);
 
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         handler = new Handler();
     }
 
@@ -213,6 +211,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         videoList.setVisibility(View.GONE);
         toolbar.setVisibility(View.GONE);
         videoChatDivider.setVisibility(View.VISIBLE);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/video$" + videoItem.getId());
 
@@ -225,6 +224,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             videoList.setVisibility(View.VISIBLE);
             toolbar.setVisibility(View.VISIBLE);
             videoChatDivider.setVisibility(View.GONE);
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }else{
             super.onBackPressed();
         }
@@ -399,6 +399,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 videoList.setVisibility(View.GONE);
                 toolbar.setVisibility(View.GONE);
                 videoChatDivider.setVisibility(View.VISIBLE);
+                MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
                 youTubePlayer.loadVideo(currentVideo);
             }else if(msg.equals("/pause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())){

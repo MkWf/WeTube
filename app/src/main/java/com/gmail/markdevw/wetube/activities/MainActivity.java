@@ -70,6 +70,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private EditText messageField;
     private Button sendMessage;
     private FrameLayout videoList;
+    private View videoChatDivider;
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -105,6 +106,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         toolbar = (Toolbar) findViewById(R.id.tb_activity_main);
         setSupportActionBar(toolbar);
+
+        videoChatDivider = findViewById(R.id.horizontal_line_video);
 
         messageItemAdapter = new MessageItemAdapter();
 
@@ -208,6 +211,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 .commit();
 
         videoList.setVisibility(View.GONE);
+        toolbar.setVisibility(View.GONE);
+        videoChatDivider.setVisibility(View.VISIBLE);
 
         messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/video$" + videoItem.getId());
 
@@ -218,6 +223,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if(getFragmentManager().getBackStackEntryCount() > 0){
             getFragmentManager().popBackStack();
             videoList.setVisibility(View.VISIBLE);
+            toolbar.setVisibility(View.VISIBLE);
+            videoChatDivider.setVisibility(View.GONE);
         }else{
             super.onBackPressed();
         }
@@ -388,6 +395,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         .show(playerFragment)
                         .addToBackStack(null)
                         .commit();
+
+                videoList.setVisibility(View.GONE);
+                toolbar.setVisibility(View.GONE);
+                videoChatDivider.setVisibility(View.VISIBLE);
 
                 youTubePlayer.loadVideo(currentVideo);
             }else if(msg.equals("/pause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())){

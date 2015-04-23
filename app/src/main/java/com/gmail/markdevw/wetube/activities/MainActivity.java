@@ -69,6 +69,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private MessageItemAdapter messageItemAdapter;
     private EditText messageField;
     private Button sendMessage;
+    private FrameLayout videoList;
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -94,6 +95,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         playerFragment = (YouTubePlayerFragment)getFragmentManager()
                 .findFragmentById(R.id.youtubeplayerfragment);
         playerFragment.initialize(WeTubeApplication.getSharedDataSource().getAPI_KEY(), this);
+
+        videoList = (FrameLayout) findViewById(R.id.fl_activity_video_list);
 
         getFragmentManager()
                 .beginTransaction()
@@ -204,6 +207,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 .addToBackStack(null)
                 .commit();
 
+        videoList.setVisibility(View.GONE);
+
         messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/video$" + videoItem.getId());
 
     }
@@ -212,6 +217,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onBackPressed() {
         if(getFragmentManager().getBackStackEntryCount() > 0){
             getFragmentManager().popBackStack();
+            videoList.setVisibility(View.VISIBLE);
         }else{
             super.onBackPressed();
         }

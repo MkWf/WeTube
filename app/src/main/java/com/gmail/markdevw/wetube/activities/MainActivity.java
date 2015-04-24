@@ -111,6 +111,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 .commit();
 
         toolbar = (Toolbar) findViewById(R.id.tb_activity_main);
+        toolbar.setTitle("User: " + name);
         setSupportActionBar(toolbar);
 
         videoChatDivider = findViewById(R.id.horizontal_line_video);
@@ -151,7 +152,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                             VideoListFragment vlf = (VideoListFragment)f;
                             vlf.getVideoItemAdapter().notifyDataSetChanged();
                             vlf.getRecyclerView().scrollToPosition(0);
-                            toolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage());
+                            toolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + name);
                         }
                     });
                 }
@@ -173,7 +174,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         VideoListFragment vlf = (VideoListFragment)f;
                         vlf.getVideoItemAdapter().notifyDataSetChanged();
                         vlf.getRecyclerView().scrollToPosition(0);
-                        toolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage());
+                        toolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + name);
                     }
                 });
             }
@@ -418,7 +419,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
             String msg = message.getTextBody();
-            if(msg.startsWith("/video$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())){
+            if(msg.startsWith("/video$") && message.getSenderId().equals(id)){
                 currentVideo = msg.substring(7);
 
                 getFragmentManager()
@@ -434,11 +435,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
                 youTubePlayer.loadVideo(currentVideo);
-            }else if(msg.equals("/pause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient()) && youTubePlayer != null){
+            }else if(msg.equals("/pause$") && message.getSenderId().equals(id) && youTubePlayer != null){
                 youTubePlayer.pause();
-            }else if(msg.equals("/unpause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient()) && youTubePlayer != null){
+            }else if(msg.equals("/unpause$") && message.getSenderId().equals(id) && youTubePlayer != null){
                 youTubePlayer.play();
-            }else if(msg.startsWith("/seek$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient()) && youTubePlayer != null){
+            }else if(msg.startsWith("/seek$") && message.getSenderId().equals(id) && youTubePlayer != null){
                 youTubePlayer.seekToMillis(Integer.parseInt(msg.substring(6)));
             }else if(msg.startsWith("sessionend-")){
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -456,7 +457,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 });
                 builder.setCancelable(false);
                 builder.show();
-            }else if(message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())) {
+            }else if(message.getSenderId().equals(id)) {
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);

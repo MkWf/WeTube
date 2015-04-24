@@ -335,6 +335,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
         user.setSessionStatus(false);
         user.saveInBackground();
+
+        WeTubeApplication.getSharedDataSource().setCurrentRecipient(null);
     }
 
     @Override

@@ -33,6 +33,8 @@ import com.gmail.markdevw.wetube.services.MessageService;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
+import com.parse.ParseUser;
+import com.parse.models.WeTubeUser;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.messaging.Message;
 import com.sinch.android.rtc.messaging.MessageClient;
@@ -302,9 +304,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         messageService.removeMessageClientListener(messageClientListener);
         unbindService(serviceConnection);
-        super.onDestroy();
+        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+        user.setSessionStatus(false);
+        user.setLoggedStatus(false);
     }
 
     @Override

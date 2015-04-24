@@ -211,7 +211,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     user.setSessionStatus(false);
                     user.saveInBackground();
                     bindService(new Intent(UsersActivity.this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
-
                 }
             }
         };
@@ -517,13 +516,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public void onDestroy(){
+        super.onDestroy();
         stopService(new Intent(this, MessageService.class));
         messageService.removeMessageClientListener(messageClientListener);
         unbindService(serviceConnection);
+
         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
         user.setLoggedStatus(false);
         user.saveInBackground();
-        super.onDestroy();
+        ParseUser.logOut();
     }
 
     @Override

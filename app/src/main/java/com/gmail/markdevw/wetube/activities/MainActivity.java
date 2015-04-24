@@ -75,7 +75,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private Button sendMessage;
     private FrameLayout videoList;
     private View videoChatDivider;
-    private int finish = 0;
+    private String name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
+    private String id = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId();
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -218,7 +219,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         videoChatDivider.setVisibility(View.VISIBLE);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/video$" + videoItem.getId());
+        messageService.sendMessage(id, "/video$" + videoItem.getId());
 
     }
 
@@ -237,7 +238,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(),
+                    messageService.sendMessage(id,
                             "sessionend-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
                     dialog.dismiss();
                     MainActivity.super.onBackPressed();
@@ -347,7 +348,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if(messageField.getText().toString().isEmpty()){
             Toast.makeText(getApplicationContext(), "Type a message first before sending", Toast.LENGTH_LONG).show();
         }else{
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), messageField.getText().toString());
+            messageService.sendMessage(id, messageField.getText().toString());
             messageType = MESSAGE;
             WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(messageField.getText().toString(), MessageItem.OUTGOING_MSG));
             messageItemAdapter.notifyDataSetChanged();
@@ -361,7 +362,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if(isPaused){
             isPaused = false;
             messageType = VIDEO_UNPAUSE;
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/unpause$");
+            messageService.sendMessage(id, "/unpause$");
         }
     }
 
@@ -369,7 +370,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onPaused() {
         messageType = VIDEO_PAUSE;
         isPaused = true;
-        messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/pause$");
+        messageService.sendMessage(id, "/pause$");
     }
 
     @Override
@@ -381,17 +382,17 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onBuffering(boolean b) {
        if(b){
             messageType = VIDEO_BUFFER;
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/pause$");
+            messageService.sendMessage(id, "/pause$");
         }else{
             messageType = VIDEO_BUFFER;
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/unpause$");
+            messageService.sendMessage(id, "/unpause$");
         }
     }
 
     @Override
     public void onSeekTo(int i) {
         messageType = VIDEO_SEEK;
-        messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(), "/seek$" + i);
+        messageService.sendMessage(id, "/seek$" + i);
     }
 
     private class MyServiceConnection implements ServiceConnection {
@@ -439,7 +440,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 youTubePlayer.seekToMillis(Integer.parseInt(msg.substring(6)));
             }else if(msg.startsWith("sessionend-")){
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle(WeTubeApplication.getSharedDataSource().getCurrentRecipient() + " has left the session");
+                builder.setTitle(name + " has left the session");
 
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
@@ -463,7 +464,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         public void onMessageSent(MessageClient client, Message message, String recipientId) {
 
         }
-        //Do you want to notify your user when the message is delivered?
+
         @Override
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
             if(messageType == VIDEO_START){
@@ -473,7 +474,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 youTubePlayer.pause();
             }
         }
-        //Don't worry about this right now
+
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }

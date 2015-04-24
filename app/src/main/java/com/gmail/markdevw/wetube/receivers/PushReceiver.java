@@ -24,7 +24,7 @@ public class PushReceiver extends ParsePushBroadcastReceiver {
         try {
             jsonObject = new JSONObject(jsonData);
             String userId = jsonObject.getString("alert");
-            WeTubeApplication.getSharedDataSource().setCurrentRecipient(userId);
+           // WeTubeApplication.getSharedDataSource().setCurrentRecipient(userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

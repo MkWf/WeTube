@@ -1099,7 +1099,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         messageService.sendMessage(id, "sessionaccept-" + user.getUsername() + "-" + user.getObjectId());
                         dialog.cancel();
 
-                        WeTubeApplication.getSharedDataSource().setCurrentRecipient(id);
+                        WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(name, id));
                         Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                         startActivity(intent);
                     }
@@ -1161,7 +1161,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 user.setSessionStatus(true);
                 user.saveInBackground();
 
-                WeTubeApplication.getSharedDataSource().setCurrentRecipient(msg.get(2));
+                WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(msg.get(1), msg.get(2)));
                 Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                 startActivity(intent);
             }

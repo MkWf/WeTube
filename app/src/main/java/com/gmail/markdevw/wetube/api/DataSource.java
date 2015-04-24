@@ -35,7 +35,7 @@ public class DataSource {
     private String prevPageToken;
     private String nextPageToken;
     private String currentSearch;
-    private String currentRecipient;
+    private UserItem currentRecipient;
     private final long NUMBER_OF_VIDEOS_RETURNED = 20;
     private List<MessageItem> messages = new Vector<>();
     private List<String> tags = new ArrayList<>();
@@ -68,8 +68,8 @@ public class DataSource {
     public List<TagItem> getUncommonTags() { return uncommonTags; }
     public List<String> getTags() { return tags; }
     public List<MessageItem> getMessages() { return messages;}
-    public void setCurrentRecipient(String recipient){ this.currentRecipient = recipient;}
-    public String getCurrentRecipient() { return this.currentRecipient; }
+    public void setCurrentRecipient(UserItem recipient){ this.currentRecipient = recipient;}
+    public UserItem getCurrentRecipient() { return this.currentRecipient; }
     public List<VideoItem> getVideos(){
         return videos;
     }

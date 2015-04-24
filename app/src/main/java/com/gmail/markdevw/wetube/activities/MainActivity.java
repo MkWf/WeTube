@@ -1,7 +1,9 @@
 package com.gmail.markdevw.wetube.activities;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
@@ -73,6 +75,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private Button sendMessage;
     private FrameLayout videoList;
     private View videoChatDivider;
+    private int finish = 0;
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -228,7 +231,26 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             videoChatDivider.setVisibility(View.GONE);
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }else{
-            super.onBackPressed();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Are you sure you want to leave this session?");
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient(),
+                            "sessionend-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                    dialog.dismiss();
+                    MainActivity.super.onBackPressed();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
         }
     }
 
@@ -246,6 +268,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+        Toast.makeText(getApplicationContext(), "YouTubePlayer failed to initialize", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -408,12 +431,28 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
                 youTubePlayer.loadVideo(currentVideo);
-            }else if(msg.equals("/pause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())){
+            }else if(msg.equals("/pause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient()) && youTubePlayer != null){
                 youTubePlayer.pause();
-            }else if(msg.equals("/unpause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())) {
+            }else if(msg.equals("/unpause$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient()) && youTubePlayer != null){
                 youTubePlayer.play();
-            }else if(msg.startsWith("/seek$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())) {
+            }else if(msg.startsWith("/seek$") && message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient()) && youTubePlayer != null){
                 youTubePlayer.seekToMillis(Integer.parseInt(msg.substring(6)));
+            }else if(msg.startsWith("sessionend-")){
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(WeTubeApplication.getSharedDataSource().getCurrentRecipient() + " has left the session");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                                user.setSessionStatus(false);
+                                user.saveInBackground();
+
+                                MainActivity.super.onBackPressed();
+                            }
+                });
+                builder.setCancelable(false);
+                builder.show();
             }else if(message.getSenderId().equals(WeTubeApplication.getSharedDataSource().getCurrentRecipient())) {
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();

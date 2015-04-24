@@ -528,6 +528,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     @Override
+    public void onRestart(){
+        super.onRestart();
+
+        isFirstMessage = true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_users, menu);
@@ -805,7 +812,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     showNextMessage();
                 }
             }else{
-                isFirstMessage = false;
+                //isFirstMessage = false;
                 showNextMessage();
             }
         }

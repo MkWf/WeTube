@@ -307,9 +307,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         super.onDestroy();
         messageService.removeMessageClientListener(messageClientListener);
         unbindService(serviceConnection);
+
         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
         user.setSessionStatus(false);
-        user.setLoggedStatus(false);
+        user.saveInBackground();
     }
 
     @Override

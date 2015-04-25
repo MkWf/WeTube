@@ -486,45 +486,28 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
 
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("objectId", currentUserId);
-        query.findInBackground(new FindCallback<ParseUser>() {
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("userId", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("getFriendsUnavailable", params, new FunctionCallback<List<ParseUser>>() {
+            @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    WeTubeUser user = (WeTubeUser) userList.get(0);
-                    if (user.getList("friends") != null) {
-                        List<String> friends = user.getList("friends");
+                    if(userList.size() > 0) {
+                        for (int i = 0; i < userList.size(); i++) {
+                            WeTubeUser friend = (WeTubeUser) userList.get(i);
 
-                        for (int i = 0; i < friends.size(); i++) {
-                            ParseQuery<ParseUser> query2 = ParseUser.getQuery();
-                            query2.whereEqualTo("objectId", friends.get(i));
-                            query2.whereEqualTo("isInSession", true);
-                            query2.whereEqualTo("isLoggedIn", true);
-                            query2.findInBackground(new FindCallback<ParseUser>() {
-                                public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                                    if (e == null) {
-                                        if(userList.size() > 0){
-                                            WeTubeUser friend = (WeTubeUser) userList.get(0);
-                                            WeTubeApplication.getSharedDataSource().getFriends()
-                                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                                        }
-                                    } else {
-                                        Toast.makeText(WeTubeApplication.getSharedInstance(),
-                                                "Error loading a user",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                    navigationDrawerAdapter.notifyDataSetChanged();
-                                    if(progressDialog != null){
-                                        progressDialog.dismiss();
-                                    }
-                                }
-                            });
+                            WeTubeApplication.getSharedDataSource().getFriends()
+                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                        }
+                        navigationDrawerAdapter.notifyDataSetChanged();
+                        if(progressDialog != null){
+                            progressDialog.dismiss();
                         }
                     }
-                } else {
+                }else{
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
-                            "Error loading friends list",
+                            "Error loading user list",
                             Toast.LENGTH_LONG).show();
                 }
             }

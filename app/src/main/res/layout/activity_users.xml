@@ -68,14 +68,28 @@
         android:orientation="vertical"
         android:layout_gravity="start">
 
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Friends"
-            android:textSize="40sp"
-            android:paddingLeft="60dp"
-            android:background="@color/white"
-            android:textStyle="bold"/>
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Friends"
+                android:textSize="40sp"
+                android:paddingLeft="60dp"
+                android:layout_weight="1"
+                android:textStyle="bold"/>
+
+            <Spinner
+                android:id="@+id/activity_users_nav_friends_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_green_light"/>
+
+         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_nav_activity_users"

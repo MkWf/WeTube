@@ -310,3 +310,57 @@ Parse.Cloud.define("unblockedBy", function(request, response) {
 	})	
 });
 
+Parse.Cloud.define("getFriendsAtoZ", function(request, response) {
+	
+  var userId = request.params.userId;
+ 
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+  query.include("fff");
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("fff");
+			var nameArray = new Array();
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					var name = array[i].get("username");
+					nameArray.push(name);
+					
+					if(nameArray.length == array.length){
+						var sortedArray = nameArray.sort();
+						var friendsList = new Array();
+						
+						for(var j = 0; j<sortedArray.length; j++){
+							var query2 = new Parse.Query(Parse.User);
+							  query2.equalTo("username", sortedArray[j]);
+
+							  query2.find({
+								  success: function(results){
+									  friendsList.push(results[0]);
+									  
+									  if(friendsList.length == sortedArray.length){
+										  nameSort = function(a,b){
+											  return a.get("username")>b.get("username");
+										  }
+										  
+										  friendsList = friendsList.sort(nameSort);
+										  response.success(friendsList);
+									  }
+								  },
+								  error: function(){
+								  	  response.error("user lookup failed")
+							  	  }
+							  })	
+						}
+					}
+				}
+
+			}
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+

@@ -75,7 +75,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate, View.OnClickListener,
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
-        NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener {
+        NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
+        DrawerLayout.DrawerListener{
 
     private Intent serviceIntent;
     private ProgressDialog progressDialog;
@@ -120,7 +121,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_activity_blocly);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.setDrawerListener(this);
 
         navigationDrawerAdapter = new NavigationDrawerAdapter();
         navigationDrawerAdapter.setDelegate(this);
@@ -296,6 +297,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                 Toast.LENGTH_LONG).show();
                                     }
                                     navigationDrawerAdapter.notifyDataSetChanged();
+                                    if(progressDialog != null){
+                                        progressDialog.dismiss();
+                                    }
                                 }
                             });
                         }
@@ -1193,6 +1197,33 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         if(!messageQueue.isEmpty() && !isBlocking){
             showNextMessage();
         }
+    }
 
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+
+    }
+
+    @Override
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
+        friendsRefreshProgress();
+        getFriends();
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
+
+    }
+
+    public void friendsRefreshProgress(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Refreshing friends list");
+        progressDialog.setMessage("Please wait...");
+        progressDialog.show();
     }
 }

@@ -290,7 +290,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if(userList.size() > 0) {
+                    if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
@@ -299,11 +299,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if(progressDialog != null){
+                        if (progressDialog != null) {
                             progressDialog.dismiss();
                         }
                     }
-                }else{
+                } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -325,7 +325,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if(userList.size() > 0) {
+                    if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
@@ -334,11 +334,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if(progressDialog != null){
+                        if (progressDialog != null) {
                             progressDialog.dismiss();
                         }
                     }
-                }else{
+                } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -360,7 +360,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if(userList.size() > 0) {
+                    if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
@@ -369,11 +369,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if(progressDialog != null){
+                        if (progressDialog != null) {
                             progressDialog.dismiss();
                         }
                     }
-                }else{
+                } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -395,7 +395,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if(userList.size() > 0) {
+                    if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
@@ -404,11 +404,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if(progressDialog != null){
+                        if (progressDialog != null) {
                             progressDialog.dismiss();
                         }
                     }
-                }else{
+                } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -430,7 +430,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if(userList.size() > 0) {
+                    if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
@@ -439,11 +439,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if(progressDialog != null){
+                        if (progressDialog != null) {
                             progressDialog.dismiss();
                         }
                     }
-                }else{
+                } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -1076,19 +1076,20 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                        final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                         messageService.sendMessage(id, "friendaccept-" + user.getUsername() + "-" + user.getObjectId());
 
-                        user.add("friends", id);
-                        user.saveInBackground(new SaveCallback() {
+                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        query.whereEqualTo("objectId", id);
+                        query.findInBackground(new FindCallback<ParseUser>() {
                             @Override
-                            public void done(ParseException e) {
-                                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                                query.whereEqualTo("objectId", id);
-                                query.findInBackground(new FindCallback<ParseUser>() {
+                            public void done(List<ParseUser> parseUsers, ParseException e) {
+                                final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
+
+                                user.add("fff", friend);
+                                user.saveInBackground(new SaveCallback() {
                                     @Override
-                                    public void done(List<ParseUser> user, ParseException e) {
-                                        WeTubeUser friend = (WeTubeUser) user.get(0);
+                                    public void done(ParseException e) {
                                         WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                                 friend.getSessionStatus(), friend.getLoggedStatus(), true));
                                         navigationDrawerAdapter.notifyDataSetChanged();
@@ -1165,17 +1166,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 final String name = msg.get(1);
                 final String id = msg.get(2);
 
-                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                user.add("friends", id);
-                user.saveInBackground(new SaveCallback() {
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                query.whereEqualTo("objectId", id);
+                query.findInBackground(new FindCallback<ParseUser>() {
                     @Override
-                    public void done(ParseException e) {
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("objectId", id);
-                        query.findInBackground(new FindCallback<ParseUser>() {
+                    public void done(List<ParseUser> parseUsers, ParseException e) {
+                        final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
+
+                        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                        user.add("fff", friend);
+                        user.saveInBackground(new SaveCallback() {
                             @Override
-                            public void done(List<ParseUser> user, ParseException e) {
-                                WeTubeUser friend = (WeTubeUser) user.get(0);
+                            public void done(ParseException e) {
                                 WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                         friend.getSessionStatus(), friend.getLoggedStatus(), true));
                                 navigationDrawerAdapter.notifyDataSetChanged();
@@ -1188,6 +1190,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 }
                             }
                         });
+
                     }
                 });
 

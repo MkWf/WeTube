@@ -123,11 +123,11 @@ Parse.Cloud.define("removeFriendPtr", function(request, response) {
   
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
-  query.include("fff");
+  query.include("friends");
 
   query.find({
 		success: function(results){
-			var array = results[0].get("fff");
+			var array = results[0].get("friends");
 			
 			var query2 = new Parse.Query(Parse.User);
 			query.equalTo("objectId", friend);
@@ -136,21 +136,23 @@ Parse.Cloud.define("removeFriendPtr", function(request, response) {
 				success: function(results2){
 					if(array.length != 0){
 						for(var i = 0; i<array.length; i++){
-							if(array[i] == results2[0]){
+							if(1>2){
 								array.splice(i,1);
+								response.success(friend);
+								
+								Parse.Object.saveAll(results, {
+									success: function(list) {
+										//response.success(array[0].get("objectId"));
+									},
+									error: function(error){
+										response.success("friend remove failed");
+									}
+								})
+								
 								break;
 							}
 						}
 					}
-					
-					Parse.Object.saveAll(results, {
-						success: function(list) {
-							response.success("friend removed")
-						},
-						error: function(error){
-					
-						}
-					})
 				}
 			})
 		},
@@ -361,11 +363,11 @@ Parse.Cloud.define("getFriendsAtoZ", function(request, response) {
   
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
-  query.include("fff");
+  query.include("friends");
 
   query.find({
 		success: function(results){
-			var array = results[0].get("fff");
+			var array = results[0].get("friends");
 			var nameArray = new Array();
 			if(array.length != 0){
 				for(var i = 0; i<array.length; i++){
@@ -418,11 +420,11 @@ Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
-  query.include("fff");
+  query.include("friends");
 
   query.find({
 		success: function(results){
-			var array = results[0].get("fff");
+			var array = results[0].get("friends");
 			var nameArray = new Array();
 			if(array.length != 0){
 				for(var i = 0; i<array.length; i++){
@@ -483,11 +485,11 @@ Parse.Cloud.define("getFriendsAvailable", function(request, response) {
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
-  query.include("fff");
+  query.include("friends");
 
   query.find({
 		success: function(results){
-			var array = results[0].get("fff");
+			var array = results[0].get("friends");
 			var nameArray = new Array();
 			if(array.length != 0){
 				for(var i = 0; i<array.length; i++){
@@ -548,11 +550,11 @@ Parse.Cloud.define("getFriendsOffline", function(request, response) {
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
-  query.include("fff");
+  query.include("friends");
 
   query.find({
 		success: function(results){
-			var array = results[0].get("fff");
+			var array = results[0].get("friends");
 			var nameArray = new Array();
 			if(array.length != 0){
 				for(var i = 0; i<array.length; i++){
@@ -612,11 +614,11 @@ Parse.Cloud.define("getFriendsOnline", function(request, response) {
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
-  query.include("fff");
+  query.include("friends");
 
   query.find({
 		success: function(results){
-			var array = results[0].get("fff");
+			var array = results[0].get("friends");
 			var nameArray = new Array();
 			if(array.length != 0){
 				for(var i = 0; i<array.length; i++){
@@ -676,11 +678,11 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 	
 	var query = new Parse.Query(Parse.User);
 	query.equalTo("objectId", userId);
-	query.include("fff");
+	query.include("friends");
 
 	query.find({
 		success: function(results){
-			var array = results[0].get("fff");
+			var array = results[0].get("friends");
 			var onlineAvailableArray = new Array();
 			var onlineUnavailableArray = new Array();
 			var offlineArray = new Array();
@@ -787,6 +789,34 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 						}
 					}
 				}
+			}else{
+				response.success(emptyArray);
+			}
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+
+Parse.Cloud.define("getLoggedInUsers", function(request, response) {
+	
+  var userId = request.params.userId;
+  var emptyArray = [];
+
+  var query = new Parse.Query(Parse.User);
+  query.notEqualTo("objectId", userId);
+  query.equalTo("isLoggedIn", true);
+
+  query.find({
+		success: function(results){
+			if(results.length != 0){
+				nameSort = function(a,b){
+					return a.get("username")>b.get("username");
+				}
+				
+				var users = results.sort(nameSort);
+				response.success(users);
 			}else{
 				response.success(emptyArray);
 			}

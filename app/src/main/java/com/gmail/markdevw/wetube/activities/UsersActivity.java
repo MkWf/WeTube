@@ -238,7 +238,37 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             WeTubeApplication.getSharedDataSource().getUsers().clear();
         }
 
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("userId", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("getLoggedInUsers", params, new FunctionCallback<List<ParseUser>>() {
+            @Override
+            public void done(List<ParseUser> userList, com.parse.ParseException e) {
+                if (e == null) {
+                    if (userList.size() > 0) {
+                        for (int i = 0; i < userList.size(); i++) {
+                            WeTubeUser user = (WeTubeUser) userList.get(i);
+
+                            WeTubeApplication.getSharedDataSource().getUsers()
+                                    .add(new UserItem(user.getUsername(), user.getObjectId(),
+                                            user.getSessionStatus(), user.getLoggedStatus(), false));
+                        }
+                    }
+                    userItemAdapter.notifyDataSetChanged();
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
+                    swipeRefreshLayout.setRefreshing(false);
+                } else {
+                    navigationDrawerAdapter.notifyDataSetChanged();
+                    Toast.makeText(WeTubeApplication.getSharedInstance(),
+                            "Error loading user list",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+       /* ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereNotEqualTo("objectId", currentUserId);
         query.whereEqualTo("isLoggedIn", true);
         query.orderByAscending("username");
@@ -274,7 +304,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
 
             }
-        });
+        });*/
     }
 
     public void getFriends(){
@@ -1132,7 +1162,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             public void done(List<ParseUser> parseUsers, ParseException e) {
                                 final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
 
-                                user.add("fff", friend);
+                                user.add("friends", friend);
                                 user.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
@@ -1220,7 +1250,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
 
                         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                        user.add("fff", friend);
+                        user.add("friends", friend);
                         user.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {

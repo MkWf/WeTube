@@ -563,7 +563,7 @@ Parse.Cloud.define("getFriendsOffline", function(request, response) {
 					}
 					
 					if(i == array.length-1 && isEmpty){
-						//response.success(emptyArray);
+						response.success(emptyArray);
 					}
 					
 					if(i == array.length-1 && nameArray.length != 0){
@@ -700,6 +700,28 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 					}
 					
 					if(i == array.length-1){	
+						if(onlineAvailableArray.length != 0){						
+							for(var j = 0; j<onlineAvailableArray.length; j++){
+								var query2 = new Parse.Query(Parse.User);
+								query2.equalTo("username", onlineAvailableArray[j]);
+
+								query2.find({
+									success: function(results){
+										tempArray.push(results[0]);
+										 
+										if(tempArray.length == onlineAvailableArray.length){
+											nameSort = function(a,b){
+												return a.get("username")>b.get("username");
+											}
+											  
+											tempArray = tempArray.sort(nameSort);
+											friendsList = tempArray;
+											tempArray = [];	
+										}
+									}
+								})
+							}
+						}
 						for(var j = 0; j<onlineAvailableArray.length; j++){
 							var query2 = new Parse.Query(Parse.User);
 							query2.equalTo("username", onlineAvailableArray[j]);
@@ -774,4 +796,3 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 		}
 	})	
 });
-

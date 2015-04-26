@@ -93,7 +93,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private int tagSelect;
     private Spinner searchOptions;
     private Spinner friendsSort;
-    private String searchOptionSelected;
+    private String searchOptionSelected = "Name";
     private String sortOptionSelected = "Default";
     ArrayAdapter<CharSequence> spinnerAdapter;
     ArrayAdapter<CharSequence> friendsAdapter;
@@ -187,7 +187,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             showSpinner();
 
             getLoggedInUsers();
-            getFriends();
+            //getFriends();
             getUserTags();
 
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
@@ -662,8 +662,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     Toast.makeText(this, "Enter a search first", Toast.LENGTH_LONG).show();
                 }else{
                     swipeRefreshLayout.setRefreshing(true);
-                    if(searchOptionSelected.equals("User")){
-                        searchByUser();
+                    if(searchOptionSelected.equals("Name")){
+                        searchByName();
                     }else{
                         searchByTag();
                     }
@@ -826,7 +826,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         if(!isLaunch){
             String selection = (String) parent.getItemAtPosition(pos);
 
-            if(selection.equals("Name") || selection.equals("User")){
+            if(selection.equals("Name") || selection.equals("Tag")){
                 searchOptionSelected = selection;
             }else{
                 sortOptionSelected = selection;
@@ -849,7 +849,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             }
         }else{
-            if(launchSpinnerCount<2){
+            if(launchSpinnerCount<1){
                 launchSpinnerCount++;
             }else{
                 isLaunch = false;
@@ -912,7 +912,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         });
     }
 
-    private void searchByUser() {
+    private void searchByName() {
         String currentUserId = ParseUser.getCurrentUser().getObjectId();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereNotEqualTo("objectId", currentUserId);

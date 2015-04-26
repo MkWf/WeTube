@@ -357,7 +357,8 @@ Parse.Cloud.define("unblockedBy", function(request, response) {
 Parse.Cloud.define("getFriendsAtoZ", function(request, response) {
 	
   var userId = request.params.userId;
- 
+  var emptyArray = [];
+  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
   query.include("fff");
@@ -400,7 +401,6 @@ Parse.Cloud.define("getFriendsAtoZ", function(request, response) {
 					}
 				}
 			}else{
-				var emptyArray = [];
 				response.success(emptyArray);
 			}
 		},
@@ -413,6 +413,8 @@ Parse.Cloud.define("getFriendsAtoZ", function(request, response) {
 Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
 	
   var userId = request.params.userId;
+  var emptyArray = [];
+  var isEmpty = 1;
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
@@ -428,6 +430,11 @@ Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
 					var isLoggedIn = array[i].get("isLoggedIn");
 					if(isNotAvailable && isLoggedIn){
 						nameArray.push(array[i].get("username"));
+						isEmpty = 0;
+					}
+					
+					if(i == array.length-1 && isEmpty){
+						response.success(emptyArray);
 					}
 					
 					if(i == array.length-1){
@@ -459,7 +466,6 @@ Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
 					}
 				}
 			}else{
-				var emptyArray = [];
 				response.success(emptyArray);
 			}
 		},
@@ -472,6 +478,8 @@ Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
 Parse.Cloud.define("getFriendsAvailable", function(request, response) {
 	
   var userId = request.params.userId;
+  var emptyArray = [];
+  var isEmpty = 1;
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
@@ -487,9 +495,14 @@ Parse.Cloud.define("getFriendsAvailable", function(request, response) {
 					var isLoggedIn = array[i].get("isLoggedIn");
 					if(!isAvailable && isLoggedIn){
 						nameArray.push(array[i].get("username"));
+						isEmpty = 0;
 					}
 					
-					if(i == array.length-1){
+					if(i == array.length-1 && isEmpty){
+						response.success(emptyArray);
+					}
+					
+					if(i == array.length-1 && nameArray.length != 0){
 						var sortedArray = nameArray.sort();
 						var friendsList = new Array();
 						
@@ -518,7 +531,6 @@ Parse.Cloud.define("getFriendsAvailable", function(request, response) {
 					}
 				}
 			}else{
-				var emptyArray = [];
 				response.success(emptyArray);
 			}
 		},
@@ -531,6 +543,8 @@ Parse.Cloud.define("getFriendsAvailable", function(request, response) {
 Parse.Cloud.define("getFriendsOffline", function(request, response) {
 	
   var userId = request.params.userId;
+  var emptyArray = [];
+  var isEmpty = 1;
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
@@ -545,9 +559,14 @@ Parse.Cloud.define("getFriendsOffline", function(request, response) {
 					var isLoggedIn = array[i].get("isLoggedIn");
 					if(!isLoggedIn){
 						nameArray.push(array[i].get("username"));
+						isEmpty = 0;
 					}
 					
-					if(i == array.length-1){
+					if(i == array.length-1 && isEmpty){
+						//response.success(emptyArray);
+					}
+					
+					if(i == array.length-1 && nameArray.length != 0){
 						var sortedArray = nameArray.sort();
 						var friendsList = new Array();
 						
@@ -576,7 +595,6 @@ Parse.Cloud.define("getFriendsOffline", function(request, response) {
 					}
 				}
 			}else{
-				var emptyArray = [];
 				response.success(emptyArray);
 			}
 		},
@@ -589,6 +607,8 @@ Parse.Cloud.define("getFriendsOffline", function(request, response) {
 Parse.Cloud.define("getFriendsOnline", function(request, response) {
 	
   var userId = request.params.userId;
+  var emptyArray = [];
+  var isEmpty = 1;
  
   var query = new Parse.Query(Parse.User);
   query.equalTo("objectId", userId);
@@ -603,9 +623,14 @@ Parse.Cloud.define("getFriendsOnline", function(request, response) {
 					var isLoggedIn = array[i].get("isLoggedIn");
 					if(isLoggedIn){
 						nameArray.push(array[i].get("username"));
+						isEmpty = 0;
 					}
 					
-					if(i == array.length-1){
+					if(i == array.length-1 && isEmpty){
+						response.success(emptyArray);
+					}
+					
+					if(i == array.length-1 && nameArray.length != 0){
 						var sortedArray = nameArray.sort();
 						var friendsList = new Array();
 						
@@ -647,6 +672,8 @@ Parse.Cloud.define("getFriendsOnline", function(request, response) {
 Parse.Cloud.define("getFriendsDefault", function(request, response) {
 	
 	var userId = request.params.userId;
+	var emptyArray = [];
+	
 	var query = new Parse.Query(Parse.User);
 	query.equalTo("objectId", userId);
 	query.include("fff");
@@ -672,7 +699,7 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 						offlineArray.push(array[i].get("username"));
 					}
 					
-					if(i == array.length-1){					
+					if(i == array.length-1){	
 						for(var j = 0; j<onlineAvailableArray.length; j++){
 							var query2 = new Parse.Query(Parse.User);
 							query2.equalTo("username", onlineAvailableArray[j]);
@@ -739,7 +766,6 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 					}
 				}
 			}else{
-				var emptyArray = [];
 				response.success(emptyArray);
 			}
 		},

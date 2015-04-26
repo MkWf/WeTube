@@ -116,6 +116,50 @@ Parse.Cloud.define("removeFriend", function(request, response) {
 	})	
 });
 
+Parse.Cloud.define("removeFriendPtr", function(request, response) {
+	
+  var userId = request.params.userId;
+  var friend = request.params.friend;
+  
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+  query.include("fff");
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("fff");
+			
+			var query2 = new Parse.Query(Parse.User);
+			query.equalTo("objectId", friend);
+			
+			query.find({
+				success: function(results2){
+					if(array.length != 0){
+						for(var i = 0; i<array.length; i++){
+							if(array[i] == results2[0]){
+								array.splice(i,1);
+								break;
+							}
+						}
+					}
+					
+					Parse.Object.saveAll(results, {
+						success: function(list) {
+							response.success("friend removed")
+						},
+						error: function(error){
+					
+						}
+					})
+				}
+			})
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+
 Parse.Cloud.define("commonTags", function(request, response) {
 	
   var userId = request.params.userId;
@@ -355,7 +399,9 @@ Parse.Cloud.define("getFriendsAtoZ", function(request, response) {
 						}
 					}
 				}
-
+			}else{
+				var emptyArray = [];
+				response.success(emptyArray);
 			}
 		},
 		error: function(){
@@ -412,7 +458,9 @@ Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
 						}
 					}
 				}
-
+			}else{
+				var emptyArray = [];
+				response.success(emptyArray);
 			}
 		},
 		error: function(){
@@ -469,7 +517,9 @@ Parse.Cloud.define("getFriendsAvailable", function(request, response) {
 						}
 					}
 				}
-
+			}else{
+				var emptyArray = [];
+				response.success(emptyArray);
 			}
 		},
 		error: function(){
@@ -525,7 +575,9 @@ Parse.Cloud.define("getFriendsOffline", function(request, response) {
 						}
 					}
 				}
-
+			}else{
+				var emptyArray = [];
+				response.success(emptyArray);
 			}
 		},
 		error: function(){
@@ -581,7 +633,9 @@ Parse.Cloud.define("getFriendsOnline", function(request, response) {
 						}
 					}
 				}
-
+			}else{
+				var emptyArray = [];
+				response.success(emptyArray);
 			}
 		},
 		error: function(){
@@ -684,6 +738,9 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 						}
 					}
 				}
+			}else{
+				var emptyArray = [];
+				response.success(emptyArray);
 			}
 		},
 		error: function(){

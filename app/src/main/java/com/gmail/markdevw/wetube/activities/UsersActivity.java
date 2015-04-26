@@ -299,9 +299,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if (progressDialog != null) {
-                            progressDialog.dismiss();
-                        }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
                     }
                 } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -334,9 +334,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if (progressDialog != null) {
-                            progressDialog.dismiss();
-                        }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
                     }
                 } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -369,9 +369,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if (progressDialog != null) {
-                            progressDialog.dismiss();
-                        }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
                     }
                 } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -404,9 +404,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if (progressDialog != null) {
-                            progressDialog.dismiss();
-                        }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
                     }
                 } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -439,9 +439,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if (progressDialog != null) {
-                            progressDialog.dismiss();
-                        }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
                     }
                 } else {
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -475,9 +475,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                         navigationDrawerAdapter.notifyDataSetChanged();
-                        if(progressDialog != null){
-                            progressDialog.dismiss();
-                        }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
                     }
                 }else{
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -1017,7 +1017,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 HashMap<String, Object> params = new HashMap<String, Object>();
                 params.put("friend", recipientId);
                 params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
-                ParseCloud.callFunctionInBackground("removeFriend", params, new FunctionCallback<String>() {
+                ParseCloud.callFunctionInBackground("removeFriendPtr", params, new FunctionCallback<String>() {
                     @Override
                     public void done(String mapObject, com.parse.ParseException e) {
                         Toast.makeText(UsersActivity.this, "Friend removed", Toast.LENGTH_SHORT).show();
@@ -1213,7 +1213,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 HashMap<String, Object> params = new HashMap<String, Object>();
                 params.put("friend", id);
                 params.put("userId", user.getObjectId());
-                ParseCloud.callFunctionInBackground("removeFriend", params, new FunctionCallback<String>() {
+                ParseCloud.callFunctionInBackground("removeFriendPtr", params, new FunctionCallback<String>() {
                     @Override
                     public void done(String mapObject, com.parse.ParseException e) {
                         for(int i=0; i<WeTubeApplication.getSharedDataSource().getFriends().size(); i++){

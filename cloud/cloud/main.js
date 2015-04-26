@@ -421,3 +421,274 @@ Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
 	})	
 });
 
+Parse.Cloud.define("getFriendsAvailable", function(request, response) {
+	
+  var userId = request.params.userId;
+ 
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+  query.include("fff");
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("fff");
+			var nameArray = new Array();
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					var isAvailable = array[i].get("isInSession");
+					var isLoggedIn = array[i].get("isLoggedIn");
+					if(!isAvailable && isLoggedIn){
+						nameArray.push(array[i].get("username"));
+					}
+					
+					if(i == array.length-1){
+						var sortedArray = nameArray.sort();
+						var friendsList = new Array();
+						
+						for(var j = 0; j<sortedArray.length; j++){
+							var query2 = new Parse.Query(Parse.User);
+							  query2.equalTo("username", sortedArray[j]);
+
+							  query2.find({
+								  success: function(results){
+									  friendsList.push(results[0]);
+									  
+									  if(friendsList.length == sortedArray.length){
+										  nameSort = function(a,b){
+											  return a.get("username")>b.get("username");
+										  }
+										  
+										  friendsList = friendsList.sort(nameSort);
+										  response.success(friendsList);
+									  }
+								  },
+								  error: function(){
+								  	  response.error("user lookup failed")
+							  	  }
+							  })	
+						}
+					}
+				}
+
+			}
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+
+Parse.Cloud.define("getFriendsOffline", function(request, response) {
+	
+  var userId = request.params.userId;
+ 
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+  query.include("fff");
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("fff");
+			var nameArray = new Array();
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					var isLoggedIn = array[i].get("isLoggedIn");
+					if(!isLoggedIn){
+						nameArray.push(array[i].get("username"));
+					}
+					
+					if(i == array.length-1){
+						var sortedArray = nameArray.sort();
+						var friendsList = new Array();
+						
+						for(var j = 0; j<sortedArray.length; j++){
+							var query2 = new Parse.Query(Parse.User);
+							  query2.equalTo("username", sortedArray[j]);
+
+							  query2.find({
+								  success: function(results){
+									  friendsList.push(results[0]);
+									  
+									  if(friendsList.length == sortedArray.length){
+										  nameSort = function(a,b){
+											  return a.get("username")>b.get("username");
+										  }
+										  
+										  friendsList = friendsList.sort(nameSort);
+										  response.success(friendsList);
+									  }
+								  },
+								  error: function(){
+								  	  response.error("user lookup failed")
+							  	  }
+							  })	
+						}
+					}
+				}
+
+			}
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+
+Parse.Cloud.define("getFriendsOnline", function(request, response) {
+	
+  var userId = request.params.userId;
+ 
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("objectId", userId);
+  query.include("fff");
+
+  query.find({
+		success: function(results){
+			var array = results[0].get("fff");
+			var nameArray = new Array();
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					var isLoggedIn = array[i].get("isLoggedIn");
+					if(isLoggedIn){
+						nameArray.push(array[i].get("username"));
+					}
+					
+					if(i == array.length-1){
+						var sortedArray = nameArray.sort();
+						var friendsList = new Array();
+						
+						for(var j = 0; j<sortedArray.length; j++){
+							var query2 = new Parse.Query(Parse.User);
+							  query2.equalTo("username", sortedArray[j]);
+
+							  query2.find({
+								  success: function(results){
+									  friendsList.push(results[0]);
+									  
+									  if(friendsList.length == sortedArray.length){
+										  nameSort = function(a,b){
+											  return a.get("username")>b.get("username");
+										  }
+										  
+										  friendsList = friendsList.sort(nameSort);
+										  response.success(friendsList);
+									  }
+								  },
+								  error: function(){
+								  	  response.error("user lookup failed")
+							  	  }
+							  })	
+						}
+					}
+				}
+
+			}
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+
+Parse.Cloud.define("getFriendsDefault", function(request, response) {
+	
+	var userId = request.params.userId;
+	var query = new Parse.Query(Parse.User);
+	query.equalTo("objectId", userId);
+	query.include("fff");
+
+	query.find({
+		success: function(results){
+			var array = results[0].get("fff");
+			var onlineAvailableArray = new Array();
+			var onlineUnavailableArray = new Array();
+			var offlineArray = new Array();
+			var tempArray = new Array();
+			var friendsList = new Array();
+			
+			if(array.length != 0){
+				for(var i = 0; i<array.length; i++){
+					var isLoggedIn = array[i].get("isLoggedIn");
+					var isInSession = array[i].get("isInSession");
+					if(isLoggedIn && !isInSession){
+						onlineAvailableArray.push(array[i].get("username"));
+					}else if(isLoggedIn && isInSession){
+						onlineUnavailableArray.push(array[i].get("username"));
+					}else if(!isLoggedIn){
+						offlineArray.push(array[i].get("username"));
+					}
+					
+					if(i == array.length-1){					
+						for(var j = 0; j<onlineAvailableArray.length; j++){
+							var query2 = new Parse.Query(Parse.User);
+							query2.equalTo("username", onlineAvailableArray[j]);
+
+							query2.find({
+								success: function(results){
+									tempArray.push(results[0]);
+									 
+									if(tempArray.length == onlineAvailableArray.length){
+										nameSort = function(a,b){
+											return a.get("username")>b.get("username");
+										}
+										  
+										tempArray = tempArray.sort(nameSort);
+										friendsList = tempArray;
+										tempArray = [];
+										
+										for(var k = 0; k<onlineUnavailableArray.length; k++){
+											var query3 = new Parse.Query(Parse.User);
+											query3.equalTo("username", onlineUnavailableArray[k]);
+											
+											query3.find({
+												success: function(results){
+													
+													tempArray.push(results[0]);
+													
+													if(tempArray.length == onlineUnavailableArray.length){
+														nameSort = function(a,b){
+															return a.get("username")>b.get("username");
+														}
+														
+														tempArray = tempArray.sort(nameSort);
+														friendsList = friendsList.concat(tempArray);
+														tempArray = [];
+														
+														for(var l = 0; l<offlineArray.length; l++){
+															var query4 = new Parse.Query(Parse.User);
+															query4.equalTo("username", offlineArray[l]);
+														
+															query4.find({
+																success: function(results){
+																	tempArray.push(results[0]);
+																	
+																	if(tempArray.length == offlineArray.length){
+																		nameSort = function(a,b){
+																			return a.get("username")>b.get("username");
+																		}
+																		
+																		tempArray = tempArray.sort(nameSort);
+																		friendsList = friendsList.concat(tempArray);
+																		response.success(friendsList);
+																	}
+																}
+															})
+														}
+													}
+												}
+											})
+										}										
+									}
+								}
+							})	
+						}
+					}
+				}
+			}
+		},
+		error: function(){
+			response.error("user lookup failed")
+		}
+	})	
+});
+

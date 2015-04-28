@@ -1631,6 +1631,7 @@ Parse.Cloud.define("getLoggedInUsers", function(request, response) {
   var query = new Parse.Query(Parse.User);
   query.notEqualTo("objectId", userId);
   query.equalTo("isLoggedIn", true);
+  //query.limit(10);
  
   query.find({
         success: function(results){

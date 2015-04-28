@@ -386,9 +386,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        final HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsOnline", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getFriendsAvailable", params, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
@@ -402,11 +402,31 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         }
 
                     }
-                    navigationDrawerAdapter.notifyDataSetChanged();
+
+                    ParseCloud.callFunctionInBackground("getFriendsUnavailable", params, new FunctionCallback<List<ParseUser>>() {
+                        @Override
+                        public void done(List<ParseUser> userList2, com.parse.ParseException e) {
+                            if(e == null) {
+                                if (userList2.size() > 0) {
+                                    for (int i = 0; i < userList2.size(); i++) {
+                                        WeTubeUser friend = (WeTubeUser) userList2.get(i);
+
+                                        WeTubeApplication.getSharedDataSource().getFriends()
+                                                .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                                        friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                                    }
+                                }
+                                navigationDrawerAdapter.notifyDataSetChanged();
+                                if (progressDialog != null) {
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        }
+                    });
+                } else {
                     if (progressDialog != null) {
                         progressDialog.dismiss();
                     }
-                } else {
                     navigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",

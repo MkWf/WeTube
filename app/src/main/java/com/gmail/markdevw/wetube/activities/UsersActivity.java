@@ -150,7 +150,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userItemAdapter);
-        recyclerView.setScrollBarSize(5);
 
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -663,7 +662,33 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         HashMap<String, Object> params = new HashMap<String, Object>();
         switch (menuItem.getItemId()) {
             case R.id.popup_session :
-                messageService.sendMessage(clickedUser.getId(), "startsession-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                query.whereEqualTo("objectId", clickedUser.getId());
+                query.whereEqualTo("isInSession", false);
+                query.findInBackground(new FindCallback<ParseUser>() {
+                    @Override
+                    public void done(List<ParseUser> parseUsers, ParseException e) {
+                       if(parseUsers.size() > 0){
+                           messageService.sendMessage(clickedUser.getId(), "startsession-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                       }else{
+                           friendsRefreshProgress();
+                           if(sortOptionSelected.equals("Default")){
+                               getFriends();
+                           }else if(sortOptionSelected.equals("Online")){
+                               getOnlineFriends();
+                           }else if(sortOptionSelected.equals("Offline")){
+                               getOfflineFriends();
+                           }else if(sortOptionSelected.equals("Available")){
+                               getAvailableFriends();
+                           }else if(sortOptionSelected.equals("Unavailable")){
+                               getUnavailableFriends();
+                           } else if(sortOptionSelected.equals("A-Z")){
+                               getAlphabeticFriends();
+                           }
+                           Toast.makeText(UsersActivity.this, "User is in a session or offline", Toast.LENGTH_LONG).show();
+                       }
+                    }
+                });
                 break;
             case R.id.popup_add :
                 messageService.sendMessage(clickedUser.getId(), "friendadd-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());

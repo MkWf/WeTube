@@ -1631,8 +1631,40 @@ Parse.Cloud.define("getLoggedInUsers", function(request, response) {
   var query = new Parse.Query(Parse.User);
   query.notEqualTo("objectId", userId);
   query.equalTo("isLoggedIn", true);
-  //query.limit(10);
+  query.limit(20);
+  
+  query.find({
+        success: function(results){
+            if(results.length != 0){
+                nameSort = function(a,b){
+                    return a.get("username")>b.get("username");
+                }
+                 
+                var users = results.sort(nameSort);
+                response.success(users);
+            }else{
+                response.success(emptyArray);
+            }
+        },
+        error: function(){
+            response.error("user lookup failed")
+        }
+    })  
+});
+
+Parse.Cloud.define("getMoreUsers", function(request, response) {
+     
+  var userId = request.params.userId;
+  var skip = request.params.skip;
+  var limit = request.params.limit;
+  var emptyArray = [];
  
+  var query = new Parse.Query(Parse.User);
+  query.notEqualTo("objectId", userId);
+  query.equalTo("isLoggedIn", true);
+  query.skip(skip);
+  query.limit(limit);
+  
   query.find({
         success: function(results){
             if(results.length != 0){

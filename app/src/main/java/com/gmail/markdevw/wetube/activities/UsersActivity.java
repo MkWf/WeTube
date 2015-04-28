@@ -111,6 +111,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     boolean isBlocking = false;
     private boolean isLaunch = true;
     private int launchSpinnerCount = 0;
+    int firstVisibleItem, lastVisibleItem, visibleItemCount, totalItemCount;
+    LinearLayoutManager mLayoutManager;
 
 
     @Override
@@ -144,9 +146,29 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         logout.setOnClickListener(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.rv_activity_users);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userItemAdapter);
+        recyclerView.setScrollBarSize(5);
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                totalItemCount = mLayoutManager.getItemCount();
+                lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
+
+                if(totalItemCount == lastVisibleItem){
+                    Toast.makeText(getBaseContext(), "Loading more users",
+                            Toast.LENGTH_SHORT).show();
+
+                    getMoreUsers(WeTubeApplication.getSharedDataSource().getUsers().size(), 20);
+                }
+            }
+        });
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_users);
 
@@ -266,45 +288,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             }
         });
-
-
-       /* ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereNotEqualTo("objectId", currentUserId);
-        query.whereEqualTo("isLoggedIn", true);
-        query.orderByAscending("username");
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < userList.size(); i++) {
-                        final WeTubeUser user = (WeTubeUser) userList.get(i);
-                        String id = user.getObjectId();
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("objectId", currentUserId);
-                        query.whereEqualTo("friends", id);
-                        query.findInBackground(new FindCallback<ParseUser>() {
-                            public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                                if (userList.size() == 0) {
-                                    WeTubeApplication.getSharedDataSource().getUsers()
-                                            .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
-                                    userItemAdapter.notifyDataSetChanged();
-                                } else {
-                                    WeTubeApplication.getSharedDataSource().getUsers()
-                                            .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), true));
-                                    userItemAdapter.notifyDataSetChanged();
-                                }
-                            }
-                        });
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-
-                } else {
-                    Toast.makeText(WeTubeApplication.getSharedInstance(),
-                            "Error loading user list",
-                            Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });*/
     }
 
     public void getFriends(){
@@ -1522,5 +1505,40 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         progressDialog.setTitle("Refreshing friends list");
         progressDialog.setMessage("Please wait...");
         progressDialog.show();
+    }
+
+    public void getMoreUsers(int skip, int limit){
+        final String currentUserId = ParseUser.getCurrentUser().getObjectId();
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("userId", ParseUser.getCurrentUser().getObjectId());
+        params.put("skip", skip);
+        params.put("limit", limit);
+        ParseCloud.callFunctionInBackground("getMoreUsers", params, new FunctionCallback<List<ParseUser>>() {
+            @Override
+            public void done(List<ParseUser> userList, com.parse.ParseException e) {
+                if (e == null) {
+                    if (userList.size() > 0) {
+                        for (int i = 0; i < userList.size(); i++) {
+                            WeTubeUser user = (WeTubeUser) userList.get(i);
+
+                            WeTubeApplication.getSharedDataSource().getUsers()
+                                    .add(new UserItem(user.getUsername(), user.getObjectId(),
+                                            user.getSessionStatus(), user.getLoggedStatus(), false));
+                        }
+                    }
+                    userItemAdapter.notifyDataSetChanged();
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
+                    swipeRefreshLayout.setRefreshing(false);
+                } else {
+                    navigationDrawerAdapter.notifyDataSetChanged();
+                    Toast.makeText(WeTubeApplication.getSharedInstance(),
+                            "Error loading user list",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

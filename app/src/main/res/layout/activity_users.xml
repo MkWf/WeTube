@@ -78,8 +78,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Friends"
-                android:textSize="40sp"
-                android:paddingLeft="60dp"
+                android:textSize="34sp"
+                android:paddingLeft="40dp"
                 android:layout_weight="1"
                 android:textStyle="bold"/>
 

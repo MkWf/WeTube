@@ -65,6 +65,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     YouTubePlayer youTubePlayer;
     String currentVideo;
     boolean isFullscreen;
+    boolean isPortrait;
     private static final int LANDSCAPE_VIDEO_PADDING_DP = 5;
     private MessageService.MessageServiceInterface messageService;
     private ServiceConnection serviceConnection = new MyServiceConnection();
@@ -292,7 +293,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     private void layout() {
-        boolean isPortrait =
+        isPortrait =
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
         if (isFullscreen) {
@@ -458,6 +459,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 builder.setCancelable(false);
                 builder.show();
             }else if(message.getSenderId().equals(id)) {
+                if(isFullscreen || !isPortrait){
+                    Toast.makeText(MainActivity.this, message.getTextBody(), Toast.LENGTH_SHORT).show();
+                }
+
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);

@@ -665,6 +665,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
                 query.whereEqualTo("objectId", clickedUser.getId());
                 query.whereEqualTo("isInSession", false);
+                query.whereEqualTo("isLoggedIn", true);
                 query.findInBackground(new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> parseUsers, ParseException e) {

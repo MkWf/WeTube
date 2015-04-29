@@ -821,10 +821,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 AlertDialog.Builder categBuilder = new AlertDialog.Builder(this);
 
                 LayoutInflater inflater = this.getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.category_dialog, null);
+                View dialogView = inflater.inflate(R.layout.tag_dialog, null);
 
-                ImageButton add = (ImageButton) dialogView.findViewById(R.id.category_dialog_add_button);
-                ImageButton minus = (ImageButton) dialogView.findViewById(R.id.category_dialog_minus_button);
+                ImageButton add = (ImageButton) dialogView.findViewById(R.id.tag_dialog_add_button);
+                ImageButton minus = (ImageButton) dialogView.findViewById(R.id.tag_dialog_minus_button);
 
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override

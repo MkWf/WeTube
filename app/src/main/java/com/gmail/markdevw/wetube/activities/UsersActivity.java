@@ -111,8 +111,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     boolean isBlocking = false;
     private boolean isLaunch = true;
     private int launchSpinnerCount = 0;
-    int firstVisibleItem, lastVisibleItem, visibleItemCount, totalItemCount;
+    int lastVisibleItem, totalItemCount;
     LinearLayoutManager mLayoutManager;
+    private final int MAX_USERS = 200;
 
 
     @Override
@@ -160,11 +161,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 totalItemCount = mLayoutManager.getItemCount();
                 lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
 
-                if(totalItemCount == lastVisibleItem){
+                if(totalItemCount == lastVisibleItem && totalItemCount < MAX_USERS){
                     Toast.makeText(getBaseContext(), "Loading more users",
                             Toast.LENGTH_SHORT).show();
 
-                    getMoreUsers(WeTubeApplication.getSharedDataSource().getUsers().size(), 20);
+                    getMoreUsers(totalItemCount, 20);
+                }else{
+                    Toast.makeText(getBaseContext(), "Reached max user limit. Please refresh list.",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

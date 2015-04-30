@@ -43,7 +43,7 @@ public class DataSource {
     private List<TagItem> commonTags = new ArrayList<>();
     private List<TagItem> uncommonTags = new ArrayList<>();
     private List<PlaylistItem> playlist = new ArrayList<>();
-    private boolean sessionController = false;
+    private boolean isSessionController = false;
 
     public DataSource(Context context){
         videos = new ArrayList<VideoItem>();
@@ -68,7 +68,8 @@ public class DataSource {
 
     }
 
-    public void setSessionController(boolean isController) { this.sessionController = isController; }
+    public boolean isSessionController() {return isSessionController;}
+    public void setSessionController(boolean isController) { this.isSessionController = isController; }
     public List<PlaylistItem> getPlaylist() { return playlist; }
     public List<TagItem> getCommonTags() { return commonTags; }
     public List<TagItem> getUncommonTags() { return uncommonTags; }

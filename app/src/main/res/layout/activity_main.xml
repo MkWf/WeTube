@@ -76,7 +76,7 @@
 
     <LinearLayout
         android:layout_marginTop="300dp"
-        android:layout_width="280dp"
+        android:layout_width="380dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="start">

@@ -234,8 +234,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         ,videoItem.getId()));
                 playlistItemAdapter.notifyDataSetChanged();
                 messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "addtoplaylist------" + videoItem.getTitle() + "------"
-                                                                                                        + videoItem.getThumbnailURL() + "-------"
+                                                                                                        + videoItem.getThumbnailURL() + "------"
                                                                                                         + videoItem.getId());
+            }else{
+                String message = "linkedvideo------" + videoItem.getTitle() + "------"
+                        + videoItem.getThumbnailURL() + "-------"
+                        + videoItem.getId();
+                messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), message);
+                WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message, MessageItem.OUTGOING_MSG));
+                messageItemAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
             }
         }
 
@@ -492,7 +500,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 });
                 builder.setCancelable(false);
                 builder.show();
-            }else if(msg.startsWith("addtoplaylist")){
+            }else if(msg.startsWith("addtoplaylist")) {
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.getTextBody().split("------")));
                 String title = msgSplit.get(1);
                 String thumbnail = msgSplit.get(2);
@@ -500,6 +508,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                 WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id));
                 playlistItemAdapter.notifyDataSetChanged();
+            }else if(msg.startsWith("linkedvideo------")){
+                WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
+                messageItemAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
             }else if(message.getSenderId().equals(id)) {
                 if(isFullscreen || !isPortrait){
                     Toast.makeText(MainActivity.this, message.getTextBody(), Toast.LENGTH_SHORT).show();

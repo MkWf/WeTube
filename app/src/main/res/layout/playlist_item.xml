@@ -33,7 +33,7 @@
         android:id="@+id/playlist_item_horizontal_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/playlist_title"
+        android:layout_below="@id/playlist_thumbnail"
         android:layout_marginTop="8dp"
         android:background="@android:color/darker_gray"
         android:layout_marginBottom="6dp"/>

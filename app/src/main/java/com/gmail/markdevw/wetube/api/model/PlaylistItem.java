@@ -8,6 +8,12 @@ public class PlaylistItem {
     private String thumbnailURL;
     private String id;
 
+    public PlaylistItem(String title, String thumbnailURL, String id){
+        setTitle(title);
+        setThumbnailURL(thumbnailURL);
+        setId(id);
+    }
+
     public String getId() {
         return id;
     }

@@ -51,7 +51,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
 
     @Override
     public int getItemCount() {
-        return WeTubeApplication.getSharedDataSource().getVideos().size();
+        return WeTubeApplication.getSharedDataSource().getPlaylist().size();
     }
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

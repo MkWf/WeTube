@@ -19,13 +19,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@id/video_thumbnail"/>
+        android:layout_toRightOf="@id/playlist_thumbnail"/>
 
     <ImageView
         android:id="@+id/playlist_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/video_title"
+        android:layout_toRightOf="@id/playlist_title"
         android:layout_alignParentRight="true"
         android:layout_marginRight="4dp"/>
 
@@ -33,7 +33,7 @@
         android:id="@+id/playlist_item_horizontal_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/video_title"
+        android:layout_below="@id/playlist_title"
         android:layout_marginTop="8dp"
         android:background="@android:color/darker_gray"
         android:layout_marginBottom="6dp"/>

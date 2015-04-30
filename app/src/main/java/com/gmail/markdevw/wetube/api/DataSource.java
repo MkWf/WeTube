@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
+import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.api.model.VideoItem;
@@ -41,9 +42,12 @@ public class DataSource {
     private List<String> tags = new ArrayList<>();
     private List<TagItem> commonTags = new ArrayList<>();
     private List<TagItem> uncommonTags = new ArrayList<>();
+    private List<PlaylistItem> playlist = new ArrayList<>();
+    private boolean sessionController = false;
 
     public DataSource(Context context){
         videos = new ArrayList<VideoItem>();
+        playlist = new ArrayList<PlaylistItem>();
         users = new ArrayList<UserItem>();
         friends = new ArrayList<UserItem>();
         youtube = new YouTube.Builder(new NetHttpTransport(),
@@ -64,6 +68,8 @@ public class DataSource {
 
     }
 
+    public void setSessionController(boolean isController) { this.sessionController = isController; }
+    public List<PlaylistItem> getPlaylist() { return playlist; }
     public List<TagItem> getCommonTags() { return commonTags; }
     public List<TagItem> getUncommonTags() { return uncommonTags; }
     public List<String> getTags() { return tags; }

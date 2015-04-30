@@ -127,7 +127,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.dl_activity_blocly);
+        drawerLayout = (DrawerLayout) findViewById(R.id.dl_activity_users);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
         drawerLayout.setDrawerListener(this);
 

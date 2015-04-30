@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.adapters.MessageItemAdapter;
+import com.gmail.markdevw.wetube.adapters.PlaylistItemAdapter;
 import com.gmail.markdevw.wetube.adapters.VideoItemAdapter;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.VideoItem;
@@ -71,13 +72,15 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private ServiceConnection serviceConnection = new MyServiceConnection();
     private MessageClientListener messageClientListener = new MyMessageClientListener();
     private RecyclerView recyclerView;
+    private RecyclerView playListRecyclerView;
     private MessageItemAdapter messageItemAdapter;
+    private PlaylistItemAdapter playlistItemAdapter;
     private EditText messageField;
     private Button sendMessage;
     private FrameLayout videoList;
     private View videoChatDivider;
-    private String name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
-    private String id = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId();
+    private String name = "";//WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
+    private String id = "";//WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId();
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -123,6 +126,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(messageItemAdapter);
+
+        playlistItemAdapter = new PlaylistItemAdapter();
+
+        playListRecyclerView = (RecyclerView) findViewById(R.id.rv_nav_activity_main);
+        playListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        playListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        playListRecyclerView.setAdapter(playlistItemAdapter);
 
         getFragmentManager()
                 .beginTransaction()
@@ -221,8 +231,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         videoChatDivider.setVisibility(View.VISIBLE);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        messageService.sendMessage(id, "/video$" + videoItem.getId());
-
+        //messageService.sendMessage(id, "/video$" + videoItem.getId());
+        youTubePlayer.loadVideo(currentVideo);
     }
 
     @Override

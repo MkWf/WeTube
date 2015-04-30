@@ -15,6 +15,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -59,7 +62,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class MainActivity extends ActionBarActivity implements VideoListFragment.Delegate, YouTubePlayer.OnInitializedListener,
         YouTubePlayer.OnFullscreenListener, View.OnClickListener,
-        YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate {
+        YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate, YouTubePlayer.PlaylistEventListener {
 
     Handler handler;
     Toolbar toolbar;
@@ -84,6 +87,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private View videoChatDivider;
     private String name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
     private String id = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId();
+    private List<String> playlistIds = new ArrayList<>();
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -247,25 +251,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
             }
         }
-
-        /*currentVideo = videoItem.getId();
-
-        messageType = VIDEO_START;
-
-        getFragmentManager()
-                .beginTransaction()
-                .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
-                .show(playerFragment)
-                .addToBackStack(null)
-                .commit();
-
-        videoList.setVisibility(View.GONE);
-        toolbar.setVisibility(View.GONE);
-        videoChatDivider.setVisibility(View.VISIBLE);
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);*/
-
-        //messageService.sendMessage(id, "/video$" + videoItem.getId());
-       // youTubePlayer.loadVideo(currentVideo);
     }
 
     @Override
@@ -339,6 +324,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         this.youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
         this.youTubePlayer.setOnFullscreenListener(this);
         this.youTubePlayer.setPlaybackEventListener(this);
+        this.youTubePlayer.setPlaylistEventListener(this);
         if (!b && currentVideo != null) {
             this.youTubePlayer.cueVideo(currentVideo);
         }
@@ -437,6 +423,59 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_play:
+                List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
+                if(videos.size() == 0){
+                    Toast.makeText(this, "Playlist is empty", Toast.LENGTH_SHORT).show();
+                }else{
+                    playlistIds.clear();
+
+                    for(int i = 0; i<videos.size(); i++){
+                        playlistIds.add(videos.get(i).getId());
+                    }
+                   // youTubePlayer.loadVideos(playlistIds);
+
+                            //currentVideo = videoItem.getId();
+
+                    messageType = VIDEO_START;
+
+                    getFragmentManager()
+                            .beginTransaction()
+                            .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
+                            .show(playerFragment)
+                            .addToBackStack(null)
+                            .commit();
+
+                    videoList.setVisibility(View.GONE);
+                    toolbar.setVisibility(View.GONE);
+                    videoChatDivider.setVisibility(View.VISIBLE);
+                    this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+                    String message = "videoplay";
+                    for(int i = 0; i<playlistIds.size(); i++){
+                        message = message.concat("---");
+                        message = message.concat(playlistIds.get(i));
+                    }
+
+                    messageService.sendMessage(id, message);
+                    // youTubePlayer.loadVideo(currentVideo);
+                }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onPlaying() {
         if(isPaused){
             isPaused = false;
@@ -474,6 +513,21 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         messageService.sendMessage(id, "/seek$" + i);
     }
 
+    @Override
+    public void onPrevious() {
+
+    }
+
+    @Override
+    public void onNext() {
+
+    }
+
+    @Override
+    public void onPlaylistEnded() {
+
+    }
+
     private class MyServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -495,6 +549,28 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
             String msg = message.getTextBody();
+            if(msg.startsWith("videoplay")){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split("---")));
+                playlistIds.clear();
+
+                for(int i = 1; i<msgSplit.size(); i++){
+                    playlistIds.add(msgSplit.get(i));
+                }
+
+                getFragmentManager()
+                        .beginTransaction()
+                        .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
+                        .show(playerFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+                videoList.setVisibility(View.GONE);
+                toolbar.setVisibility(View.GONE);
+                videoChatDivider.setVisibility(View.VISIBLE);
+                MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+                youTubePlayer.loadVideos(playlistIds);
+            }
             if(msg.startsWith("/video$") && message.getSenderId().equals(id)){
                 currentVideo = msg.substring(7);
 
@@ -563,7 +639,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         @Override
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
             if(messageType == VIDEO_START){
-                youTubePlayer.loadVideo(currentVideo);
+                youTubePlayer.loadVideos(playlistIds);
             }
             if(messageType == VIDEO_PAUSE){
                 youTubePlayer.pause();

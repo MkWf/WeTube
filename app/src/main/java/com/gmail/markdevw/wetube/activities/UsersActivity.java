@@ -166,7 +166,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             Toast.LENGTH_SHORT).show();
 
                     getMoreUsers(totalItemCount, 20);
-                }else{
+                }else if(totalItemCount == lastVisibleItem && totalItemCount >= MAX_USERS){
                     Toast.makeText(getBaseContext(), "Reached max user limit. Please refresh list.",
                             Toast.LENGTH_SHORT).show();
                 }

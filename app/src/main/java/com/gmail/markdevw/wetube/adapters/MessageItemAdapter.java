@@ -23,7 +23,7 @@ import java.util.Arrays;
 public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onItemClicked(MessageItemAdapter itemAdapter, MessageItem messageItemItem);
+        public void onMessageItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id);
     }
 
     private WeakReference<Delegate> delegate;
@@ -64,6 +64,10 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         ImageView thumbnailOut;
         MessageItem messageItem;
 
+        String title;
+        String thumbnail;
+        String id;
+
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
@@ -81,9 +85,9 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
             if(message.startsWith("linkedvideo------")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.split("------")));
-                String title = msgSplit.get(1);
-                String thumbnail = msgSplit.get(2);
-                String id = msgSplit.get(3);
+                title = msgSplit.get(1);
+                thumbnail = msgSplit.get(2);
+                id = msgSplit.get(3);
 
                 if(messageItem.getType() == MessageItem.OUTGOING_MSG){
                     messageIn.setVisibility(View.INVISIBLE);
@@ -111,7 +115,10 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
         @Override
         public void onClick(View view) {
-            ///////////////////getDelegate().onItemClicked(MessageItemAdapter.this, userItem);
+            String message = messageItem.getMessage();
+            if(message.startsWith("linkedvideo------") && WeTubeApplication.getSharedDataSource().isSessionController()){
+                getDelegate().onMessageItemClicked(MessageItemAdapter.this, title, thumbnail, id);
+            }
         }
     }
 }

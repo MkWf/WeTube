@@ -59,7 +59,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class MainActivity extends ActionBarActivity implements VideoListFragment.Delegate, YouTubePlayer.OnInitializedListener,
         YouTubePlayer.OnFullscreenListener, View.OnClickListener,
-        YouTubePlayer.PlaybackEventListener{
+        YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate {
 
     Handler handler;
     Toolbar toolbar;
@@ -124,6 +124,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         videoChatDivider = findViewById(R.id.horizontal_line_video);
 
         messageItemAdapter = new MessageItemAdapter();
+        messageItemAdapter.setDelegate(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.rv_activity_main);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -265,6 +266,38 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         //messageService.sendMessage(id, "/video$" + videoItem.getId());
        // youTubePlayer.loadVideo(currentVideo);
+    }
+
+    @Override
+    public void onMessageItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id) {
+        boolean isMatchFound = false;
+        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
+        for(int i = 0; i<videos.size(); i++){
+            if(videos.get(i).getId().equals(id)){
+                Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
+                isMatchFound = true;
+                break;
+            }
+        }
+
+        if(!isMatchFound){
+            if(WeTubeApplication.getSharedDataSource().isSessionController()){
+                WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail,
+                        id));
+                playlistItemAdapter.notifyDataSetChanged();
+                messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "addtoplaylist------" + title + "------"
+                        + thumbnail + "------"
+                        + id);
+            }else{
+                String message = "linkedvideo------" + title + "------"
+                        + thumbnail + "-------"
+                        + id;
+                messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), message);
+                WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message, MessageItem.OUTGOING_MSG));
+                messageItemAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+            }
+        }
     }
 
     @Override

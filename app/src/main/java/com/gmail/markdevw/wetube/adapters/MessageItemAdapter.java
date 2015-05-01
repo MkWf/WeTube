@@ -23,7 +23,7 @@ import java.util.Arrays;
 public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onMessageItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id);
+        public void onMessageVideoItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id);
     }
 
     private WeakReference<Delegate> delegate;
@@ -63,6 +63,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         ImageView thumbnailIn;
         ImageView thumbnailOut;
         MessageItem messageItem;
+        String msgSplitter = "=-=-=";
 
         String title;
         String thumbnail;
@@ -83,18 +84,20 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
             this.messageItem = messageItem;
             String message = messageItem.getMessage();
 
-            if(message.startsWith("linkedvideo------")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.split("------")));
+            if(message.startsWith("linkedvideo")){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.split(msgSplitter)));
                 title = msgSplit.get(1);
                 thumbnail = msgSplit.get(2);
                 id = msgSplit.get(3);
 
                 if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+                    thumbnailIn.setVisibility(View.GONE);
                     messageIn.setVisibility(View.INVISIBLE);
                     messageOut.setVisibility(View.VISIBLE);
                     messageOut.setText(title);
                     Picasso.with(WeTubeApplication.getSharedInstance()).load(thumbnail).into(thumbnailOut);
                 }else{
+                    thumbnailOut.setVisibility(View.GONE);
                     messageOut.setVisibility(View.INVISIBLE);
                     messageIn.setVisibility(View.VISIBLE);
                     messageIn.setText(title);
@@ -102,10 +105,14 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                 }
             }else{
                 if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+                    thumbnailIn.setVisibility(View.GONE);
+                    thumbnailOut.setVisibility(View.GONE);
                     messageIn.setVisibility(View.INVISIBLE);
                     messageOut.setVisibility(View.VISIBLE);
                     messageOut.setText(messageItem.getMessage());
                 }else{
+                    thumbnailIn.setVisibility(View.GONE);
+                    thumbnailOut.setVisibility(View.GONE);
                     messageOut.setVisibility(View.INVISIBLE);
                     messageIn.setVisibility(View.VISIBLE);
                     messageIn.setText(messageItem.getMessage());
@@ -116,8 +123,8 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         @Override
         public void onClick(View view) {
             String message = messageItem.getMessage();
-            if(message.startsWith("linkedvideo------") && WeTubeApplication.getSharedDataSource().isSessionController()){
-                getDelegate().onMessageItemClicked(MessageItemAdapter.this, title, thumbnail, id);
+            if(message.startsWith("linkedvideo")){
+                getDelegate().onMessageVideoItemClicked(MessageItemAdapter.this, title, thumbnail, id);
             }
         }
     }

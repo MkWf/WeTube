@@ -71,7 +71,7 @@ THE OTHER STUFF BACK*/
 
 public class MainActivity extends ActionBarActivity implements VideoListFragment.Delegate, YouTubePlayer.OnInitializedListener,
         YouTubePlayer.OnFullscreenListener, View.OnClickListener,
-        YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate, YouTubePlayer.PlaylistEventListener {
+        YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate, YouTubePlayer.PlaylistEventListener, PlaylistItemAdapter.Delegate {
 
     Handler handler;
     Toolbar toolbar;
@@ -150,6 +150,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         recyclerView.setAdapter(messageItemAdapter);
 
         playlistItemAdapter = new PlaylistItemAdapter();
+        playlistItemAdapter.setDelegate(this);
 
         playListRecyclerView = (RecyclerView) findViewById(R.id.rv_nav_activity_main);
         playListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -534,6 +535,17 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     }
 
+    @Override
+    public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem) {
+
+    }
+
+    @Override
+    public void onDeleteItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem) {
+        int index = WeTubeApplication.getSharedDataSource().getPlaylist().indexOf(playlistItem);
+        messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "deleteitemplaylist" + msgSplitter + String.valueOf(index));
+    }
+
     private class MyServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -586,6 +598,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+            }else if(msg.startsWith(("deleteitemplaylist"))){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+                String index = msgSplit.get(1);
+                WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                playlistItemAdapter.notifyDataSetChanged();
             }else if(msg.startsWith("videoplay")){
                 playlistIds.clear();
 
@@ -631,6 +648,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+            }else if(msg.startsWith(("deleteitemplaylist"))){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+                String index = msgSplit.get(1);
+                WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                playlistItemAdapter.notifyDataSetChanged();
             }
         }
 

@@ -21,7 +21,8 @@ import java.lang.ref.WeakReference;
 public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem);
+        public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem);
+        public void onDeleteItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem);
     }
 
     private WeakReference<Delegate> delegate;
@@ -57,6 +58,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView thumbnail;
+        ImageView delete;
         TextView title;
         PlaylistItem playlistItem;
 
@@ -65,7 +67,9 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
 
             thumbnail = (ImageView) itemView.findViewById(R.id.playlist_thumbnail);
             title = (TextView) itemView.findViewById(R.id.playlist_title);
+            delete = (ImageView) itemView.findViewById(R.id.playlist_delete);
 
+            delete.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -74,11 +78,24 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
 
             title.setText(playlistItem.getTitle());
             Picasso.with(WeTubeApplication.getSharedInstance()).load(playlistItem.getThumbnailURL()).into(thumbnail);
+
+            if(WeTubeApplication.getSharedDataSource().isSessionController()){
+                delete.setVisibility(View.VISIBLE);
+            }else{
+                delete.setVisibility(View.GONE);
+            }
         }
 
         @Override
         public void onClick(View view) {
-            getDelegate().onItemClicked(PlaylistItemAdapter.this, playlistItem);
+            switch(view.getId()){
+                case R.id.playlist_delete:
+                    getDelegate().onDeleteItemClicked(PlaylistItemAdapter.this, playlistItem);
+                    break;
+                default:
+                    getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, playlistItem);
+            }
+
         }
     }
 

@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -434,28 +433,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             controller.setEnabled(true);
-            Drawable icon = controller.getIcon();
-            if(icon != null){
-                icon.setAlpha(255);
-            }
-
             play.setEnabled(true);
-            icon = play.getIcon();
-            if(icon != null){
-                icon.setAlpha(255);
-            }
         }else{
             controller.setEnabled(false);
-            Drawable icon = controller.getIcon();
-            if(icon != null){
-                icon.setAlpha(128);
-            }
+            controller.setVisible(false);
 
             play.setEnabled(false);
-            icon = play.getIcon();
-            if(icon != null){
-                icon.setAlpha(128);
-            }
+            play.setVisible(false);
         }
 
         return super.onCreateOptionsMenu(menu);

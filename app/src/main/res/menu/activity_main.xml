@@ -8,7 +8,7 @@
         app:showAsAction="always"/>
 
     <item android:id="@+id/action_pass_control"
-        android:icon="@mipmap/ic_activity_main_pass_control"
+        android:icon="@mipmap/ic_activity_main_pass_control_red"
         android:title="Pass Control"
         android:orderInCategory="1"
         app:showAsAction="always"/>

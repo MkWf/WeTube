@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -428,6 +429,35 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_main, menu);
 
+        MenuItem controller = menu.findItem(R.id.action_pass_control);
+        MenuItem play = menu.findItem(R.id.action_play);
+
+        if(WeTubeApplication.getSharedDataSource().isSessionController()){
+            controller.setEnabled(true);
+            Drawable icon = controller.getIcon();
+            if(icon != null){
+                icon.setAlpha(255);
+            }
+
+            play.setEnabled(true);
+            icon = play.getIcon();
+            if(icon != null){
+                icon.setAlpha(255);
+            }
+        }else{
+            controller.setEnabled(false);
+            Drawable icon = controller.getIcon();
+            if(icon != null){
+                icon.setAlpha(128);
+            }
+
+            play.setEnabled(false);
+            icon = play.getIcon();
+            if(icon != null){
+                icon.setAlpha(128);
+            }
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -471,6 +501,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     messageService.sendMessage(id, message);
                     // youTubePlayer.loadVideo(currentVideo);
                 }
+                break;
+            case R.id.action_pass_control:
+                messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "passcontroller");
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -580,13 +614,26 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to add " + title + " to chat", Toast.LENGTH_LONG).show();
+
+                messages.remove(failureInfo.getMessageId());
+            }else if(msg.startsWith("deleteitemplaylist")){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+                String title = msgSplit.get(1);
+                Toast.makeText(MainActivity.this, "Failed to delete " + title + " from playlist", Toast.LENGTH_LONG).show();
+
+                messages.remove(failureInfo.getMessageId());
+            }else if(msg.startsWith("passcontroller")){
+                Toast.makeText(MainActivity.this, "Failed to pass controls to "
+                        + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName(), Toast.LENGTH_LONG).show();
+
+                messages.remove(failureInfo.getMessageId());
             }
         }
 
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
             String msg = message.getTextBody();
-            if(msg.startsWith("addtoplaylist")) {
+            if (msg.startsWith("addtoplaylist")) {
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.getTextBody().split(msgSplitter)));
                 String title = msgSplit.get(1);
                 String thumbnail = msgSplit.get(2);
@@ -594,16 +641,20 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                 WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id));
                 playlistItemAdapter.notifyDataSetChanged();
-            }else if(msg.startsWith("linkedvideo")) {
+            } else if (msg.startsWith("linkedvideo")) {
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
-            }else if(msg.startsWith(("deleteitemplaylist"))){
+            } else if (msg.startsWith(("deleteitemplaylist"))) {
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String index = msgSplit.get(1);
                 WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
                 playlistItemAdapter.notifyDataSetChanged();
-            }else if(msg.startsWith("videoplay")){
+            } else if(msg.startsWith("passcontroller")){
+                WeTubeApplication.getSharedDataSource().setSessionController(true);
+                invalidateOptionsMenu();
+                playlistItemAdapter.notifyDataSetChanged();
+             } else if(msg.startsWith("videoplay")){
                 playlistIds.clear();
 
                 List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
@@ -652,6 +703,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String index = msgSplit.get(1);
                 WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                playlistItemAdapter.notifyDataSetChanged();
+            }else if(msg.startsWith("passcontroller")){
+                WeTubeApplication.getSharedDataSource().setSessionController(false);
+                invalidateOptionsMenu();
                 playlistItemAdapter.notifyDataSetChanged();
             }
         }

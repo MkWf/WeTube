@@ -10,11 +10,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -71,7 +74,7 @@ THE OTHER STUFF BACK*/
 
 public class MainActivity extends ActionBarActivity implements VideoListFragment.Delegate, YouTubePlayer.OnInitializedListener,
         YouTubePlayer.OnFullscreenListener, View.OnClickListener,
-        YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate, YouTubePlayer.PlaylistEventListener, PlaylistItemAdapter.Delegate {
+        YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate, YouTubePlayer.PlaylistEventListener, PlaylistItemAdapter.Delegate, DrawerLayout.DrawerListener {
 
     Handler handler;
     Toolbar toolbar;
@@ -100,6 +103,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private int playlistIndex = 0;
     private String msgSplitter = "=-=-=";
     private HashMap<String, String> messages = new HashMap<String, String>();
+    private ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -151,6 +156,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         playlistItemAdapter = new PlaylistItemAdapter();
         playlistItemAdapter.setDelegate(this);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.dl_activity_main);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, 0, 0);
+        drawerLayout.setDrawerListener(drawerToggle);
 
         playListRecyclerView = (RecyclerView) findViewById(R.id.rv_nav_activity_main);
         playListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -455,6 +464,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
                 if(videos.size() == 0){
                     Toast.makeText(this, "Playlist is empty", Toast.LENGTH_SHORT).show();
+                    drawerLayout.openDrawer(Gravity.LEFT);
                 }else{
                     playlistIds.clear();
 
@@ -496,6 +506,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
 
     @Override
     public void onPlaying() {
@@ -565,6 +582,26 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onDeleteItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem) {
         int index = WeTubeApplication.getSharedDataSource().getPlaylist().indexOf(playlistItem);
         messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "deleteitemplaylist" + msgSplitter + String.valueOf(index));
+    }
+
+    @Override
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+
     }
 
     private class MyServiceConnection implements ServiceConnection {

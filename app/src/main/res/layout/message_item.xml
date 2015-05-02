@@ -9,8 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:background="@android:color/darker_gray"/>
+        android:layout_alignParentLeft="true" />
 
     <TextView
         android:id="@+id/message_item_message_incoming"
@@ -39,7 +38,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/message_item_message_outgoing"
-        android:background="@android:color/darker_gray"/>
+        android:layout_toLeftOf="@id/message_item_message_outgoing" />
 
 </RelativeLayout>

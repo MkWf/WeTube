@@ -93,12 +93,16 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                 if(messageItem.getType() == MessageItem.OUTGOING_MSG){
                     thumbnailIn.setVisibility(View.GONE);
                     messageIn.setVisibility(View.INVISIBLE);
+
+                    thumbnailOut.setVisibility(View.VISIBLE);
                     messageOut.setVisibility(View.VISIBLE);
                     messageOut.setText(title);
                     Picasso.with(WeTubeApplication.getSharedInstance()).load(thumbnail).into(thumbnailOut);
                 }else{
                     thumbnailOut.setVisibility(View.GONE);
                     messageOut.setVisibility(View.INVISIBLE);
+
+                    thumbnailIn.setVisibility(View.VISIBLE);
                     messageIn.setVisibility(View.VISIBLE);
                     messageIn.setText(title);
                     Picasso.with(WeTubeApplication.getSharedInstance()).load(thumbnail).into(thumbnailIn);

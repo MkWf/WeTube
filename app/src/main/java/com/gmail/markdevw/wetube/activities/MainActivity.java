@@ -465,7 +465,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else{
                     messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playliststart");
                 }
-
+                break;
             case R.id.action_pass_control:
                 messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "passcontroller");
                 break;
@@ -521,18 +521,19 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onPrevious() {
-        if(playlistIndex > 0){
+       /* if(playlistIndex > 0){
             playlistIndex--;
             messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistprev");
-        }
+        }*/
     }
 
     @Override
     public void onNext() {
-        if(playlistIndex < playlistIds.size() - 1){
+       /* if(playlistIndex < playlistIds.size() - 1){
             playlistIndex++;
             messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistnext");
-        }
+        }*/
+
     }
 
     @Override

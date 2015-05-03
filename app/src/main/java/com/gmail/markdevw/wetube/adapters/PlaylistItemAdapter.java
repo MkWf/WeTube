@@ -21,7 +21,7 @@ import java.lang.ref.WeakReference;
 public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem, int itemIndex);
+        public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem, int itemIndex, View itemView);
         public void onDeleteItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem);
     }
 
@@ -61,11 +61,14 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         ImageView delete;
         TextView title;
         PlaylistItem playlistItem;
+        View itemView;
 
         int itemIndex;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
+
+            this.itemView = itemView;
 
             thumbnail = (ImageView) itemView.findViewById(R.id.playlist_thumbnail);
             title = (TextView) itemView.findViewById(R.id.playlist_title);
@@ -96,7 +99,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
                     getDelegate().onDeleteItemClicked(PlaylistItemAdapter.this, playlistItem);
                     break;
                 default:
-                    getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, playlistItem, itemIndex);
+                    getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, playlistItem, itemIndex, itemView);
             }
 
         }

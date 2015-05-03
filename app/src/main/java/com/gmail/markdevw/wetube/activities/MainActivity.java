@@ -488,8 +488,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     @Override
-    public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem) {
-
+    public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem, int index) {
+        if(WeTubeApplication.getSharedDataSource().isSessionController()){
+            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistindex"
+                    + msgSplitter + String.valueOf(index));
+        }
     }
 
     @Override
@@ -713,8 +716,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 youTubePlayer.loadVideos(playlistIds);
             }else if(msg.startsWith("playlistnext")){
                 youTubePlayer.next();
-            }else if(msg.startsWith("playlistprev")){
+            }else if(msg.startsWith("playlistprev")) {
                 youTubePlayer.previous();
+            }else if(msg.startsWith("playlistindex")){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+                String index = msgSplit.get(1);
+                int video = Integer.parseInt(index);
+                youTubePlayer.loadVideos(playlistIds, video, 0);
             }else{
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
@@ -779,6 +787,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     youTubePlayer.loadVideos(playlistIds);
                     messages.remove(deliveryInfo.getMessageId());
+                }else if(msg.startsWith("playlistindex")){
+                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+                    String index = msgSplit.get(1);
+                    int video = Integer.parseInt(index);
+                    youTubePlayer.loadVideos(playlistIds, video, 0);
                 }else if(msg.startsWith("playlistprev") || msg.startsWith("playliststart")){
                     //do nothing
                 }else{

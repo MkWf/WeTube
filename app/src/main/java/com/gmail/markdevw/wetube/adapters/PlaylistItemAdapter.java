@@ -21,7 +21,7 @@ import java.lang.ref.WeakReference;
 public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem);
+        public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem, int itemIndex);
         public void onDeleteItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem);
     }
 
@@ -47,7 +47,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
     @Override
     public void onBindViewHolder(ItemAdapterViewHolder itemAdapterViewHolder, int index) {
         DataSource sharedDataSource = WeTubeApplication.getSharedDataSource();
-        itemAdapterViewHolder.update(sharedDataSource.getPlaylist().get(index));
+        itemAdapterViewHolder.update(sharedDataSource.getPlaylist().get(index), index);
     }
 
     @Override
@@ -62,6 +62,8 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         TextView title;
         PlaylistItem playlistItem;
 
+        int itemIndex;
+
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
@@ -73,8 +75,9 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
             itemView.setOnClickListener(this);
         }
 
-        void update(PlaylistItem playlistItem) {
+        void update(PlaylistItem playlistItem, int index) {
             this.playlistItem = playlistItem;
+            this.itemIndex = index;
 
             title.setText(playlistItem.getTitle());
             Picasso.with(WeTubeApplication.getSharedInstance()).load(playlistItem.getThumbnailURL()).into(thumbnail);
@@ -93,7 +96,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
                     getDelegate().onDeleteItemClicked(PlaylistItemAdapter.this, playlistItem);
                     break;
                 default:
-                    getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, playlistItem);
+                    getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, playlistItem, itemIndex);
             }
 
         }

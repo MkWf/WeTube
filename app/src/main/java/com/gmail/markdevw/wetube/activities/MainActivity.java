@@ -432,10 +432,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             Toast.makeText(getApplicationContext(), "Type a message first before sending", Toast.LENGTH_LONG).show();
         }else{
             messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), messageField.getText().toString());
-            messageType = MESSAGE;
-            WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(messageField.getText().toString(), MessageItem.OUTGOING_MSG));
-            messageItemAdapter.notifyDataSetChanged();
-            recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
             messageField.setText("");
         }
     }
@@ -664,6 +660,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 messages.remove(failureInfo.getMessageId());
             }else if(msg.startsWith("playlistnext")){
                 Toast.makeText(MainActivity.this, "Failed to playlist", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(MainActivity.this, "Failed to send message", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -717,6 +715,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 youTubePlayer.next();
             }else if(msg.startsWith("playlistprev")){
                 youTubePlayer.previous();
+            }else{
+                WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
+                messageItemAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
             }
         }
 
@@ -756,10 +758,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                     messages.remove(deliveryInfo.getMessageId());
                     Toast.makeText(MainActivity.this, "You have give control to " + name, Toast.LENGTH_SHORT).show();
-                }else if(msg.startsWith("playliststart")){
+                }else if(msg.startsWith("playliststart")) {
                     playlistIds.clear();
                     List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                    for(int i = 0; i<videos.size(); i++) {
+                    for (int i = 0; i < videos.size(); i++) {
                         playlistIds.add(videos.get(i).getId());
                     }
 
@@ -777,8 +779,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     youTubePlayer.loadVideos(playlistIds);
                     messages.remove(deliveryInfo.getMessageId());
-                }else if(msg.startsWith("playlistnext")){
-
+                }else if(msg.startsWith("playlistprev") || msg.startsWith("playliststart")){
+                    //do nothing
+                }else{
+                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
+                    messageItemAdapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
                 }
             }
         }

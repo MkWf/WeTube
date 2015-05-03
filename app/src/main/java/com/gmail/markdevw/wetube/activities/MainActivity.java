@@ -119,6 +119,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private int messageType;
     private boolean isPaused = false;
     private boolean hasVideoEnded = false;
+    private boolean hasVideoStarted = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -525,22 +526,25 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onLoading() {
+
         WeTubeApplication.getSharedDataSource();
     }
 
     @Override
     public void onLoaded(String s) {
+
         WeTubeApplication.getSharedDataSource();
     }
 
     @Override
     public void onAdStarted() {
+
         WeTubeApplication.getSharedDataSource();
     }
 
     @Override
     public void onVideoStarted() {
-        WeTubeApplication.getSharedDataSource();
+        hasVideoStarted = true;
     }
 
     @Override
@@ -555,8 +559,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onPlaying() {
-        if(WeTubeApplication.getSharedDataSource().isSessionController()){
+        if(WeTubeApplication.getSharedDataSource().isSessionController() && isPaused){
             messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "play");
+            isPaused = false;
+        }else if(hasVideoStarted){
+            hasVideoStarted = false;
+            youTubePlayer.pause();
         }
     }
 
@@ -846,7 +854,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         youTubePlayer.loadVideos(playlistIds, video, 0);
                     }
                 }else if(msg.startsWith(msgSplitter + "pause")) {
-
+                    isPaused = true;
                 }else if(msg.startsWith(msgSplitter + "play")){
 
                 }else if(msg.startsWith("playlistprev") || msg.startsWith("playliststart")){

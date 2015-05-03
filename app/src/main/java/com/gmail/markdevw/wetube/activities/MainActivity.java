@@ -117,6 +117,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     private int messageType;
     private boolean isPaused = false;
+    private boolean hasVideoEnded = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -543,7 +544,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onVideoEnded() {
-        WeTubeApplication.getSharedDataSource();
+        hasVideoEnded = true;
     }
 
     @Override
@@ -591,20 +592,18 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onPrevious() {
-       /* if(playlistIndex > 0){
-            playlistIndex--;
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistprev");
-        }*/
+        if(WeTubeApplication.getSharedDataSource().isSessionController()){
+            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId()
+                    ,"playlistprev");
+        }
     }
 
     @Override
     public void onNext() {
-       /* if(playlistIndex < playlistIds.size() - 1){
-            playlistIndex++;
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistnext");
-        }*/
-       // messageService.send
-        //  messageService
+       if(WeTubeApplication.getSharedDataSource().isSessionController() && !hasVideoEnded){
+           messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId()
+                                ,"playlistnext");
+       }
     }
 
     @Override
@@ -663,6 +662,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 Toast.makeText(MainActivity.this, "Failed to start playlist", Toast.LENGTH_LONG).show();
 
                 messages.remove(failureInfo.getMessageId());
+            }else if(msg.startsWith("playlistnext")){
+                Toast.makeText(MainActivity.this, "Failed to playlist", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -712,6 +713,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
                 youTubePlayer.loadVideos(playlistIds);
+            }else if(msg.startsWith("playlistnext")){
+                youTubePlayer.next();
+            }else if(msg.startsWith("playlistprev")){
+                youTubePlayer.previous();
             }
         }
 
@@ -772,6 +777,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     youTubePlayer.loadVideos(playlistIds);
                     messages.remove(deliveryInfo.getMessageId());
+                }else if(msg.startsWith("playlistnext")){
+
                 }
             }
         }

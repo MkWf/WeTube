@@ -118,7 +118,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     private int messageType;
     private boolean isPaused = false;
-    private boolean hasVideoEnded = false;
+    private boolean hasYourVideoEnded = false;
+    private boolean hasTheirVideoEnded = false;
     private boolean hasVideoStarted = false;
 
     @Override
@@ -545,11 +546,18 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     @Override
     public void onVideoStarted() {
         hasVideoStarted = true;
+        if(WeTubeApplication.getSharedDataSource().isSessionController()){
+            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+        }
     }
 
     @Override
     public void onVideoEnded() {
-        hasVideoEnded = true;
+        hasYourVideoEnded = true;
+        if(WeTubeApplication.getSharedDataSource().isSessionController() && !hasTheirVideoEnded){
+            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+        }
+        messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoended");
     }
 
     @Override
@@ -559,19 +567,30 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onPlaying() {
-        if(WeTubeApplication.getSharedDataSource().isSessionController() && isPaused){
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "play");
+      /*  if(WeTubeApplication.getSharedDataSource().isSessionController() && isPaused && !hasVideoStarted){
+            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "play" + msgSplitter);
             isPaused = false;
         }else if(hasVideoStarted){
             hasVideoStarted = false;
             youTubePlayer.pause();
+        }*/
+        if(hasVideoStarted){
+            youTubePlayer.pause();
+            hasVideoStarted = false;
+
+            if(!WeTubeApplication.getSharedDataSource().isSessionController()){
+                messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videostart");
+            }
+        }else if(WeTubeApplication.getSharedDataSource().isSessionController()) {
+            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "play" + msgSplitter);
+            //isPaused = false;
         }
     }
 
     @Override
     public void onPaused() {
-        if(WeTubeApplication.getSharedDataSource().isSessionController()){
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "pause");
+       if(WeTubeApplication.getSharedDataSource().isSessionController()){
+            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "pause" + msgSplitter);
         }
     }
 
@@ -593,8 +612,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onSeekTo(int i) {
-        //  messageType = VIDEO_SEEK;
-        // messageService.sendMessage(id, "/seek$" + i);
+        if(WeTubeApplication.getSharedDataSource().isSessionController()){
+            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "seek" + msgSplitter + String.valueOf(i));
+        }
     }
 
     @Override
@@ -607,7 +627,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onNext() {
-       if(WeTubeApplication.getSharedDataSource().isSessionController() && !hasVideoEnded){
+       if(WeTubeApplication.getSharedDataSource().isSessionController() && !hasYourVideoEnded){
            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId()
                                 ,"playlistnext");
        }
@@ -646,39 +666,43 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to add " + title + " to playlist", Toast.LENGTH_LONG).show();
-
-                messages.remove(failureInfo.getMessageId());
             }else if(msg.startsWith("linkedvideo")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to add " + title + " to chat", Toast.LENGTH_LONG).show();
-
-                messages.remove(failureInfo.getMessageId());
             }else if(msg.startsWith("deleteitemplaylist")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to delete " + title + " from playlist", Toast.LENGTH_LONG).show();
-
-                messages.remove(failureInfo.getMessageId());
             }else if(msg.startsWith("passcontroller")){
                 Toast.makeText(MainActivity.this, "Failed to pass controls to "
                         + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName(), Toast.LENGTH_LONG).show();
-
-                messages.remove(failureInfo.getMessageId());
+            }else if(msg.startsWith("playlistindex")){
+                Toast.makeText(MainActivity.this, "Failed to start video", Toast.LENGTH_LONG).show();
             }else if(msg.startsWith("playliststart")){
                 Toast.makeText(MainActivity.this, "Failed to start playlist", Toast.LENGTH_LONG).show();
-
-                messages.remove(failureInfo.getMessageId());
-            }else if(msg.startsWith("playlistnext")){
-                Toast.makeText(MainActivity.this, "Failed to playlist", Toast.LENGTH_SHORT).show();
+            }else if(msg.startsWith("playlistnext")) {
+                Toast.makeText(MainActivity.this, "Failed to play next video", Toast.LENGTH_SHORT).show();
+            }else if(msg.startsWith("playlistprev")){
+                Toast.makeText(MainActivity.this, "Failed to play previous video", Toast.LENGTH_SHORT).show();
             }else if(msg.startsWith(msgSplitter + "pause")) {
+                youTubePlayer.play();
                 Toast.makeText(MainActivity.this, "Failed to pause video", Toast.LENGTH_SHORT).show();
             }else if(msg.startsWith(msgSplitter + "play")){
+                youTubePlayer.pause();
                 Toast.makeText(MainActivity.this, "Failed to play video", Toast.LENGTH_SHORT).show();
+            }else if(msg.startsWith(msgSplitter + "seek")) {
+                Toast.makeText(MainActivity.this, "Failed to seek to new position", Toast.LENGTH_SHORT).show();
+            }else if(msg.startsWith("videostart")){
+                messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videostart");
+                Toast.makeText(MainActivity.this, "Failed to initiate video play", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(MainActivity.this, "Failed to send message", Toast.LENGTH_SHORT).show();
             }
+            messages.remove(failureInfo.getMessageId());
         }
+
+        //APP CRASHES IF YOU CLICK NEXT THEN CLICK NEXT AGAIN WITHOUT PLAYING THE VIDEO BEFORE IT
 
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
@@ -757,10 +781,21 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     youTubePlayer.loadVideos(playlistIds, video, 0);
                 }
-            }else if(msg.startsWith(msgSplitter + "pause")) {
+            }else if(msg.startsWith("pause")) {
                 youTubePlayer.pause();
-            }else if(msg.startsWith(msgSplitter + "play")){
+            }else if(msg.startsWith("play")) {
                 youTubePlayer.play();
+            }else if(msg.startsWith("seek")) {
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+                int seek = Integer.parseInt(msgSplit.get(1));
+                youTubePlayer.seekToMillis(seek);
+            }else if(msg.startsWith("videostart")){
+                youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            }else if(msg.startsWith(("videoended"))){
+                hasTheirVideoEnded = true;
+                if(WeTubeApplication.getSharedDataSource().isSessionController() && hasYourVideoEnded){
+                    youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+                }
             }else{
                 WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
                 messageItemAdapter.notifyDataSetChanged();
@@ -853,11 +888,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                         youTubePlayer.loadVideos(playlistIds, video, 0);
                     }
-                }else if(msg.startsWith(msgSplitter + "pause")) {
+                }else if(msg.startsWith("pause")) {
                     isPaused = true;
-                }else if(msg.startsWith(msgSplitter + "play")){
+                }else if(msg.startsWith("play")){
 
-                }else if(msg.startsWith("playlistprev") || msg.startsWith("playliststart")){
+                }else if(msg.startsWith("playlistprev") || msg.startsWith("playliststart") || msg.startsWith("playlistnext") || msg.startsWith(msgSplitter + "seek")){
                     //do nothing
                 }else{
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));

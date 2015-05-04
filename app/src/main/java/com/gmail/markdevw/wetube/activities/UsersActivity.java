@@ -1118,7 +1118,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onMessageSent(MessageClient client, Message message, final String recipientId) {
-            Toast.makeText(UsersActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(UsersActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
             ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
             if (msg.get(0).equals("friendremove")) {
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
@@ -1164,7 +1164,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
-            Toast.makeText(UsersActivity.this, "Message delivered.", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(UsersActivity.this, "Message delivered.", Toast.LENGTH_SHORT).show();
         }
 
         @Override

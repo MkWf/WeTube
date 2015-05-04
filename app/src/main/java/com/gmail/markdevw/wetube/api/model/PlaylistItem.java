@@ -7,6 +7,7 @@ public class PlaylistItem {
     private String title;
     private String thumbnailURL;
     private String id;
+    private boolean toBeDeleted;
 
     public PlaylistItem(String title, String thumbnailURL, String id){
         setTitle(title);
@@ -37,4 +38,8 @@ public class PlaylistItem {
     public void setThumbnailURL(String thumbnail) {
         this.thumbnailURL = thumbnail;
     }
+
+    public boolean isToBeDeleted() { return toBeDeleted;}
+
+    public void setToBeDeleted(boolean toBeDeleted) { this.toBeDeleted = toBeDeleted;}
 }

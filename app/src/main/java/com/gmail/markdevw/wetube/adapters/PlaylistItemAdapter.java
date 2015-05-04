@@ -96,7 +96,9 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         public void onClick(View view) {
             switch(view.getId()){
                 case R.id.playlist_delete:
-                    getDelegate().onDeleteItemClicked(PlaylistItemAdapter.this, playlistItem);
+                    if(!playlistItem.isToBeDeleted()){
+                        getDelegate().onDeleteItemClicked(PlaylistItemAdapter.this, playlistItem);
+                    }
                     break;
                 default:
                     getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, playlistItem, itemIndex, itemView);

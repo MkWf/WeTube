@@ -121,6 +121,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private boolean hasYourVideoEnded = false;
     private boolean hasTheirVideoEnded = false;
     private boolean hasVideoStarted = false;
+    private int currentIndex = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -502,6 +503,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     @Override
     public void onDeleteItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem) {
         int index = WeTubeApplication.getSharedDataSource().getPlaylist().indexOf(playlistItem);
+        playlistItem.setToBeDeleted(true);
         messageService.sendMessage(id, "deleteitemplaylist" + msgSplitter + String.valueOf(index));
     }
 
@@ -553,11 +555,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onVideoEnded() {
-        hasYourVideoEnded = true;
-        if(WeTubeApplication.getSharedDataSource().isSessionController() && !hasTheirVideoEnded){
-            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-        }
-        messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoended");
+       // messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoend");
+       // messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoended");
     }
 
     @Override
@@ -673,6 +672,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             }else if(msg.startsWith("deleteitemplaylist")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String title = msgSplit.get(1);
+                for(int i = 0; i<WeTubeApplication.getSharedDataSource().getPlaylist().size(); i++){
+                    if(title.equals(WeTubeApplication.getSharedDataSource().getPlaylist().get(i).getTitle())){
+                        WeTubeApplication.getSharedDataSource().getPlaylist().get(i).setToBeDeleted(false);
+                        break;
+                    }
+                }
                 Toast.makeText(MainActivity.this, "Failed to delete " + title + " from playlist", Toast.LENGTH_LONG).show();
             }else if(msg.startsWith("passcontroller")){
                 Toast.makeText(MainActivity.this, "Failed to pass controls to "
@@ -722,7 +727,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             } else if (msg.startsWith(("deleteitemplaylist"))) {
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String index = msgSplit.get(1);
-                WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
+                    WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                }
+                if(playlistIds.size() > 0){
+                    playlistIds.remove(Integer.parseInt(index));
+                }
                 playlistItemAdapter.notifyDataSetChanged();
             } else if(msg.startsWith("passcontroller")){
                 WeTubeApplication.getSharedDataSource().setSessionController(true);
@@ -731,6 +741,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
                 Toast.makeText(MainActivity.this, name + " has given you control", Toast.LENGTH_SHORT).show();
             } else if(msg.startsWith("playliststart")){
+                currentIndex = 0;
                 playlistIds.clear();
                 List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
                 for(int i = 0; i<videos.size(); i++) {
@@ -751,13 +762,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                 youTubePlayer.loadVideos(playlistIds);
             }else if(msg.startsWith("playlistnext")){
+                currentIndex++;
                 youTubePlayer.next();
             }else if(msg.startsWith("playlistprev")) {
+                currentIndex--;
                 youTubePlayer.previous();
             }else if(msg.startsWith("playlistindex")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 String index = msgSplit.get(1);
                 int video = Integer.parseInt(index);
+                currentIndex = video;
                 if(playerFragment.isVisible()){
                     youTubePlayer.loadVideos(playlistIds, video, 0);
                 }else{
@@ -829,7 +843,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(("deleteitemplaylist"))){
                     ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                     String index = msgSplit.get(1);
-                    WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                    if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
+                        WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                    }
+                    if(playlistIds.size() > 0){
+                        playlistIds.remove(Integer.parseInt(index));
+                    }
                     playlistItemAdapter.notifyDataSetChanged();
                     messages.remove(deliveryInfo.getMessageId());
                 }else if(msg.startsWith("passcontroller")){

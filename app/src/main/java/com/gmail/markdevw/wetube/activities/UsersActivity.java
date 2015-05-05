@@ -65,6 +65,7 @@ import com.sinch.android.rtc.messaging.MessageFailureInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Queue;
@@ -114,6 +115,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     int lastVisibleItem, totalItemCount;
     LinearLayoutManager mLayoutManager;
     private final int MAX_USERS = 200;
+    private final long LOGIN_TIME = System.currentTimeMillis();
 
 
     @Override
@@ -1104,15 +1106,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
-            messageQueue.add(message);
+            Date time = message.getTimestamp();
+            if(LOGIN_TIME < time.getTime()){
+                messageQueue.add(message);
 
-            if(!isFirstMessage){
-                if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
+                if(!isFirstMessage){
+                    if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
+                        showNextMessage();
+                    }
+                }else{
+                    isFirstMessage = false;
                     showNextMessage();
                 }
-            }else{
-                //isFirstMessage = false;
-                showNextMessage();
             }
         }
 
@@ -1173,7 +1178,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     public void showNextMessage() {
         Message message = messageQueue.poll();
-
         ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
             if(msg.get(0).equals("friendadd")){
                 final String name = msg.get(1);

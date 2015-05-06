@@ -65,6 +65,7 @@ import com.sinch.android.rtc.messaging.MessageFailureInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Queue;
@@ -592,8 +593,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                messageService.sendMessage(clickedUser.getId(), "unblock" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
-                                        + ParseUser.getCurrentUser().getObjectId());
+                                HashMap<String, Object> params = new HashMap<String, Object>();
+                                params.put("clickedId", clickedUser.getId());
+                                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
+                                ParseCloud.callFunctionInBackground("unblock", params, new FunctionCallback<String>() {
+                                    @Override
+                                    public void done(String mapObject, com.parse.ParseException e) {
+                                        Toast.makeText(UsersActivity.this, "User unblocked", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 dialog.cancel();
                             }
                         });
@@ -1115,7 +1123,19 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
+            Date time = message.getTimestamp();
+            if(LOGIN_TIME < time.getTime()){
+                messageQueue.add(message);
 
+                if(!isFirstMessage){
+                    if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
+                        showNextMessage();
+                    }
+                }else{
+                    isFirstMessage = false;
+                    showNextMessage();
+                }
+            }
         }
 
         @Override
@@ -1140,7 +1160,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     public void showNextMessage() {
         Message message = messageQueue.poll();
-        ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
+        ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(msgSplitter)));
             if(msg.get(0).equals("friendadd")){
                 final String name = msg.get(1);
                 final String id = msg.get(2);

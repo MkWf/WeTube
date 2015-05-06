@@ -65,7 +65,6 @@ import com.sinch.android.rtc.messaging.MessageFailureInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Queue;
@@ -116,6 +115,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     LinearLayoutManager mLayoutManager;
     private final int MAX_USERS = 200;
     private final long LOGIN_TIME = System.currentTimeMillis();
+    private String msgSplitter = "=-=-=";
+    private HashMap<String, String> messages = new HashMap<String, String>();
 
 
     @Override
@@ -591,7 +592,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                messageService.sendMessage(clickedUser.getId(), "unblock-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                                messageService.sendMessage(clickedUser.getId(), "unblock" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                        + ParseUser.getCurrentUser().getObjectId());
                                 dialog.cancel();
                             }
                         });
@@ -676,7 +678,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     @Override
                     public void done(List<ParseUser> parseUsers, ParseException e) {
                        if(parseUsers.size() > 0){
-                           messageService.sendMessage(clickedUser.getId(), "startsession-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                           messageService.sendMessage(clickedUser.getId(), "startsession" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                   + ParseUser.getCurrentUser().getObjectId());
                        }else{
                            friendsRefreshProgress();
                            if(sortOptionSelected.equals("Default")){
@@ -698,7 +701,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 });
                 break;
             case R.id.popup_add :
-                messageService.sendMessage(clickedUser.getId(), "friendadd-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                messageService.sendMessage(clickedUser.getId(), "friendadd" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                        + ParseUser.getCurrentUser().getObjectId());
                 break;
             case R.id.popup_profile:
                 params.put("clickedId", clickedUser.getId());
@@ -748,7 +752,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        messageService.sendMessage(clickedUser.getId(), "friendremove-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                        messageService.sendMessage(clickedUser.getId(), "friendremove" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                + ParseUser.getCurrentUser().getObjectId());
                         dialog.cancel();
                     }
                 });
@@ -1099,77 +1104,34 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private class MyMessageClientListener implements MessageClientListener {
 
         @Override
-        public void onMessageFailed(MessageClient client, Message message,
-                                    MessageFailureInfo failureInfo) {
-            Toast.makeText(UsersActivity.this, "Message failed to send.", Toast.LENGTH_LONG).show();
+        public void onMessageFailed(MessageClient client, Message message, MessageFailureInfo failureInfo) {
+            String msg = messages.get(failureInfo.getMessageId());
+            if(msg.startsWith("addtoplaylist")) {
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split("")));
+                String title = msgSplit.get(1);
+                Toast.makeText(UsersActivity.this, "Failed to add " + title + " to playlist", Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
-            Date time = message.getTimestamp();
-            if(LOGIN_TIME < time.getTime()){
-                messageQueue.add(message);
 
-                if(!isFirstMessage){
-                    if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
-                        showNextMessage();
-                    }
-                }else{
-                    isFirstMessage = false;
-                    showNextMessage();
-                }
-            }
         }
 
         @Override
         public void onMessageSent(MessageClient client, Message message, final String recipientId) {
-            //Toast.makeText(UsersActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
-            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split("-")));
-            if (msg.get(0).equals("friendremove")) {
-                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("friend", recipientId);
-                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
-                ParseCloud.callFunctionInBackground("removeFriendPtr", params, new FunctionCallback<String>() {
-                    @Override
-                    public void done(String mapObject, com.parse.ParseException e) {
-                        Toast.makeText(UsersActivity.this, "Friend removed", Toast.LENGTH_SHORT).show();
-
-                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getFriends().size(); i++){
-                            if(WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(recipientId)){
-                                WeTubeApplication.getSharedDataSource().getFriends().remove(i);
-                                navigationDrawerAdapter.notifyItemRemoved(i);
-                                break;
-                            }
-                        }
-                        for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
-                            if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(recipientId)){
-                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
-                                userItemAdapter.notifyDataSetChanged();
-                                break;
-                            }
-                        }
-                    }
-                });
-            }else if(msg.get(0).equals("unblock")){
-                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("clickedId", recipientId);
-                params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
-                ParseCloud.callFunctionInBackground("unblock", params, new FunctionCallback<String>() {
-                    @Override
-                    public void done(String mapObject, com.parse.ParseException e) {
-                        Toast.makeText(UsersActivity.this, "User unblocked", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+            messages.put(message.getMessageId(), message.getTextBody());
         }
 
         @Override
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
-           // Toast.makeText(UsersActivity.this, "Message delivered.", Toast.LENGTH_SHORT).show();
+            String msg = messages.get(deliveryInfo.getMessageId());
+            if(msg != null){
+                if(msg.equals("")){
+
+                }
+                messages.remove(deliveryInfo.getMessageId());
+            }
         }
 
         @Override
@@ -1190,7 +1152,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                        messageService.sendMessage(id, "friendaccept-" + user.getUsername() + "-" + user.getObjectId());
+                        messageService.sendMessage(id, "friendaccept" + msgSplitter + user.getUsername() + msgSplitter + user.getObjectId());
 
                         ParseQuery<ParseUser> query = ParseUser.getQuery();
                         query.whereEqualTo("objectId", id);
@@ -1224,7 +1186,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        messageService.sendMessage(id, "frienddecline-" + ParseUser.getCurrentUser().getUsername());
+                        messageService.sendMessage(id, "frienddecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
                         dialog.cancel();
                     }
                 });
@@ -1238,7 +1200,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                messageService.sendMessage(id, "blockuser-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                                messageService.sendMessage(id, "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter + ParseUser.getCurrentUser().getObjectId());
                                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                                 user.add("blockedUsers", id);
                                 user.saveInBackground();
@@ -1402,7 +1364,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                         user.setSessionStatus(true);
                         user.saveInBackground();
-                        messageService.sendMessage(id, "sessionaccept-" + user.getUsername() + "-" + user.getObjectId());
+                        messageService.sendMessage(id, "sessionaccept" + msgSplitter + user.getUsername() + msgSplitter + user.getObjectId());
                         dialog.cancel();
 
                         WeTubeApplication.getSharedDataSource().setSessionController(false);
@@ -1414,7 +1376,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        messageService.sendMessage(id, "sessiondecline-" + ParseUser.getCurrentUser().getUsername());
+                        messageService.sendMessage(id, "sessiondecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
                         dialog.cancel();
                     }
                 });
@@ -1428,7 +1390,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                messageService.sendMessage(id, "blockuser-" + ParseUser.getCurrentUser().getUsername() + "-" + ParseUser.getCurrentUser().getObjectId());
+                                messageService.sendMessage(id, "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                        + ParseUser.getCurrentUser().getObjectId());
                                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                                 user.add("blockedUsers", id);
                                 user.saveInBackground();

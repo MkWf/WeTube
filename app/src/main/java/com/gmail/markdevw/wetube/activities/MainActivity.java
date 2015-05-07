@@ -502,6 +502,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 playlistItem.setSelected(true);
                 lastClickedPlaylistItem = playlistItem;
                 playlistItemAdapter.notifyDataSetChanged();
+                playListRecyclerView.smoothScrollBy(0, itemView.getTop());
             }
         }
     }

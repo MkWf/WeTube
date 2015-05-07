@@ -326,8 +326,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     ParseCloud.callFunctionInBackground("getFriendsUnavailable", params, new FunctionCallback<List<ParseUser>>() {
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
-                            if(e == null){
-                                if(userList2.size() > 0){
+                            if (e == null) {
+                                if (userList2.size() > 0) {
                                     for (int i = 0; i < userList2.size(); i++) {
                                         WeTubeUser friend = (WeTubeUser) userList2.get(i);
 
@@ -340,7 +340,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 ParseCloud.callFunctionInBackground("getFriendsOffline", params, new FunctionCallback<List<ParseUser>>() {
                                     @Override
                                     public void done(List<ParseUser> userList3, com.parse.ParseException e) {
-                                        if(userList3.size() > 0){
+                                        if (userList3.size() > 0) {
                                             for (int i = 0; i < userList3.size(); i++) {
                                                 WeTubeUser friend = (WeTubeUser) userList3.get(i);
 
@@ -398,7 +398,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     ParseCloud.callFunctionInBackground("getFriendsUnavailable", params, new FunctionCallback<List<ParseUser>>() {
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
-                            if(e == null) {
+                            if (e == null) {
                                 if (userList2.size() > 0) {
                                     for (int i = 0; i < userList2.size(); i++) {
                                         WeTubeUser friend = (WeTubeUser) userList2.get(i);
@@ -665,30 +665,25 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             case R.id.popup_session :
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
                 query.whereEqualTo("objectId", clickedUser.getId());
-                query.whereEqualTo("isInSession", false);
-                query.whereEqualTo("isLoggedIn", true);
                 query.findInBackground(new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> parseUsers, ParseException e) {
-                       if(parseUsers.size() > 0){
-                           messageService.sendMessage(clickedUser.getId(), "startsession" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
-                                   + ParseUser.getCurrentUser().getObjectId());
-                       }else{
-                           friendsRefreshProgress();
-                           if(sortOptionSelected.equals("Default")){
-                               getFriends();
-                           }else if(sortOptionSelected.equals("Online")){
-                               getOnlineFriends();
-                           }else if(sortOptionSelected.equals("Offline")){
-                               getOfflineFriends();
-                           }else if(sortOptionSelected.equals("Available")){
-                               getAvailableFriends();
-                           }else if(sortOptionSelected.equals("Unavailable")){
-                               getUnavailableFriends();
-                           } else if(sortOptionSelected.equals("A-Z")){
-                               getAlphabeticFriends();
+                       if(parseUsers.size() > 0) {
+                           WeTubeUser user = (WeTubeUser) parseUsers.get(0);
+                           if (user.getLoggedStatus() && !user.getSessionStatus()) {
+                               messageService.sendMessage(clickedUser.getId(), "startsession" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                       + ParseUser.getCurrentUser().getObjectId());
+                           } else {
+                               clickedUser.setOnlineStatus(user.getLoggedStatus());
+                               clickedUser.setSessionStatus(user.getSessionStatus());
+                               userItemAdapter.notifyDataSetChanged();
+                               navigationDrawerAdapter.notifyDataSetChanged();
+                               if (!user.getLoggedStatus()) {
+                                   Toast.makeText(UsersActivity.this, user.getUsername() + " has gone offline", Toast.LENGTH_LONG).show();
+                               } else {
+                                   Toast.makeText(UsersActivity.this, user.getUsername() + " in already in a session", Toast.LENGTH_LONG).show();
+                               }
                            }
-                           Toast.makeText(UsersActivity.this, "User is in a session or offline", Toast.LENGTH_LONG).show();
                        }
                     }
                 });
@@ -767,11 +762,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.activity_users_send_button:
-                if(searchField.getText().toString().isEmpty()){
+                if(searchField.getText().toString().isEmpty()) {
                     Toast.makeText(this, "Enter a search first", Toast.LENGTH_LONG).show();
                 }else{
                     swipeRefreshLayout.setRefreshing(true);
-                    if(searchOptionSelected.equals("Name")){
+                    if (searchOptionSelected.equals("Name")){
                         searchByName();
                     }else{
                         searchByTag();

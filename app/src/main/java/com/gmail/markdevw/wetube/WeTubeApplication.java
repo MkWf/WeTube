@@ -7,6 +7,7 @@ import com.parse.Parse;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.models.Blocked;
+import com.parse.models.Friend;
 import com.parse.models.WeTubeUser;
 
 /**
@@ -33,6 +34,7 @@ public class WeTubeApplication extends Application {
 
         ParseObject.registerSubclass(WeTubeUser.class);
         ParseObject.registerSubclass(Blocked.class);
+        ParseObject.registerSubclass(Friend.class);
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, getResources().getString(R.string.parse_app_id), getResources().getString(R.string.parse_client_key));
         ParseInstallation.getCurrentInstallation().saveInBackground();

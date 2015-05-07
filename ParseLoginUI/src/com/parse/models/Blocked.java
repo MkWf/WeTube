@@ -10,9 +10,6 @@ import com.parse.ParseObject;
 @ParseClassName("Blocked")
 public class Blocked extends ParseObject {
 
-    private String blockedUser;
-    private String blockedBy;
-
     public Blocked(){}
 
     public Blocked(String blockedBy, String blockedUser){
@@ -20,6 +17,6 @@ public class Blocked extends ParseObject {
         setBlockedUser(blockedUser);
     }
 
-    public void setBlockedUser(String blockedUser) { this.blockedUser = blockedUser;}
-    public void setBlockedBy(String blockedBy) { this.blockedBy = blockedBy; }
+    public void setBlockedUser(String blockedUser) { put("userId", blockedUser);}
+    public void setBlockedBy(String blockedBy) { put("blockedBy", blockedBy); }
 }

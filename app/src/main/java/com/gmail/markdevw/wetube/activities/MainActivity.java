@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gmail.markdevw.wetube.R;
@@ -106,6 +107,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
     private PlaylistItem lastClickedPlaylistItem = new PlaylistItem();
+    private TextView playlistSize;
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -122,6 +124,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private boolean hasTheirVideoEnded = false;
     private boolean hasVideoStarted = false;
     private int currentIndex = 0;
+    private final int MAX_PLAYLIST_SIZE = 50;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -179,6 +182,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         messageField = (EditText) findViewById(R.id.activity_main_message_field);
         sendMessage = (Button) findViewById(R.id.activity_main_send_button);
         sendMessage.setOnClickListener(this);
+
+        playlistSize = (TextView) findViewById(R.id.playlist_size);
+
 
         handler = new Handler();
     }
@@ -503,6 +509,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 lastClickedPlaylistItem = playlistItem;
                 playlistItemAdapter.notifyDataSetChanged();
                 playListRecyclerView.smoothScrollBy(0, itemView.getTop());
+
+                String indexItem = String.valueOf(index + 1);
+
+                playlistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
             }
         }
     }

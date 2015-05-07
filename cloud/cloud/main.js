@@ -248,36 +248,37 @@ Parse.Cloud.define("isBlocked", function(request, response) {
   var userId = request.params.userId;
   var clickedId = request.params.clickedId;
   var userArray;
+  var done = 0;
  
-  var query = new Parse.Query(Parse.User);
-  query.equalTo("objectId", userId);
+  var query = new Parse.Query(Parse.Blocked);
+  query.equalTo("userId", userId);
+  query.equalTo("blockedBy", clickedId);
  
   query.find({
         success: function(results){
-            userArray = results[0].get("blockedUsers");
-             
-            var done = 0;
-             
-            for(var i = 0; i<userArray.length; i++){
-                if(userArray[i] == clickedId){
-                    response.success("You blocked this user");
-                    done = done + 1;
-                }
-            }
-             
-            if(done == 0){
-                userArray = results[0].get("blockedBy");
-                for(var j = 0; j<userArray.length; j++){
-                    if(userArray[j] == clickedId){
-                        response.success("You are blocked by this user");
-                        done = done + 1;
-                    }
-                }
-            }
-             
-            if(done == 0){
-                response.success("No block");
-            }
+            if(results.length > 0){
+				response.success("You are blocked by this user");
+				done = done + 1;
+			}
+			
+			if(done == 0){
+				var query = new Parse.Query(Parse.Blocked);
+				query.equalTo("userId", clickedId);
+				query.equalTo("blockedBy", userId);
+				
+				query.find({
+					success: function(results){
+						if(results.length > 0){
+							response.success("You blocked this user");
+							done = done + 1;
+						}
+						
+						if(done == 0){
+							response.success("No block");
+						}
+					}
+				})
+			}
         },
         error: function(){
         }

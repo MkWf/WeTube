@@ -105,7 +105,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private HashMap<String, String> messages = new HashMap<String, String>();
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
-    private View clickedPlaylistView;
+    private PlaylistItem lastClickedPlaylistItem = new PlaylistItem();
 
     private final int MESSAGE = 0;
     private final int VIDEO_START = 1;
@@ -495,9 +495,14 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     @Override
     public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem, int index, View itemView) {
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistindex"
-                    + msgSplitter + String.valueOf(index));
-            clickedPlaylistView = itemView;
+           // messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistindex"
+           //         + msgSplitter + String.valueOf(index));
+            if(lastClickedPlaylistItem != null){
+                lastClickedPlaylistItem.setSelected(false);
+                playlistItem.setSelected(true);
+                lastClickedPlaylistItem = playlistItem;
+                playlistItemAdapter.notifyDataSetChanged();
+            }
         }
     }
 

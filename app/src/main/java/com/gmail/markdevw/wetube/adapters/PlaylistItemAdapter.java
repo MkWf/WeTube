@@ -90,6 +90,12 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
             }else{
                 delete.setVisibility(View.GONE);
             }
+
+            if(playlistItem.isSelected()){
+                itemView.setBackgroundResource(R.color.black_26);
+            }else{
+                itemView.setBackgroundResource(R.color.off_white);
+            }
         }
 
         @Override

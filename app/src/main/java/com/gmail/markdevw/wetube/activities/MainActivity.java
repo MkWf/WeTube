@@ -510,6 +510,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 playlistItemAdapter.notifyDataSetChanged();
                 playListRecyclerView.smoothScrollBy(0, itemView.getTop());
 
+                currentIndex = index+1;
                 String indexItem = String.valueOf(index + 1);
 
                 playlistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
@@ -850,6 +851,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     String id = msgSplit.get(3);
 
                     WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id));
+                    playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     playlistItemAdapter.notifyDataSetChanged();
                     messages.remove(deliveryInfo.getMessageId());
                 }else if(msg.startsWith("linkedvideo")){

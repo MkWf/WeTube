@@ -192,6 +192,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         }else{
             new Thread(){
                 public void run(){
+                    messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "Started search for " + search.toUpperCase() + "...");
                     WeTubeApplication.getSharedDataSource().searchForVideos(search);
                     handler.post(new Runnable() {
                         @Override

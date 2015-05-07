@@ -862,14 +862,25 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(("deleteitemplaylist"))){
                     ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                     String index = msgSplit.get(1);
+                    int i = Integer.parseInt(index);
                     if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
-                        WeTubeApplication.getSharedDataSource().getPlaylist().remove(Integer.parseInt(index));
+                        WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
                     }
                     if(playlistIds.size() > 0){
                         playlistIds.remove(Integer.parseInt(index));
                     }
                     playlistItemAdapter.notifyDataSetChanged();
-                    playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+
+
+                    if(i + 1 < currentIndex){
+                        --currentIndex;
+                        playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+                    }else if(i + 1 > currentIndex){
+                        playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+                    }else{
+                        currentIndex = 0;
+                        playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+                    }
                     messages.remove(deliveryInfo.getMessageId());
                 }else if(msg.startsWith("passcontroller")){
                     WeTubeApplication.getSharedDataSource().setSessionController(false);

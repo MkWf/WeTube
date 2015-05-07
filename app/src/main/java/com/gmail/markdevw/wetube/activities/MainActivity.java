@@ -869,6 +869,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         playlistIds.remove(Integer.parseInt(index));
                     }
                     playlistItemAdapter.notifyDataSetChanged();
+                    playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     messages.remove(deliveryInfo.getMessageId());
                 }else if(msg.startsWith("passcontroller")){
                     WeTubeApplication.getSharedDataSource().setSessionController(false);

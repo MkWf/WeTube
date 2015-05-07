@@ -244,7 +244,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         VideoListFragment vlf = (VideoListFragment)f;
                         vlf.getVideoItemAdapter().notifyDataSetChanged();
                         vlf.getRecyclerView().scrollToPosition(0);
-                        toolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage());
+                        toolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + name);
                     }
                 });
             }

@@ -737,6 +737,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 int i = Integer.parseInt(index);
                 if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
                     WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
+                    List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
+                    for(int j = 0; j<list.size(); j++){
+                        list.get(j).setIndex(j+1);
+                    }
                 }
                 if(playlistIds.size() > 0){
                     playlistIds.remove(Integer.parseInt(index));
@@ -876,6 +880,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     int i = Integer.parseInt(index);
                     if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
                         WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
+                        List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
+                        for(int j = 0; j<list.size(); j++){
+                            list.get(j).setIndex(j+1);
+                        }
                     }
                     if(playlistIds.size() > 0){
                         playlistIds.remove(Integer.parseInt(index));

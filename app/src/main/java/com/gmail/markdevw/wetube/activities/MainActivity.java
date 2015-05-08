@@ -724,7 +724,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 String thumbnail = msgSplit.get(2);
                 String id = msgSplit.get(3);
 
-                WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id));
+                WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1));
                 playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                 playlistItemAdapter.notifyDataSetChanged();
             } else if (msg.startsWith("linkedvideo")) {
@@ -861,7 +861,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     String thumbnail = msgSplit.get(2);
                     String id = msgSplit.get(3);
 
-                    WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id));
+                    WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1));
                     playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     playlistItemAdapter.notifyDataSetChanged();
                     messages.remove(deliveryInfo.getMessageId());

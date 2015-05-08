@@ -9,11 +9,13 @@ public class PlaylistItem {
     private String id;
     private boolean toBeDeleted;
     private boolean isSelected;
+    private int index;
 
-    public PlaylistItem(String title, String thumbnailURL, String id){
+    public PlaylistItem(String title, String thumbnailURL, String id, int index){
         setTitle(title);
         setThumbnailURL(thumbnailURL);
         setId(id);
+        setIndex(index);
     }
 
     public PlaylistItem(){}
@@ -49,6 +51,10 @@ public class PlaylistItem {
     public void setSelected(boolean isSelected) { this.isSelected = isSelected;}
 
     public boolean isSelected() { return isSelected;}
+
+    public int getIndex() { return index;}
+
+    public void setIndex(int index) { this.index = index;}
 }
 
 

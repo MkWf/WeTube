@@ -60,6 +60,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         ImageView thumbnail;
         ImageView delete;
         TextView title;
+        TextView count;
         PlaylistItem playlistItem;
         View itemView;
 
@@ -73,6 +74,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
             thumbnail = (ImageView) itemView.findViewById(R.id.playlist_thumbnail);
             title = (TextView) itemView.findViewById(R.id.playlist_title);
             delete = (ImageView) itemView.findViewById(R.id.playlist_delete);
+            count = (TextView) itemView.findViewById(R.id.playlist_index);
 
             delete.setOnClickListener(this);
             itemView.setOnClickListener(this);
@@ -83,6 +85,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
             this.itemIndex = index;
 
             title.setText(playlistItem.getTitle());
+            count.setText(String.valueOf(playlistItem.getIndex()));
             Picasso.with(WeTubeApplication.getSharedInstance()).load(playlistItem.getThumbnailURL()).into(thumbnail);
 
             if(WeTubeApplication.getSharedDataSource().isSessionController()){

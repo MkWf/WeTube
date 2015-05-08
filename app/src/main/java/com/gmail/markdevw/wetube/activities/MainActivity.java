@@ -98,8 +98,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private Button sendMessage;
     private FrameLayout videoList;
     private View videoChatDivider;
-    private final String name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
-    private final String id = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId();
+    private String name;
+    private String id;
     private List<String> playlistIds = new ArrayList<>();
     private int playlistIndex = 0;
     private String msgSplitter = "=-=-=";
@@ -130,6 +130,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
+        id = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId();
 
         bindService(new Intent(this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
 
@@ -792,7 +795,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 String index = String.valueOf(currentIndex + 1);
                 playlistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
 
-                //youTubePlayer.loadVideos(playlistIds);
+                youTubePlayer.loadVideos(playlistIds);
             }else if(msg.startsWith("playlistnext")){
                 currentIndex++;
                 youTubePlayer.next();
@@ -813,7 +816,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 String indexItem = String.valueOf(currentIndex + 1);
                 playlistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
 
-               /* if(playerFragment.isVisible()){
+                if(playerFragment.isVisible()){
                     youTubePlayer.loadVideos(playlistIds, video, 0);
                 }else{
                     playlistIds.clear();
@@ -834,8 +837,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     videoChatDivider.setVisibility(View.VISIBLE);
                     MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-                   // youTubePlayer.loadVideos(playlistIds, video, 0);
-                }*/
+                    youTubePlayer.loadVideos(playlistIds, video, 0);
+                }
             }else if(msg.startsWith("pause")) {
                 youTubePlayer.pause();
             }else if(msg.startsWith("play")) {
@@ -942,7 +945,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     String index = String.valueOf(currentIndex + 1);
                     playlistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                   // youTubePlayer.loadVideos(playlistIds);
+                    youTubePlayer.loadVideos(playlistIds);
                     messages.remove(deliveryInfo.getMessageId());
                 }else if(msg.startsWith("playlistindex")) {
                     ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
@@ -958,9 +961,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     String indexItem = String.valueOf(video + 1);
 
                     playlistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                   /* if(playerFragment.isVisible()){
+                    if(playerFragment.isVisible()){
                         youTubePlayer.loadVideos(playlistIds, video, 0);
-                        messages.remove(deliveryInfo.getMessageId());
                     }else{
                         playlistIds.clear();
                         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
@@ -981,7 +983,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
                         youTubePlayer.loadVideos(playlistIds, video, 0);
-                    }*/
+                    }
+                    messages.remove(deliveryInfo.getMessageId());
                 }else if(msg.startsWith("pause")) {
                     isPaused = true;
                 }else if(msg.startsWith("play")){

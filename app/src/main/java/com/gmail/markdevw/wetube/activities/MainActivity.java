@@ -503,17 +503,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "playlistindex"
                     + msgSplitter + String.valueOf(index));
-            if(lastClickedPlaylistItem != null){
-                WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
-                WeTubeApplication.getSharedDataSource().getPlaylist().get(index).setSelected(true);
-                playlistItemAdapter.notifyDataSetChanged();
-                playListRecyclerView.smoothScrollBy(0, itemView.getTop());
-
-                currentIndex = index;
-                String indexItem = String.valueOf(index + 1);
-
-                playlistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-            }
         }
     }
 
@@ -807,8 +796,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
                 playlistItemAdapter.notifyDataSetChanged();
 
-                //View itemView = playlistItemAdapter.viewholder
-                //playListRecyclerView.smoothScrollBy(0, itemView.getTop());
                 currentIndex = video;
 
                 String indexItem = String.valueOf(currentIndex + 1);
@@ -938,6 +925,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                     String index = msgSplit.get(1);
                     int video = Integer.parseInt(index);
+
+                    WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
+                    WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
+                    playlistItemAdapter.notifyDataSetChanged();
+                   // playListRecyclerView.smoothScrollBy(0, itemView.getTop());
+
+                    currentIndex = video;
+                    String indexItem = String.valueOf(video + 1);
+
+                    playlistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                    /* if(playerFragment.isVisible()){
                         youTubePlayer.loadVideos(playlistIds, video, 0);
                         messages.remove(deliveryInfo.getMessageId());

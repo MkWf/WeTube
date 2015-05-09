@@ -797,10 +797,21 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                 youTubePlayer.loadVideos(playlistIds);
             }else if(msg.startsWith("playlistnext")){
-                currentIndex++;
+                WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
+                ++currentIndex;
+                WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(true);
+
+                String index = String.valueOf(currentIndex + 1);
+                playlistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                 youTubePlayer.next();
             }else if(msg.startsWith("playlistprev")) {
-                currentIndex--;
+                WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
+                ++currentIndex;
+                WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(true);
+
+                String index = String.valueOf(currentIndex + 1);
+                playlistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+
                 youTubePlayer.previous();
             }else if(msg.startsWith("playlistindex")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
@@ -989,8 +1000,20 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     isPaused = true;
                 }else if(msg.startsWith("play")){
 
-                }else if(msg.startsWith("playlistprev")|| msg.startsWith("playlistnext") || msg.startsWith(msgSplitter + "seek")){
-                    //do nothing
+                }else if(msg.startsWith("playlistprev")){
+                    WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
+                    --currentIndex;
+                    WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(true);
+
+                    String index = String.valueOf(currentIndex - 1);
+                    playlistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+                }else if(msg.startsWith("playlistnext")){
+                    WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
+                    ++currentIndex;
+                    WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(true);
+
+                    String index = String.valueOf(currentIndex + 1);
+                    playlistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                 }else{
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                     messageItemAdapter.notifyDataSetChanged();

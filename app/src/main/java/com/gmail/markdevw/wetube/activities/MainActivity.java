@@ -313,7 +313,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             toolbar.setVisibility(View.VISIBLE);
             videoChatDivider.setVisibility(View.GONE);
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            playlistIndex = 0;
+            currentIndex = 0;
+            WeTubeApplication.getSharedDataSource().setPlayerVisible(false);
+            playlistItemAdapter.notifyDataSetChanged();
         }else{
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Are you sure you want to leave this session?");
@@ -768,6 +770,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
                 Toast.makeText(MainActivity.this, name + " has given you control", Toast.LENGTH_SHORT).show();
             } else if(msg.startsWith("playliststart")){
+                WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                 WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
                 currentIndex = 0;
                 WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(true);
@@ -832,6 +835,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 if(playerFragment.isVisible()){
                     youTubePlayer.loadVideos(playlistIds, video, 0);
                 }else{
+                    WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                     playlistIds.clear();
                     List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
                     for (int i = 0; i < videos.size(); i++) {
@@ -933,6 +937,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     messages.remove(deliveryInfo.getMessageId());
                     Toast.makeText(MainActivity.this, "You have given control to " + name, Toast.LENGTH_SHORT).show();
                 }else if(msg.startsWith("playliststart")) {
+                    WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                     WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);
                     currentIndex = 0;
                     WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(true);
@@ -977,6 +982,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     if(playerFragment.isVisible()){
                         youTubePlayer.loadVideos(playlistIds, video, 0);
                     }else{
+                        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         playlistIds.clear();
                         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
                         for (int i = 0; i < videos.size(); i++) {

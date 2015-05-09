@@ -88,7 +88,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
             count.setText(String.valueOf(playlistItem.getIndex()));
             Picasso.with(WeTubeApplication.getSharedInstance()).load(playlistItem.getThumbnailURL()).into(thumbnail);
 
-            if(WeTubeApplication.getSharedDataSource().isSessionController()){
+            if(WeTubeApplication.getSharedDataSource().isSessionController() && !WeTubeApplication.getSharedDataSource().isPlayerVisible()){
                 delete.setVisibility(View.VISIBLE);
             }else{
                 delete.setVisibility(View.GONE);

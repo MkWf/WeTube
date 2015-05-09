@@ -44,6 +44,7 @@ public class DataSource {
     private List<TagItem> uncommonTags = new ArrayList<>();
     private List<PlaylistItem> playlist = new ArrayList<>();
     private boolean isSessionController = false;
+    private boolean isPlayerVisible = false;
 
     public DataSource(Context context){
         videos = new ArrayList<VideoItem>();
@@ -67,7 +68,8 @@ public class DataSource {
         }
 
     }
-
+    public boolean isPlayerVisible() {return isPlayerVisible;}
+    public void setPlayerVisible(boolean isPlayerVisible) { this.isPlayerVisible = isPlayerVisible; }
     public boolean isSessionController() {return isSessionController;}
     public void setSessionController(boolean isController) { this.isSessionController = isController; }
     public List<PlaylistItem> getPlaylist() { return playlist; }

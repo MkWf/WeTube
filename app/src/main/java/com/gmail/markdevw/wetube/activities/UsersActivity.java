@@ -680,9 +680,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                userItemAdapter.notifyDataSetChanged();
                                navigationDrawerAdapter.notifyDataSetChanged();
                                if (!user.getLoggedStatus()) {
-                                   Toast.makeText(UsersActivity.this, user.getUsername() + " has gone offline", Toast.LENGTH_LONG).show();
+                                   Toast.makeText(UsersActivity.this, user.getUsername() + " is offline", Toast.LENGTH_LONG).show();
                                } else {
-                                   Toast.makeText(UsersActivity.this, user.getUsername() + " in already in a session", Toast.LENGTH_LONG).show();
+                                   Toast.makeText(UsersActivity.this, user.getUsername() + " is already in a session", Toast.LENGTH_LONG).show();
                                }
                            }
                        }

@@ -61,13 +61,6 @@ import java.util.List;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-/*MAKE SURE BOTH USERS HAVE CORRECT PLAYLISTS, GO THROUGH CODE AGAIN. MAYBE MESSAGES ARENT BEING DELIVERED AND HAVE TO USE ONMESSAGEDELIVERED
-NO REASON TO LOADVIDEOS BY SENDING MESSAGE WITH ALL THE VIDEOIDS TOGETHER. OTHER USER ALREADY HAS THE PLAYLISTS, JUST USE FOR LOOP TO LOOP THROUGH
-PLAYLISTSITEM.GETID TO CREATE THE PLAYLIST INSTEAD
-
-COPY-PASTE ALL THE ONINCOMING AND PLAYBACK STUFF INTO SUBLIME AND JUST HAVE THE PLAYLIST STUFF IN CODE FOR NOW TO GET IT WORKING THEN RE-ADD ALL
-THE OTHER STUFF BACK*/
-
 
 /**
  * Created by Mark on 3/24/2015.
@@ -272,7 +265,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             }
         }
 
-        if(!isMatchFound){
+        if(!isMatchFound && WeTubeApplication.getSharedDataSource().getPlaylist().size() < MAX_PLAYLIST_SIZE){
             if(WeTubeApplication.getSharedDataSource().isSessionController()){
                 messageService.sendMessage(id, "addtoplaylist" + msgSplitter + videoItem.getTitle() + msgSplitter + videoItem.getThumbnailURL() + msgSplitter
                                                + videoItem.getId());
@@ -281,6 +274,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                                     + videoItem.getId();
                 messageService.sendMessage(id, message);
             }
+        }else{
+            Toast.makeText(this, "Max playlist size reached (50)", Toast.LENGTH_SHORT).show();
         }
     }
 

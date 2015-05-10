@@ -1066,6 +1066,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     private void searchByName() {
         String currentUserId = ParseUser.getCurrentUser().getObjectId();
+        final WeTubeUser w = (WeTubeUser) ParseUser.getCurrentUser();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereNotEqualTo("objectId", currentUserId);
         query.whereEqualTo("isLoggedIn", true);
@@ -1084,22 +1085,42 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     WeTubeApplication.getSharedDataSource().getUsers().clear();
                     for (int i=0; i<userList.size(); i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
+
+                        WeTubeApplication.getSharedDataSource().getUsers()
+                                .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
+                       // userItemAdapter.notifyDataSetChanged();
+                    }
+
+                    for(int i = 0; i<userList.size(); i++){
+                        final WeTubeUser user = (WeTubeUser) userList.get(i);
                         String id = user.getObjectId();
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("friends", id);
-                        query.findInBackground(new FindCallback<ParseUser>() {
-                            public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                                if (userList.size() == 0) {
-                                    WeTubeApplication.getSharedDataSource().getUsers()
-                                            .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
-                                    userItemAdapter.notifyDataSetChanged();
-                                } else {
-                                    WeTubeApplication.getSharedDataSource().getUsers()
-                                            .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), true));
+
+                        ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                        q1.whereEqualTo("friend1", user);
+                        q1.whereEqualTo("friend2", w);
+
+                        ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                        q2.whereEqualTo("friend2", user);
+                        q2.whereEqualTo("friend1", w);
+
+                        List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                        queries.add(q1);
+                        queries.add(q2);
+
+                        ParseQuery<Friend> query = ParseQuery.or(queries);
+                        final int j = i;
+                        query.findInBackground(new FindCallback<Friend>() {
+                            @Override
+                            public void done(List<Friend> list, ParseException e) {
+                                if(list.size() > 0){
+                                    WeTubeApplication.getSharedDataSource().getUsers().get(j).setFriendStatus(true);
+                                }
+                                if(j == WeTubeApplication.getSharedDataSource().getUsers().size()-1){
                                     userItemAdapter.notifyDataSetChanged();
                                 }
                             }
                         });
+
                     }
                     swipeRefreshLayout.setRefreshing(false);
                 } else {

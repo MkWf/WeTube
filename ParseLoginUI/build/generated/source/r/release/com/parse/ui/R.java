@@ -43,8 +43,7 @@ public final class R {
         public static int com_parse_ui_parse_login_button_background_selector=0x7f020003;
         public static int com_parse_ui_twitter_login_button_background_selector=0x7f020004;
         public static int com_parse_ui_twitter_login_logo=0x7f020005;
-        public static int dog=0x7f020006;
-        public static int user_default=0x7f020007;
+        public static int user_default=0x7f020006;
     }
     public static final class id {
         public static int app_logo=0x7f090000;

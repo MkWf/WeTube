@@ -1184,41 +1184,43 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         @Override
         public void onMessageDelivered(MessageClient client, final MessageDeliveryInfo deliveryInfo) {
             String msg = messages.get(deliveryInfo.getMessageId());
-            ArrayList<String> message = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
-            if(msg.startsWith("friendaccept")){
-                final String name = message.get(1);
-                final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+            if(msg != null){
+                ArrayList<String> message = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+                if(msg.startsWith("friendaccept")){
+                    final String name = message.get(1);
+                    final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
 
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                query.whereEqualTo("objectId", deliveryInfo.getRecipientId());
-                query.findInBackground(new FindCallback<ParseUser>() {
-                    @Override
-                    public void done(List<ParseUser> parseUsers, ParseException e) {
-                        final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo("objectId", deliveryInfo.getRecipientId());
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> parseUsers, ParseException e) {
+                            final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
 
-                        user.add("friends", friend);
-                        user.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                        friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                                navigationDrawerAdapter.notifyDataSetChanged();
+                            user.add("friends", friend);
+                            user.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                                    navigationDrawerAdapter.notifyDataSetChanged();
 
-                                for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
-                                    if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
-                                        WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
-                                        userItemAdapter.notifyItemChanged(i);
+                                    for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+                                        if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
+                                            WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
+                                            userItemAdapter.notifyItemChanged(i);
+                                        }
                                     }
                                 }
-                            }
-                        });
-                    }
-                });
-            }else if(msg.startsWith("sessionaccept")){
-                Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
-                startActivity(intent);
+                            });
+                        }
+                    });
+                }else if(msg.startsWith("sessionaccept")){
+                    Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
+                    startActivity(intent);
+                }
+                messages.remove(deliveryInfo.getMessageId());
             }
-            messages.remove(deliveryInfo.getMessageId());
         }
 
         @Override

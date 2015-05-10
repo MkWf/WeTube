@@ -690,7 +690,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 query.findInBackground(new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> parseUsers, ParseException e) {
-                       if(parseUsers.size() > 0) {
+                       if(parseUsers.size() > 0 && e == null) {
                            WeTubeUser user = (WeTubeUser) parseUsers.get(0);
                            if (user.getLoggedStatus() && !user.getSessionStatus()) {
                                messageService.sendMessage(clickedUser.getId(), "startsession" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
@@ -706,6 +706,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                    Toast.makeText(UsersActivity.this, user.getUsername() + " is already in a session", Toast.LENGTH_LONG).show();
                                }
                            }
+                       }else {
+                           Toast.makeText(UsersActivity.this, "Error finding user: " + e, Toast.LENGTH_SHORT).show();
                        }
                     }
                 });
@@ -1187,7 +1189,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             if(msg != null){
                 ArrayList<String> message = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
                 if(msg.startsWith("friendaccept")){
-                    final String name = message.get(1);
                     final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
 
                     ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -1196,23 +1197,30 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         @Override
                         public void done(List<ParseUser> parseUsers, ParseException e) {
                             final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
+                            final String name = friend.getUsername();
 
-                            user.add("friends", friend);
-                            user.saveInBackground(new SaveCallback() {
+                            Friend newFriend = new Friend(user, friend);
+                            newFriend.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                                    navigationDrawerAdapter.notifyDataSetChanged();
+                                    if(e == null){
+                                        Toast.makeText(UsersActivity.this, name + " has been added to your friends list", Toast.LENGTH_SHORT).show();
+                                        WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                                friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                                        navigationDrawerAdapter.notifyDataSetChanged();
 
-                                    for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
-                                        if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
-                                            WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
-                                            userItemAdapter.notifyItemChanged(i);
+                                        for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+                                            if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
+                                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
+                                                userItemAdapter.notifyItemChanged(i);
+                                            }
                                         }
+                                    }else{
+                                        Toast.makeText(UsersActivity.this, "Failed to add " + name + " to your friends list", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
+
                         }
                     });
                 }else if(msg.startsWith("sessionaccept")){
@@ -1393,46 +1401,44 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             final String name = msg.get(1);
             final String id = msg.get(2);
 
-            final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle(name + " accepted your friend request");
+            final AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
 
             ParseQuery<ParseUser> query = ParseUser.getQuery();
             query.whereEqualTo("objectId", id);
             query.findInBackground(new FindCallback<ParseUser>() {
                 @Override
-                public void done(List<ParseUser> parseUsers, ParseException e) {
-                    final WeTubeUser friend = (WeTubeUser) parseUsers.get(0);
+                public void done(List<ParseUser> list, ParseException e) {
+                    if (list.size() > 0 && e == null) {
+                        WeTubeUser friend = (WeTubeUser) list.get(0);
 
-                    user.add("friends", friend);
-                    user.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                    friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                            navigationDrawerAdapter.notifyDataSetChanged();
+                        WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                        navigationDrawerAdapter.notifyDataSetChanged();
 
-                            for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
-                                if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
-                                    WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
-                                    userItemAdapter.notifyItemChanged(i);
-                                }
+                        for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+                            if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)) {
+                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
+                                userItemAdapter.notifyItemChanged(i);
                             }
                         }
-                    });
-                }
-            });
 
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                        builder.setTitle(name + " accepted your friend request");
+                    } else {
+                        builder.setTitle("Failed to add " + name + " to your friends list");
+                    }
+
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.setCancelable(false);
+                    dialog = builder.create();
+                    dialog.show();
                 }
             });
-            builder.setCancelable(false);
-            dialog = builder.create();
-            dialog.show();
         }else if(msg.get(0).equals("friendremove")){
             final String id = msg.get(2);
 

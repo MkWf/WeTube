@@ -12,11 +12,11 @@ public class Friend extends ParseObject {
 
     public Friend(){}
 
-    public Friend(String user, String friend){
+    public Friend(WeTubeUser user, WeTubeUser friend){
         setUser(user);
         setFriend(friend);
     }
 
-    public void setUser(String user) { put("friend1", user);}
-    public void setFriend(String friend) { put("friend2", friend); }
+    public void setUser(WeTubeUser user) { put("friend1", user);}
+    public void setFriend(WeTubeUser friend) { put("friend2", friend); }
 }

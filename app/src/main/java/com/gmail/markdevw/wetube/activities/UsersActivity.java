@@ -649,14 +649,35 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     @Override
-    public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, UserItem userItem, View view) {
+    public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, final UserItem userItem, final View view, final int index) {
         clickedUser = userItem;
 
-        PopupMenu popMenu = new PopupMenu(this, view);
-        getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("objectId", clickedUser.getId());
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> list, ParseException e) {
+                if (e == null && list.size() > 0) {
+                    WeTubeUser user = (WeTubeUser) list.get(0);
+                    clickedUser.setOnlineStatus(user.getLoggedStatus());
+                    clickedUser.setSessionStatus(user.getSessionStatus());
+                    navigationDrawerAdapter.notifyItemChanged(index);
 
-        popMenu.setOnMenuItemClickListener(this);
-        popMenu.show();
+                    PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
+
+                    if (user.getSessionStatus() || !user.getLoggedStatus()) {
+                        getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
+                    } else {
+                        getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+                    }
+
+                    popMenu.setOnMenuItemClickListener(UsersActivity.this);
+                    popMenu.show();
+                } else {
+                    Toast.makeText(UsersActivity.this, "Error searching for " + userItem.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override

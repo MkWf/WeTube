@@ -20,7 +20,7 @@ import java.lang.ref.WeakReference;
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, UserItem userItem, View view);
+        public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, UserItem userItem, View view, int index);
     }
 
     private WeakReference<Delegate> delegate;
@@ -45,7 +45,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     @Override
     public void onBindViewHolder(ItemAdapterViewHolder itemAdapterViewHolder, int index) {
         DataSource sharedDataSource = WeTubeApplication.getSharedDataSource();
-        itemAdapterViewHolder.update(sharedDataSource.getFriends().get(index));
+        itemAdapterViewHolder.update(sharedDataSource.getFriends().get(index), index);
     }
 
     @Override
@@ -58,6 +58,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         TextView name;
         ImageView status;
         UserItem userItem;
+        int index;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
@@ -68,8 +69,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             itemView.setOnClickListener(this);
         }
 
-        void update(UserItem userItem) {
+        void update(UserItem userItem, int index) {
             this.userItem = userItem;
+            this.index = index;
             name.setText(userItem.getName());
 
             if(!userItem.getOnlineStatus()){
@@ -83,7 +85,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         @Override
         public void onClick(View view) {
-            getDelegate().onNavItemClicked(NavigationDrawerAdapter.this, userItem, view);
+            getDelegate().onNavItemClicked(NavigationDrawerAdapter.this, userItem, view, index);
         }
     }
 }

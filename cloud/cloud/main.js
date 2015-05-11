@@ -857,3 +857,68 @@ Parse.Cloud.define("getMoreUsers", function(request, response) {
         }
     })  
 });
+
+Parse.Cloud.define("getFriendsAvailableTwo", function(request, response) {
+     
+    var userId = request.params.userId;
+    var emptyArray = [];
+    //var isEmpty = 1;
+
+    var query = new Parse.Query(Parse.User);
+    query.equalTo("objectId", userId);
+
+    query.find({
+        success: function(users){  
+            var user = users[0];    //passing myself
+      
+            var q1 = new Parse.Query("Friend");
+            q1.equalTo("friend1", user);
+
+            var q2 = new Parse.Query("Friend");
+            q2.equalTo("friend2", user);
+
+            var mainQuery = Parse.Query.or(q1, q2);
+            mainQuery.include("friend1");
+            mainQuery.include("friend2");
+            mainQuery.find({         //OR query to check both the friend1 and friend2 columns for myself. i only create one Friend object when a friend invite is accepted
+                                    //rather than two objects with each user on friend1 and friend2 
+                success: function(friends){
+                    var friendPtrs = [];   
+                    var availFriends = [];
+                    for(var i = 0; i<friends.length; i++){
+                        if(friends[i].get("friend1").id == user.id){  //if im on friend1, i get friend2
+                            friendPtrs.push(friends[i].get("friend2"));
+                        }else{
+                            friendPtrs.push(friends[i].get("friend1"));
+                        }
+                    }
+
+                    //response.success(friendPtrs);  <---- this successfully returns all the users im friends with but i dont want to stop there. i want to then sort 
+                                                     //the users alphabetically by their usernames before using a response.success. Adding ANY code beyond this line
+                                                     //gives me a Parse error of 'Script ran out of memory'. So, I returned the friends and looped through all the users 
+                                                     //to pull their objectIds and stored them in a List which I then passed to the function below to try to complete what I 
+                                                     //wanted to do in this function
+
+                      
+                }
+            })
+        }
+    })
+});
+
+Parse.Cloud.define("get", function(request, response) {
+
+    var userIds = request.params.userIds;
+    var array = [];
+
+    for(var i = 0; i<userIds.length; i++){    //tells me length of userIds is undefined
+        var query = new Parse.Query(Parse.User);
+        query.equalTo("objectId", userId[i]);
+        query.find({
+            success: function(results){
+                array.push(results[0]);
+            }
+        })
+    }
+    
+});

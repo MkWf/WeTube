@@ -309,22 +309,22 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         final HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsAvailable", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getFriendsAvailableTwo", params, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
                     if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
-                            WeTubeUser friend = (WeTubeUser) userList.get(i);
+                           // WeTubeUser friend = (WeTubeUser) userList.get(i);
 
-                            WeTubeApplication.getSharedDataSource().getFriends()
-                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                          //  WeTubeApplication.getSharedDataSource().getFriends()
+                              //      .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                               //             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
 
                     }
 
-                    ParseCloud.callFunctionInBackground("getFriendsUnavailable", params, new FunctionCallback<List<ParseUser>>() {
+                    ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
                             if (e == null) {
@@ -338,7 +338,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     }
                                 }
 
-                                ParseCloud.callFunctionInBackground("getFriendsOffline", params, new FunctionCallback<List<ParseUser>>() {
+                                ParseCloud.callFunctionInBackground("getFriendsOfflineTwo", params, new FunctionCallback<List<ParseUser>>() {
                                     @Override
                                     public void done(List<ParseUser> userList3, com.parse.ParseException e) {
                                         if (userList3.size() > 0) {
@@ -381,7 +381,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         final HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsAvailable", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getFriendsAvailableTwo", params, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
@@ -396,7 +396,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                     }
 
-                    ParseCloud.callFunctionInBackground("getFriendsUnavailable", params, new FunctionCallback<List<ParseUser>>() {
+                    ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
                             if (e == null) {
@@ -438,7 +438,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsOffline", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getFriendsOfflineTwo", params, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
@@ -475,24 +475,38 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsAvailable", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getFriendsAvailableTwo", params, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
-                            WeTubeUser friend = (WeTubeUser) userList.get(i);
+                    List<String> ids = new ArrayList<String>();
+                    for(int i = 0; i<userList.size(); i++){
+                        ids.add(userList.get(i).getObjectId());
+                    }
+                    HashMap<String, Object> paramsg = new HashMap<String, Object>();
+                    paramsg.put("userId", ids);
+                    ParseCloud.callFunctionInBackground("get", paramsg, new FunctionCallback<List<ParseUser>>() {
+                        @Override
+                        public void done(List<ParseUser> o, ParseException e) {
+                            if(e == null){
 
-                            WeTubeApplication.getSharedDataSource().getFriends()
-                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                            }
+                        }
+                    });
+                   /* if (userList.size() > 0) {
+                        for (int i = 0; i < userList.size(); i++) {
+                             WeTubeUser friend = (WeTubeUser) userList.get(i);
+
+                              WeTubeApplication.getSharedDataSource().getFriends()
+                                  .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                  friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
 
                     }
                     navigationDrawerAdapter.notifyDataSetChanged();
                     if (progressDialog != null) {
                         progressDialog.dismiss();
-                    }
+                    }*/
                 } else {
                     navigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -512,7 +526,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsUnavailable", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
@@ -549,7 +563,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsAtoZ", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getFriendsAtoZTwo", params, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {

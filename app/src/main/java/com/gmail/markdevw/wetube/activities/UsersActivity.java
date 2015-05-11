@@ -1139,6 +1139,33 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+        builder.setTitle("Are you sure you want to exit?");
+
+        builder.setPositiveButton("Exit without logout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setNeutralButton("Exit with logout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.cancel();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
     private class MyServiceConnection implements ServiceConnection {
 
         @Override

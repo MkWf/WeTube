@@ -1241,12 +1241,33 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                    user.setSessionStatus(true);
-                    user.saveInBackground();
-                    messageService.sendMessage(id, "sessionaccept" + msgSplitter + user.getUsername() + msgSplitter + user.getObjectId());
-                    WeTubeApplication.getSharedDataSource().setSessionController(false);
-                    WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(name, id));
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo("objectId", id);
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> list, ParseException e) {
+                            if(list.size() > 0 && e == null){
+                                WeTubeUser recip = (WeTubeUser) list.get(0);
+                                if(!recip.getSessionStatus() && recip.getLoggedStatus()){
+                                    messageService.sendMessage(id, "sessionaccept" + msgSplitter + recip.getUsername() + msgSplitter + recip.getObjectId());
+
+                                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                                    user.setSessionStatus(true);
+                                    user.saveInBackground();
+                                    WeTubeApplication.getSharedDataSource().setSessionController(false);
+                                    WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(name, id));
+                                }else{
+                                    if(!recip.getLoggedStatus()){
+                                        Toast.makeText(UsersActivity.this, "Session failed to start. User has gone offline", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        Toast.makeText(UsersActivity.this, "Session failed to start. User is in another session", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(UsersActivity.this, "Error finding user", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                     dialog.cancel();
                 }
             });

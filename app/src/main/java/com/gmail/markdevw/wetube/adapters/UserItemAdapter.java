@@ -20,7 +20,7 @@ import java.lang.ref.WeakReference;
 public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onItemClicked(UserItemAdapter itemAdapter, UserItem userItem, View view);
+        public void onItemClicked(UserItemAdapter itemAdapter, UserItem userItem, View view, int index);
     }
 
     private WeakReference<Delegate> delegate;
@@ -45,7 +45,7 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
     @Override
     public void onBindViewHolder(ItemAdapterViewHolder itemAdapterViewHolder, int index) {
         DataSource sharedDataSource = WeTubeApplication.getSharedDataSource();
-        itemAdapterViewHolder.update(sharedDataSource.getUsers().get(index));
+        itemAdapterViewHolder.update(sharedDataSource.getUsers().get(index), index);
     }
 
     @Override
@@ -59,6 +59,7 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
         ImageView status;
         ImageView friend;
         UserItem userItem;
+        int index;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
@@ -70,11 +71,14 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
             itemView.setOnClickListener(this);
         }
 
-        void update(UserItem userItem) {
+        void update(UserItem userItem, int index) {
             this.userItem = userItem;
+            this.index = index;
             name.setText(userItem.getName());
 
-            if(userItem.getSessionStatus()){
+            if(!userItem.getOnlineStatus()) {
+                status.setImageResource(R.drawable.offline);
+            }else if(userItem.getSessionStatus()){
                 status.setImageResource(R.drawable.unavailable);
             }else{
                 status.setImageResource(R.drawable.available);
@@ -89,7 +93,7 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
 
         @Override
         public void onClick(View view) {
-            getDelegate().onItemClicked(UserItemAdapter.this, userItem, view);
+            getDelegate().onItemClicked(UserItemAdapter.this, userItem, view, index);
         }
     }
 }

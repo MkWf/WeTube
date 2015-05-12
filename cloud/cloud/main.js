@@ -866,6 +866,7 @@ Parse.Cloud.define("getFriendsAvailableTwo", function(request, response) {
 
     var query = new Parse.Query(Parse.User);
     query.equalTo("objectId", userId);
+    console.log(query);
 
     query.find({
         success: function(users){  
@@ -880,26 +881,38 @@ Parse.Cloud.define("getFriendsAvailableTwo", function(request, response) {
             var mainQuery = Parse.Query.or(q1, q2);
             mainQuery.include("friend1");
             mainQuery.include("friend2");
-            mainQuery.find({         //OR query to check both the friend1 and friend2 columns for myself. i only create one Friend object when a friend invite is accepted
-                                    //rather than two objects with each user on friend1 and friend2 
+
+            var User = Parse.Object.extend("User"); 
+            var innerQuery = new Parse.Query(User);
+            innerQuery.equalTo("isInSession", "false");
+            innerQuery.equalTo("isLoggedIn", "true");
+            console.log(innerQuery);
+
+            mainQuery.matchesQuery("friend1", innerQuery);
+            //mainQuery.matchesQuery("friend2", innerQuery);
+
+            mainQuery.find({         
                 success: function(friends){
-                    var friendPtrs = [];   
+                    console.log(friends);
+                    response.success(friends);
+                    /*var friendPtrs = [];   
                     var availFriends = [];
                     for(var i = 0; i<friends.length; i++){
-                        if(friends[i].get("friend1").id == user.id){  //if im on friend1, i get friend2
+                        if(friends[i].get("friend1").id == user.id){  
                             friendPtrs.push(friends[i].get("friend2"));
                         }else{
                             friendPtrs.push(friends[i].get("friend1"));
                         }
                     }
 
-                    response.success(friendPtrs);  //<---- this successfully returns all the users im friends with but i dont want to stop there. i want to then sort 
-                                                     //the users alphabetically by their usernames before using a response.success. Adding ANY code beyond this line
-                                                     //gives me a Parse error of 'Script ran out of memory'. So, I returned the friends and looped through all the users 
-                                                     //to pull their objectIds and stored them in a List which I then passed to the function below to try to complete what I 
-                                                     //wanted to do in this function
+                    for(var i = 0; i<friendPtrs.length; i++){
+
+                    }    */                             
 
                       
+                }, 
+                error: function(err){
+                  response.error(err);
                 }
             })
         }

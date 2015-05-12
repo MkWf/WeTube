@@ -315,16 +315,19 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 if (e == null) {
                     if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
-                           // WeTubeUser friend = (WeTubeUser) userList.get(i);
+                            WeTubeUser friend = (WeTubeUser) userList.get(i);
 
-                          //  WeTubeApplication.getSharedDataSource().getFriends()
-                              //      .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                               //             friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                            WeTubeApplication.getSharedDataSource().getFriends()
+                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
-
+                        navigationDrawerAdapter.notifyDataSetChanged();
+                        if (progressDialog != null) {
+                            progressDialog.dismiss();
+                        }
                     }
 
-                    ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
+                    /*ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
                             if (e == null) {
@@ -358,7 +361,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 });
                             }
                         }
-                    });
+                    });*/
                 } else {
                     if (progressDialog != null) {
                         progressDialog.dismiss();
@@ -556,7 +559,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     public void getAlphabeticFriends(){
         String currentUserId = ParseUser.getCurrentUser().getObjectId();
 
-        if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0){
+        if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0) {
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
 
@@ -1058,7 +1061,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if(userList.size() == 0){
+                    if (userList.size() == 0) {
                         WeTubeApplication.getSharedDataSource().getUsers().clear();
                         userItemAdapter.notifyDataSetChanged();
                         Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -1123,7 +1126,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if(userList.size() == 0){
+                    if (userList.size() == 0) {
                         WeTubeApplication.getSharedDataSource().getUsers().clear();
                         userItemAdapter.notifyDataSetChanged();
                         Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -1131,14 +1134,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 Toast.LENGTH_LONG).show();
                     }
                     WeTubeApplication.getSharedDataSource().getUsers().clear();
-                    for (int i=0; i<userList.size(); i++) {
+                    for (int i = 0; i < userList.size(); i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
 
                         WeTubeApplication.getSharedDataSource().getUsers()
                                 .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
                     }
 
-                    for(int i = 0; i<userList.size(); i++){
+                    for (int i = 0; i < userList.size(); i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
 
                         ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
@@ -1158,10 +1161,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         query.findInBackground(new FindCallback<Friend>() {
                             @Override
                             public void done(List<Friend> list, ParseException e) {
-                                if(list.size() > 0){
+                                if (list.size() > 0) {
                                     WeTubeApplication.getSharedDataSource().getUsers().get(j).setFriendStatus(true);
                                 }
-                                if(j == WeTubeApplication.getSharedDataSource().getUsers().size()-1){
+                                if (j == WeTubeApplication.getSharedDataSource().getUsers().size() - 1) {
                                     userItemAdapter.notifyDataSetChanged();
                                 }
                             }

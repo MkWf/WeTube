@@ -893,7 +893,7 @@ Parse.Cloud.define("getFriendsAvailableTwo", function(request, response) {
                         }
                     }
 
-                    //response.success(friendPtrs);  <---- this successfully returns all the users im friends with but i dont want to stop there. i want to then sort 
+                    response.success(friendPtrs);  //<---- this successfully returns all the users im friends with but i dont want to stop there. i want to then sort 
                                                      //the users alphabetically by their usernames before using a response.success. Adding ANY code beyond this line
                                                      //gives me a Parse error of 'Script ran out of memory'. So, I returned the friends and looped through all the users 
                                                      //to pull their objectIds and stored them in a List which I then passed to the function below to try to complete what I 

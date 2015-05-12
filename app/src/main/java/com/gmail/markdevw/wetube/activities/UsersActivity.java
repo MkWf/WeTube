@@ -163,19 +163,24 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+                try{
+                    super.onScrolled(recyclerView, dx, dy);
 
-                totalItemCount = mLayoutManager.getItemCount();
-                lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
+                    totalItemCount = mLayoutManager.getItemCount();
+                    lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
 
-                if(totalItemCount == lastVisibleItem && totalItemCount < MAX_USERS){
-                    Toast.makeText(getBaseContext(), "Loading more users",
-                            Toast.LENGTH_SHORT).show();
+                    if(totalItemCount == lastVisibleItem && totalItemCount < MAX_USERS){
+                        Toast.makeText(getBaseContext(), "Loading more users",
+                                Toast.LENGTH_SHORT).show();
 
-                    getMoreUsers(totalItemCount, 20);
-                }else if(totalItemCount == lastVisibleItem && totalItemCount >= MAX_USERS){
-                    Toast.makeText(getBaseContext(), "Reached max user limit. Please refresh list.",
-                            Toast.LENGTH_SHORT).show();
+                        getMoreUsers(totalItemCount, 20);
+                    }else if(totalItemCount == lastVisibleItem && totalItemCount >= MAX_USERS){
+                        Toast.makeText(getBaseContext(), "Reached max user limit. Please refresh list.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                catch(IndexOutOfBoundsException e){
+                    //prevent crashing from scrolling too quickly
                 }
             }
         });
@@ -843,14 +848,21 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public void onDestroy(){
         super.onDestroy();
-        stopService(new Intent(this, MessageService.class));
-        messageService.removeMessageClientListener(messageClientListener);
-        unbindService(serviceConnection);
 
-        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-        user.setLoggedStatus(false);
-        user.saveInBackground();
-        ParseUser.logOut();
+        try{
+            stopService(new Intent(this, MessageService.class));
+            messageService.removeMessageClientListener(messageClientListener);
+            unbindService(serviceConnection);
+        }catch(NullPointerException e){
+
+        }
+
+        if(ParseUser.getCurrentUser() != null){
+            WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+            user.setLoggedStatus(false);
+            user.saveInBackground();
+            ParseUser.logOut();
+        }
     }
 
     @Override
@@ -1148,6 +1160,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                UsersActivity.this.moveTaskToBack(true);
                 UsersActivity.this.finish();
             }
         });
@@ -1161,6 +1174,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.cancel();
+                UsersActivity.this.moveTaskToBack(true);
                 UsersActivity.this.finish();
             }
         });

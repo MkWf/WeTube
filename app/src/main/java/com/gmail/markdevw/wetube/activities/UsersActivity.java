@@ -1148,6 +1148,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                UsersActivity.this.finish();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -1160,6 +1161,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.cancel();
+                UsersActivity.this.finish();
             }
         });
         builder.setCancelable(false);

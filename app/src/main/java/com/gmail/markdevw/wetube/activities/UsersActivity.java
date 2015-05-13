@@ -310,24 +310,20 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         final HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
         ParseCloud.callFunctionInBackground("getFriendsAvailableTwo", params, new FunctionCallback<List<ParseUser>>() {
-            @Override
-            public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
-                            WeTubeUser friend = (WeTubeUser) userList.get(i);
+                        @Override
+                        public void done(List<ParseUser> userList, com.parse.ParseException e) {
+                            if (e == null) {
+                                if (userList.size() > 0) {
+                                    for (int i = 0; i < userList.size(); i++) {
+                                        WeTubeUser friend = (WeTubeUser) userList.get(i);
 
-                            WeTubeApplication.getSharedDataSource().getFriends()
-                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                        }
-                        navigationDrawerAdapter.notifyDataSetChanged();
-                        if (progressDialog != null) {
-                            progressDialog.dismiss();
-                        }
-                    }
+                                        WeTubeApplication.getSharedDataSource().getFriends()
+                                                .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                                        friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                                    }
+                                }
 
-                    /*ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
+                    ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
                             if (e == null) {
@@ -361,7 +357,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 });
                             }
                         }
-                    });*/
+                    });
                 } else {
                     if (progressDialog != null) {
                         progressDialog.dismiss();
@@ -482,21 +478,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    List<String> ids = new ArrayList<String>();
-                    for(int i = 0; i<userList.size(); i++){
-                        ids.add(userList.get(i).getObjectId());
-                    }
-                    HashMap<String, Object> paramsg = new HashMap<String, Object>();
-                    paramsg.put("userId", ids);
-                    ParseCloud.callFunctionInBackground("get", paramsg, new FunctionCallback<List<ParseUser>>() {
-                        @Override
-                        public void done(List<ParseUser> o, ParseException e) {
-                            if(e == null){
-
-                            }
-                        }
-                    });
-                   /* if (userList.size() > 0) {
+                     if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
                              WeTubeUser friend = (WeTubeUser) userList.get(i);
 
@@ -509,7 +491,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     navigationDrawerAdapter.notifyDataSetChanged();
                     if (progressDialog != null) {
                         progressDialog.dismiss();
-                    }*/
+                    }
                 } else {
                     navigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -556,25 +538,25 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         });
     }
 
-    public void getAlphabeticFriends(){
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
+            public void getAlphabeticFriends() {
+                String currentUserId = ParseUser.getCurrentUser().getObjectId();
 
-        if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0) {
-            WeTubeApplication.getSharedDataSource().getFriends().clear();
-        }
+                if (WeTubeApplication.getSharedDataSource().getFriends().size() > 0) {
+                    WeTubeApplication.getSharedDataSource().getFriends().clear();
+                }
 
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getFriendsAtoZTwo", params, new FunctionCallback<List<ParseUser>>() {
-            @Override
-            public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
-                            WeTubeUser friend = (WeTubeUser) userList.get(i);
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("userId", ParseUser.getCurrentUser().getObjectId());
+                ParseCloud.callFunctionInBackground("getFriendsAtoZTwo", params, new FunctionCallback<List<ParseUser>>() {
+                    @Override
+                    public void done(List<ParseUser> userList, com.parse.ParseException e) {
+                        if (e == null) {
+                            if (userList.size() > 0) {
+                                for (int i = 0; i < userList.size(); i++) {
+                                    WeTubeUser friend = (WeTubeUser) userList.get(i);
 
-                            WeTubeApplication.getSharedDataSource().getFriends()
+                                    WeTubeApplication.getSharedDataSource().getFriends()
                                     .add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
@@ -589,82 +571,82 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
-                }
+                        }
+                    }
+                });
             }
-        });
-    }
 
-    @Override
+            @Override
     public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, final View view, final int index) {
 
-        clickedUser = userItem;
+                clickedUser = userItem;
 
-        ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
-        query.whereEqualTo("blockedBy", WeTubeUser.getCurrentUser().getObjectId());
-        query.whereEqualTo("userId", userItem.getId());
-        query.findInBackground(new FindCallback<Blocked>() {
-            @Override
-            public void done(final List<Blocked> list, ParseException e) {
-                if (list.size() > 0) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                    builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
+                ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
+                query.whereEqualTo("blockedBy", WeTubeUser.getCurrentUser().getObjectId());
+                query.whereEqualTo("userId", userItem.getId());
+                query.findInBackground(new FindCallback<Blocked>() {
+                    @Override
+                    public void done(final List<Blocked> list, ParseException e) {
+                        if (list.size() > 0) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                            builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
 
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            list.get(0).deleteInBackground(new DeleteCallback() {
+                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    list.get(0).deleteInBackground(new DeleteCallback() {
                                 @Override
                                 public void done(ParseException e) {
                                     Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setCancelable(false);
-                    builder.show();
-                } else {
-                    ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
-                    query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
-                    query.whereEqualTo("blockedBy", userItem.getId());
-                    query.findInBackground(new FindCallback<Blocked>() {
-                        @Override
-                        public void done(List<Blocked> list, ParseException e) {
-                            if (list.size() > 0) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                                builder.setTitle(clickedUser.getName() + " has you blocked");
+                                    dialog.cancel();
+                                }
+                            });
+                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                            builder.setCancelable(false);
+                            builder.show();
+                        } else {
+                            ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
+                            query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
+                            query.whereEqualTo("blockedBy", userItem.getId());
+                            query.findInBackground(new FindCallback<Blocked>() {
+                                @Override
+                                public void done(List<Blocked> list, ParseException e) {
+                                    if (list.size() > 0) {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                                        builder.setTitle(clickedUser.getName() + " has you blocked");
 
-                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                                builder.setCancelable(false);
-                                builder.show();
-                            } else {
-                                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                                query.whereEqualTo("objectId", clickedUser.getId());
-                                query.findInBackground(new FindCallback<ParseUser>() {
-                                    @Override
-                                    public void done(List<ParseUser> list, ParseException e) {
-                                        if (e == null && list.size() > 0) {
-                                            WeTubeUser user = (WeTubeUser) list.get(0);
-                                            clickedUser.setOnlineStatus(user.getLoggedStatus());
-                                            clickedUser.setSessionStatus(user.getSessionStatus());
-                                            userItemAdapter.notifyItemChanged(index);
+                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        builder.setCancelable(false);
+                                        builder.show();
+                                    } else {
+                                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                                        query.whereEqualTo("objectId", clickedUser.getId());
+                                        query.findInBackground(new FindCallback<ParseUser>() {
+                                            @Override
+                                            public void done(List<ParseUser> list, ParseException e) {
+                                                if (e == null && list.size() > 0) {
+                                                    WeTubeUser user = (WeTubeUser) list.get(0);
+                                                    clickedUser.setOnlineStatus(user.getLoggedStatus());
+                                                    clickedUser.setSessionStatus(user.getSessionStatus());
+                                                    userItemAdapter.notifyItemChanged(index);
 
-                                            PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
+                                                    PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
 
-                                            if (user.getSessionStatus() || !user.getLoggedStatus()) {
-                                                getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
-                                            } else {
+                                                    if (user.getSessionStatus() || !user.getLoggedStatus()) {
+                                                        getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
+                                                    } else {
                                                 getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
                                             }
 
@@ -1115,55 +1097,55 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         });
     }
 
-    private void searchByName() {
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-        final WeTubeUser w = (WeTubeUser) ParseUser.getCurrentUser();
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereNotEqualTo("objectId", currentUserId);
-        query.whereEqualTo("isLoggedIn", true);
-        query.whereStartsWith("username", searchField.getText().toString());
-        query.orderByAscending("username");
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                if (e == null) {
-                    if (userList.size() == 0) {
-                        WeTubeApplication.getSharedDataSource().getUsers().clear();
-                        userItemAdapter.notifyDataSetChanged();
-                        Toast.makeText(WeTubeApplication.getSharedInstance(),
-                                "Could not find any logged in users with that name",
-                                Toast.LENGTH_LONG).show();
-                    }
-                    WeTubeApplication.getSharedDataSource().getUsers().clear();
-                    for (int i = 0; i < userList.size(); i++) {
-                        final WeTubeUser user = (WeTubeUser) userList.get(i);
+            private void searchByName() {
+                String currentUserId = ParseUser.getCurrentUser().getObjectId();
+                final WeTubeUser w = (WeTubeUser) ParseUser.getCurrentUser();
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                query.whereNotEqualTo("objectId", currentUserId);
+                query.whereEqualTo("isLoggedIn", true);
+                query.whereStartsWith("username", searchField.getText().toString());
+                query.orderByAscending("username");
+                query.findInBackground(new FindCallback<ParseUser>() {
+                    public void done(List<ParseUser> userList, com.parse.ParseException e) {
+                        if (e == null) {
+                            if (userList.size() == 0) {
+                                WeTubeApplication.getSharedDataSource().getUsers().clear();
+                                userItemAdapter.notifyDataSetChanged();
+                                Toast.makeText(WeTubeApplication.getSharedInstance(),
+                                        "Could not find any logged in users with that name",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                            WeTubeApplication.getSharedDataSource().getUsers().clear();
+                            for (int i = 0; i < userList.size(); i++) {
+                                final WeTubeUser user = (WeTubeUser) userList.get(i);
 
-                        WeTubeApplication.getSharedDataSource().getUsers()
-                                .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
-                    }
+                                WeTubeApplication.getSharedDataSource().getUsers()
+                                        .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
+                            }
 
-                    for (int i = 0; i < userList.size(); i++) {
-                        final WeTubeUser user = (WeTubeUser) userList.get(i);
+                            for (int i = 0; i < userList.size(); i++) {
+                                final WeTubeUser user = (WeTubeUser) userList.get(i);
 
-                        ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
-                        q1.whereEqualTo("friend1", user);
-                        q1.whereEqualTo("friend2", w);
+                                ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                                q1.whereEqualTo("friend1", user);
+                                q1.whereEqualTo("friend2", w);
 
-                        ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
-                        q2.whereEqualTo("friend2", user);
-                        q2.whereEqualTo("friend1", w);
+                                ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                                q2.whereEqualTo("friend2", user);
+                                q2.whereEqualTo("friend1", w);
 
-                        List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
-                        queries.add(q1);
-                        queries.add(q2);
+                                List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                                queries.add(q1);
+                                queries.add(q2);
 
-                        ParseQuery<Friend> query = ParseQuery.or(queries);
-                        final int j = i;
-                        query.findInBackground(new FindCallback<Friend>() {
-                            @Override
-                            public void done(List<Friend> list, ParseException e) {
-                                if (list.size() > 0) {
+                                ParseQuery<Friend> query = ParseQuery.or(queries);
+                                final int j = i;
+                                query.findInBackground(new FindCallback<Friend>() {
+                                    @Override
+                                    public void done(List<Friend> list, ParseException e) {
+                                        if (list.size() > 0) {
                                     WeTubeApplication.getSharedDataSource().getUsers().get(j).setFriendStatus(true);
-                                }
+                                        }
                                 if (j == WeTubeApplication.getSharedDataSource().getUsers().size() - 1) {
                                     userItemAdapter.notifyDataSetChanged();
                                 }
@@ -1488,7 +1470,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             builder.setCancelable(false);
             dialog = builder.create();
             dialog.show();
-        }else if(msg.get(0).equals("friendaccept")){
+        } else if (msg.get(0).equals("friendaccept")) {
             final String name = msg.get(1);
             final String id = msg.get(2);
 

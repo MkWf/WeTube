@@ -860,8 +860,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         if(ParseUser.getCurrentUser() != null){
             WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
             user.setLoggedStatus(false);
-            user.saveInBackground();
-            ParseUser.logOut();
+            user.setSessionStatus(false);
+            user.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    ParseUser.logOut();
+                }
+            });
         }
     }
 

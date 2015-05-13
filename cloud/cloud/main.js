@@ -901,9 +901,18 @@ Parse.Cloud.define("getFriendsAvailableTwo", function(request, response) {
                         }
                     }
 
-                   nameSort = function(a,b){
-                      return a.get("username")>b.get("username");
-                  }
+                    function nameSort(a, b)
+                    {
+                         var A = a.get("username").toLowerCase();
+                         var B = b.get("username").toLowerCase();
+                         if (A < B){
+                            return -1;
+                         }else if (A > B){
+                           return  1;
+                         }else{
+                           return 0;
+                         }
+                    }
                      
                   friendPtrs = friendPtrs.sort(nameSort);
                   response.success(friendPtrs);
@@ -966,9 +975,18 @@ Parse.Cloud.define("getFriendsUnavailableTwo", function(request, response) {
                               }
                           }
 
-                         nameSort = function(a,b){
-                            return a.get("username")>b.get("username");
-                        }
+                   function nameSort(a, b)
+                    {
+                         var A = a.get("username").toLowerCase();
+                         var B = b.get("username").toLowerCase();
+                         if (A < B){
+                            return -1;
+                         }else if (A > B){
+                           return  1;
+                         }else{
+                           return 0;
+                         }
+                    }
                            
                         friendPtrs = friendPtrs.sort(nameSort);
 
@@ -1034,9 +1052,18 @@ Parse.Cloud.define("getFriendsOfflineTwo", function(request, response) {
                               }
                           }
 
-                         nameSort = function(a,b){
-                            return a.get("username")>b.get("username");
-                        }
+                          function nameSort(a, b)
+                          {
+                               var A = a.get("username").toLowerCase();
+                               var B = b.get("username").toLowerCase();
+                               if (A < B){
+                                  return -1;
+                               }else if (A > B){
+                                 return  1;
+                               }else{
+                                 return 0;
+                               }
+                          }
                            
                         friendPtrs = friendPtrs.sort(nameSort);
 
@@ -1064,7 +1091,7 @@ Parse.Cloud.define("getFriendsAtoZTwo", function(request, response) {
 
     query.find({
         success: function(users){  
-           var user = users[0];    //passing myself
+           var user = users[0];   
       
             var q1 = new Parse.Query("Friend");
             q1.equalTo("friend1", user);
@@ -1075,6 +1102,8 @@ Parse.Cloud.define("getFriendsAtoZTwo", function(request, response) {
             var mainQuery = Parse.Query.or(q1, q2);
             mainQuery.include("friend1");
             mainQuery.include("friend2");
+            mainQuery.include("User");
+            mainQuery.ascending("username");
 
             mainQuery.find({         
                 success: function(friends){
@@ -1088,9 +1117,18 @@ Parse.Cloud.define("getFriendsAtoZTwo", function(request, response) {
                         }
                     }
 
-                   nameSort = function(a,b){
-                      return a.get("username")>b.get("username");
-                  }
+                   function nameSort(a, b)
+                    {
+                         var A = a.get("username").toLowerCase();
+                         var B = b.get("username").toLowerCase();
+                         if (A < B){
+                            return -1;
+                         }else if (A > B){
+                           return  1;
+                         }else{
+                           return 0;
+                         }
+                    }
                      
                   friendPtrs = friendPtrs.sort(nameSort);
                   response.success(friendPtrs);

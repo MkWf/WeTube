@@ -543,29 +543,28 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         });
     }
 
-            public void getAlphabeticFriends() {
-                String currentUserId = ParseUser.getCurrentUser().getObjectId();
+    public void getAlphabeticFriends() {
+        String currentUserId = ParseUser.getCurrentUser().getObjectId();
 
-                if (WeTubeApplication.getSharedDataSource().getFriends().size() > 0) {
-                    WeTubeApplication.getSharedDataSource().getFriends().clear();
-                }
+        if (WeTubeApplication.getSharedDataSource().getFriends().size() > 0) {
+            WeTubeApplication.getSharedDataSource().getFriends().clear();
+        }
 
 
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("userId", ParseUser.getCurrentUser().getObjectId());
-                ParseCloud.callFunctionInBackground("getFriendsAtoZTwo", params, new FunctionCallback<List<ParseUser>>() {
-                    @Override
-                    public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                        if (e == null) {
-                            if (userList.size() > 0) {
-                                for (int i = 0; i < userList.size(); i++) {
-                                    WeTubeUser friend = (WeTubeUser) userList.get(i);
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("userId", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("getFriendsAtoZTwo", params, new FunctionCallback<List<ParseUser>>() {
+            @Override
+            public void done(List<ParseUser> userList, com.parse.ParseException e) {
+                if (e == null) {
+                    if (userList.size() > 0) {
+                        for (int i = 0; i < userList.size(); i++) {
+                            WeTubeUser friend = (WeTubeUser) userList.get(i);
 
-                                    WeTubeApplication.getSharedDataSource().getFriends()
-                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                            WeTubeApplication.getSharedDataSource().getFriends()
+                            .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                    friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
-
                     }
                     navigationDrawerAdapter.notifyDataSetChanged();
                     if (progressDialog != null) {
@@ -576,12 +575,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                }
             }
+        });
+    }
 
-            @Override
+    @Override
     public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, final View view, final int index) {
 
                 clickedUser = userItem;

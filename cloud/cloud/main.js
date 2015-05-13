@@ -857,3 +857,250 @@ Parse.Cloud.define("getMoreUsers", function(request, response) {
         }
     })  
 });
+
+Parse.Cloud.define("getFriendsAvailableTwo", function(request, response) {
+     
+    var userId = request.params.userId;
+    var emptyArray = [];
+    //var isEmpty = 1;
+
+    var query = new Parse.Query(Parse.User);
+    query.equalTo("objectId", userId);
+
+    query.find({
+        success: function(users){  
+           var user = users[0];    //passing myself
+      
+            var q1 = new Parse.Query("Friend");
+            q1.equalTo("friend1", user);
+
+            var q2 = new Parse.Query("Friend");
+            q2.equalTo("friend2", user);
+
+            var mainQuery = Parse.Query.or(q1, q2);
+            mainQuery.include("friend1");
+            mainQuery.include("friend2");
+
+            var User = Parse.Object.extend("User"); 
+            var innerQuery = new Parse.Query(User);
+            innerQuery.equalTo("isInSession", false);
+            innerQuery.equalTo("isLoggedIn", true);
+
+            mainQuery.matchesQuery("friend1", innerQuery);
+            mainQuery.matchesQuery("friend2", innerQuery);
+
+            mainQuery.find({         
+                success: function(friends){
+                    var friendPtrs = [];   
+                    var availFriends = [];
+                    for(var i = 0; i<friends.length; i++){
+                        if(friends[i].get("friend1").id == user.id){  
+                            friendPtrs.push(friends[i].get("friend2"));
+                        }else{
+                            friendPtrs.push(friends[i].get("friend1"));
+                        }
+                    }
+
+                   nameSort = function(a,b){
+                      return a.get("username")>b.get("username");
+                  }
+                     
+                  friendPtrs = friendPtrs.sort(nameSort);
+                  response.success(friendPtrs);
+           
+                }, 
+                error: function(err){
+                  response.error(err);
+                }
+            })
+        
+        }
+    })
+});
+
+Parse.Cloud.define("getFriendsUnavailableTwo", function(request, response) {
+     
+    var userId = request.params.userId;
+    var emptyArray = [];
+    //var isEmpty = 1;
+
+    var query = new Parse.Query(Parse.User);
+    query.equalTo("objectId", userId);
+
+    query.find({
+        success: function(users){  
+           var user = users[0];    //passing myself
+      
+            var q1 = new Parse.Query("Friend");
+            q1.equalTo("friend1", user);
+
+            var q2 = new Parse.Query("Friend");
+            q2.equalTo("friend2", user);
+
+            var mainQuery = Parse.Query.or(q1, q2);
+            mainQuery.include("friend1");
+            mainQuery.include("friend2");
+
+            user.set("isInSession", true);
+            user.save(null, {
+              success: function(gameScore) {
+                  var User = Parse.Object.extend("User"); 
+                  var innerQuery = new Parse.Query(User);
+                  innerQuery.equalTo("isInSession", true);
+                  innerQuery.equalTo("isLoggedIn", true);
+
+                  mainQuery.matchesQuery("friend1", innerQuery);
+                  mainQuery.matchesQuery("friend2", innerQuery);
+
+                  mainQuery.find({         
+                      success: function(friends){
+                          user.set("isInSession", false);
+                          user.save();
+                          var friendPtrs = [];   
+                          var availFriends = [];
+                          for(var i = 0; i<friends.length; i++){
+                              if(friends[i].get("friend1").id == user.id){  
+                                  friendPtrs.push(friends[i].get("friend2"));
+                              }else{
+                                  friendPtrs.push(friends[i].get("friend1"));
+                              }
+                          }
+
+                         nameSort = function(a,b){
+                            return a.get("username")>b.get("username");
+                        }
+                           
+                        friendPtrs = friendPtrs.sort(nameSort);
+
+                        response.success(friendPtrs);
+                 
+                      }, 
+                      error: function(err){
+                        response.error(err);
+                      }
+                  })
+              }
+            });     
+        }
+    })
+});
+
+
+Parse.Cloud.define("getFriendsOfflineTwo", function(request, response) {
+     
+    var userId = request.params.userId;
+    var emptyArray = [];
+    //var isEmpty = 1;
+
+    var query = new Parse.Query(Parse.User);
+    query.equalTo("objectId", userId);
+
+    query.find({
+        success: function(users){  
+           var user = users[0];    //passing myself
+      
+            var q1 = new Parse.Query("Friend");
+            q1.equalTo("friend1", user);
+
+            var q2 = new Parse.Query("Friend");
+            q2.equalTo("friend2", user);
+
+            var mainQuery = Parse.Query.or(q1, q2);
+            mainQuery.include("friend1");
+            mainQuery.include("friend2");
+
+            user.set("isLoggedIn", false);
+            user.save(null, {
+              success: function(gameScore) {
+                  var User = Parse.Object.extend("User"); 
+                  var innerQuery = new Parse.Query(User);
+                  //innerQuery.equalTo("isInSession", false);
+                  innerQuery.equalTo("isLoggedIn", false);
+
+                  mainQuery.matchesQuery("friend1", innerQuery);
+                  mainQuery.matchesQuery("friend2", innerQuery);
+
+                  mainQuery.find({         
+                      success: function(friends){
+                          user.set("isLoggedIn", true);
+                          user.save();
+                          var friendPtrs = [];   
+                          var availFriends = [];
+                          for(var i = 0; i<friends.length; i++){
+                              if(friends[i].get("friend1").id == user.id){  
+                                  friendPtrs.push(friends[i].get("friend2"));
+                              }else{
+                                  friendPtrs.push(friends[i].get("friend1"));
+                              }
+                          }
+
+                         nameSort = function(a,b){
+                            return a.get("username")>b.get("username");
+                        }
+                           
+                        friendPtrs = friendPtrs.sort(nameSort);
+
+                        response.success(friendPtrs);
+                 
+                      }, 
+                      error: function(err){
+                        response.error(err);
+                      }
+                  })
+              }
+            });     
+        }
+    })
+});
+
+Parse.Cloud.define("getFriendsAtoZTwo", function(request, response) {
+     
+    var userId = request.params.userId;
+    var emptyArray = [];
+    //var isEmpty = 1;
+
+    var query = new Parse.Query(Parse.User);
+    query.equalTo("objectId", userId);
+
+    query.find({
+        success: function(users){  
+           var user = users[0];    //passing myself
+      
+            var q1 = new Parse.Query("Friend");
+            q1.equalTo("friend1", user);
+
+            var q2 = new Parse.Query("Friend");
+            q2.equalTo("friend2", user);
+
+            var mainQuery = Parse.Query.or(q1, q2);
+            mainQuery.include("friend1");
+            mainQuery.include("friend2");
+
+            mainQuery.find({         
+                success: function(friends){
+                    var friendPtrs = [];   
+                    var availFriends = [];
+                    for(var i = 0; i<friends.length; i++){
+                        if(friends[i].get("friend1").id == user.id){  
+                            friendPtrs.push(friends[i].get("friend2"));
+                        }else{
+                            friendPtrs.push(friends[i].get("friend1"));
+                        }
+                    }
+
+                   nameSort = function(a,b){
+                      return a.get("username")>b.get("username");
+                  }
+                     
+                  friendPtrs = friendPtrs.sort(nameSort);
+                  response.success(friendPtrs);
+           
+                }, 
+                error: function(err){
+                  response.error(err);
+                }
+            })
+        
+        }
+    })
+});

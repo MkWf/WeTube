@@ -26,8 +26,7 @@ int drawable com_parse_ui_facebook_login_logo 0x7f020002
 int drawable com_parse_ui_parse_login_button_background_selector 0x7f020003
 int drawable com_parse_ui_twitter_login_button_background_selector 0x7f020004
 int drawable com_parse_ui_twitter_login_logo 0x7f020005
-int drawable dog 0x7f020006
-int drawable user_default 0x7f020007
+int drawable user_default 0x7f020006
 int id app_logo 0x7f090000
 int id create_account 0x7f090012
 int id facebook_login 0x7f09000b

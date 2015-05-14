@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "WeTube": {
+            "applicationId": "o6iDnraPZeQpUDp8ElDzIXTEKLRkM6DWgNMyvdmq", 
+            "masterKey": "1Fu0JnsSMSRnPBhaXl7GVsc1oLu7iKVilGFE1bKo"
+        }, 
+        "_default": {
+            "link": "WeTube"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.4.2"
+    }
+}

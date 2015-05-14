@@ -187,10 +187,10 @@ public class ParseSignupFragment extends ParseLoginFragmentBase implements OnCli
       user.setSessionStatus(false);
 
       JSONArray arr = new JSONArray();
-      user.setDefaultFriends(arr);
+      //user.setDefaultFriends(arr);
       user.setDefaultTags(arr);
-      user.setDefaultBlockedUsers(arr);
-      user.setDefaultBlockedBy(arr);
+      //user.setDefaultBlockedUsers(arr);
+      //user.setDefaultBlockedBy(arr);
 
                 // Set additional custom fields only if the user filled it out
                 if (name.length() != 0) {

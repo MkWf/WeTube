@@ -702,10 +702,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                                                     PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
 
-                                                    if (user.getSessionStatus() || !user.getLoggedStatus() && clickedUser.getFriendStatus()) {
+                                                    if ((user.getSessionStatus() || !user.getLoggedStatus()) && clickedUser.getFriendStatus()) {
                                                         getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
-                                                    } else if(user.getLoggedStatus() && clickedUser.getFriendStatus()) {
+                                                    } else if(user.getLoggedStatus() && !user.getSessionStatus() && clickedUser.getFriendStatus()) {
                                                         getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+                                                    }else if(user.getLoggedStatus()){
+                                                        getMenuInflater().inflate(R.menu.activity_users_popup_unavailable_offline, popMenu.getMenu());
                                                     }else {
                                                         getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
                                                     }

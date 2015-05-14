@@ -900,6 +900,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         user.setSessionStatus(false);
                         user.saveInBackground();
 
+                        youTubePlayer.release();
                         MainActivity.super.onBackPressed();
                     }
                 });
@@ -1077,6 +1078,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     WeTubeApplication.getSharedDataSource().getPlaylist().clear();
                     WeTubeApplication.getSharedDataSource().getMessages().clear();
+                    youTubePlayer.release();
                     MainActivity.super.onBackPressed();
                 }else if(msg.startsWith("play")){
 

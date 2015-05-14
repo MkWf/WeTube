@@ -872,12 +872,20 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
 Parse.Cloud.define("getLoggedInUsers", function(request, response) {
      
   var userId = request.params.userId;
+  var descending = request.params.descending;
+  var ascending = request.params.ascending;
   var emptyArray = [];
  
   var query = new Parse.Query(Parse.User);
   query.notEqualTo("objectId", userId);
   query.equalTo("isLoggedIn", true);
-  query.limit(20);
+
+  if(ascending != null){
+    query.ascending(ascending);
+  }else{
+    query.descending(descending);
+  }
+  query.limit(10);
   
   query.find({
         success: function(results){
@@ -924,17 +932,17 @@ Parse.Cloud.define("getMoreUsers", function(request, response) {
         success: function(results){
             if(results.length != 0){
                 function nameSort(a, b)
-                {
-                     var A = a.get("username").toLowerCase();
-                     var B = b.get("username").toLowerCase();
-                     if (A < B){
-                        return -1;
-                     }else if (A > B){
-                       return  1;
-                     }else{
-                       return 0;
-                     }
-                }
+                    {
+                         var A = a.get("username").toLowerCase();
+                         var B = b.get("username").toLowerCase();
+                         if (A < B){
+                            return -1;
+                         }else if (A > B){
+                           return  1;
+                         }else{
+                           return 0;
+                         }
+                    }
                  
                 var users = results.sort(nameSort);
                 response.success(users);

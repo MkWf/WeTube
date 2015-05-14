@@ -73,6 +73,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -220,7 +221,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     startService(serviceIntent);
                     showSpinner();
 
-                    //getLoggedInUsers();
+                    getLoggedInUsers();
                     getUserTags();
 
                     ParseInstallation installation = ParseInstallation.getCurrentInstallation();
@@ -254,7 +255,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             showSpinner();
 
             getLoggedInUsers();
-            //getFriends();
+            getFriends();
             getUserTags();
 
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
@@ -305,9 +306,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             WeTubeApplication.getSharedDataSource().getUsers().clear();
         }
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("userId", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getLoggedInUsers", params, new FunctionCallback<List<ParseUser>>() {
+        ParseCloud.callFunctionInBackground("getLoggedInUsers", generateParams(), new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(final List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
@@ -318,8 +317,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     user.getSessionStatus(), user.getLoggedStatus(), false));
                         }
 
-                        for(int i = 0; i < userList.size(); i++){
-                            final WeTubeUser user = (WeTubeUser) userList.get(i);
+                       for(int j = 0; j < userList.size(); j++){
+                            final WeTubeUser user = (WeTubeUser) userList.get(j);
                             ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
                             q1.whereEqualTo("friend1", user);
                             q1.whereEqualTo("friend2", currentUser);
@@ -333,12 +332,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             queries.add(q2);
 
                             ParseQuery<Friend> query = ParseQuery.or(queries);
-                            final int j = i;
+                            final int k = j;
                             query.findInBackground(new FindCallback<Friend>() {
                                 @Override
                                 public void done(List<Friend> list, ParseException e) {
                                     if(e == null && list.size() > 0){
-
+                                        WeTubeApplication.getSharedDataSource().getUsers().get(k).setFriendStatus(true);
+                                        userItemAdapter.notifyItemChanged(k);
                                     }
                                 }
                             });
@@ -357,6 +357,42 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             }
         });
+    }
+
+    public HashMap<String, Object> generateParams(){
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("userId", ParseUser.getCurrentUser().getObjectId());
+
+        Random rand = new Random();
+        int n = rand.nextInt(7);
+
+        switch(n) {
+            case 0:
+                params.put("ascending", "objectId");
+                break;
+            case 1:
+                params.put("ascending", "username");
+                break;
+            case 2:
+                params.put("ascending", "updatedAt");
+                break;
+            case 3:
+                params.put("ascending", "createdAt");
+                break;
+            case 4:
+                params.put("descending", "objectId");
+                break;
+            case 5:
+                params.put("descending", "username");
+                break;
+            case 6:
+                params.put("descending", "updatedAt");
+                break;
+            case 7:
+                params.put("descending", "createdAt");
+                break;
+        }
+        return params;
     }
 
     public void getFriends(){
@@ -702,14 +738,16 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                                                     PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
 
-                                                    if ((user.getSessionStatus() || !user.getLoggedStatus()) && clickedUser.getFriendStatus()) {
+                                                    if (clickedUser.getOnlineStatus() && clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
                                                         getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
-                                                    } else if(user.getLoggedStatus() && !user.getSessionStatus() && clickedUser.getFriendStatus()) {
+                                                    } else if(clickedUser.getOnlineStatus() && !clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
                                                         getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
-                                                    }else if(user.getLoggedStatus()){
-                                                        getMenuInflater().inflate(R.menu.activity_users_popup_unavailable_offline, popMenu.getMenu());
-                                                    }else {
+                                                    }else if(clickedUser.getSessionStatus()){
+                                                        getMenuInflater().inflate(R.menu.activity_users_popup_unavailable, popMenu.getMenu());
+                                                    }else if(clickedUser.getOnlineStatus()) {
                                                         getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
+                                                    }else{
+                                                        getMenuInflater().inflate(R.menu.activity_users_popup_offline, popMenu.getMenu());
                                                     }
                                                     popMenu.setOnMenuItemClickListener(UsersActivity.this);
                                                     popMenu.show();
@@ -841,34 +879,47 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
-                        q1.whereEqualTo("friend1", clickedUser.getId());
-                        q1.whereEqualTo("friend2", ParseUser.getCurrentUser().getObjectId());
+                    public void onClick(final DialogInterface dialog, int which) {
 
-                        ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
-                        q2.whereEqualTo("friend2", clickedUser.getId());
-                        q2.whereEqualTo("friend1", ParseUser.getCurrentUser().getObjectId());
-
-                        List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
-                        queries.add(q1);
-                        queries.add(q2);
-
-                        ParseQuery<Friend> query = ParseQuery.or(queries);
-                        query.findInBackground(new FindCallback<Friend>() {
+                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        query.whereEqualTo("objectId", clickedUser.getId());
+                        query.findInBackground(new FindCallback<ParseUser>() {
                             @Override
-                            public void done(List<Friend> list, ParseException e) {
-                                if(list.size() > 0){
-                                    list.get(0).deleteInBackground(new DeleteCallback() {
+                            public void done(List<ParseUser> parseUsers, ParseException e) {
+                                if(e == null && parseUsers.size() > 0){
+                                    ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                                    q1.whereEqualTo("friend1", parseUsers.get(0));
+                                    q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
+
+                                    ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                                    q2.whereEqualTo("friend2", parseUsers.get(0));
+                                    q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
+
+                                    List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                                    queries.add(q1);
+                                    queries.add(q2);
+
+                                    ParseQuery<Friend> query = ParseQuery.or(queries);
+                                    query.findInBackground(new FindCallback<Friend>() {
                                         @Override
-                                        public void done(ParseException e) {
-                                            Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
+                                        public void done(List<Friend> list, ParseException e) {
+                                            if(e == null && list.size() > 0){
+                                                list.get(0).deleteInBackground(new DeleteCallback() {
+                                                    @Override
+                                                    public void done(ParseException e) {
+                                                        navigationDrawerAdapter.notifyDataSetChanged();
+                                                        Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
                                         }
                                     });
+                                    dialog.cancel();
                                 }
                             }
                         });
-                        dialog.cancel();
+
+
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

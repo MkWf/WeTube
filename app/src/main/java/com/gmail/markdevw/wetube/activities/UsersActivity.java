@@ -1462,7 +1462,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             if(list.size() > 0 && e == null){
                                 WeTubeUser recip = (WeTubeUser) list.get(0);
                                 if(!recip.getSessionStatus() && recip.getLoggedStatus()){
-                                    messageService.sendMessage(id, "sessionaccept" + msgSplitter + recip.getUsername() + msgSplitter + recip.getObjectId());
+                                    messageService.sendMessage(id, "sessionaccept" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter +
+                                        ParseUser.getCurrentUser().getObjectId());
 
                                     WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                                     user.setSessionStatus(true);

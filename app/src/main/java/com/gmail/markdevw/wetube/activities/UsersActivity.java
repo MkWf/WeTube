@@ -160,7 +160,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userItemAdapter);
 
-       /* recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -168,23 +168,25 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     super.onScrolled(recyclerView, dx, dy);
 
                     totalItemCount = mLayoutManager.getItemCount();
-                    lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
+                    if(totalItemCount >= 20){
+                        lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
 
-                    if(totalItemCount == lastVisibleItem && totalItemCount < MAX_USERS){
-                        Toast.makeText(getBaseContext(), "Loading more users",
-                                Toast.LENGTH_SHORT).show();
+                        if(totalItemCount == lastVisibleItem && totalItemCount < MAX_USERS){
+                            Toast.makeText(getBaseContext(), "Loading more users",
+                                    Toast.LENGTH_SHORT).show();
 
-                        getMoreUsers(totalItemCount, 20);
-                    }else if(totalItemCount == lastVisibleItem && totalItemCount >= MAX_USERS){
-                        Toast.makeText(getBaseContext(), "Reached max user limit. Please refresh list.",
-                                Toast.LENGTH_SHORT).show();
+                            getMoreUsers(totalItemCount, 20);
+                        }else if(totalItemCount == lastVisibleItem && totalItemCount >= MAX_USERS){
+                            Toast.makeText(getBaseContext(), "Reached max user limit. Please refresh list.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
                 catch(IndexOutOfBoundsException e){
                     //prevent crashing from scrolling too quickly
                 }
             }
-        });*/
+        });
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_users);
 

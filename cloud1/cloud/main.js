@@ -385,8 +385,17 @@ Parse.Cloud.define("getFriendsAtoZ", function(request, response) {
                                       friendsList.push(results[0]);
                                        
                                       if(friendsList.length == sortedArray.length){
-                                          nameSort = function(a,b){
-                                              return a.get("username")>b.get("username");
+                                          function nameSort(a, b)
+                                          {
+                                               var A = a.get("username").toLowerCase();
+                                               var B = b.get("username").toLowerCase();
+                                               if (A < B){
+                                                  return -1;
+                                               }else if (A > B){
+                                                 return  1;
+                                               }else{
+                                                 return 0;
+                                               }
                                           }
                                            
                                           friendsList = friendsList.sort(nameSort);
@@ -450,8 +459,17 @@ Parse.Cloud.define("getFriendsUnavailable", function(request, response) {
                                       friendsList.push(results[0]);
                                        
                                       if(friendsList.length == sortedArray.length){
-                                          nameSort = function(a,b){
-                                              return a.get("username")>b.get("username");
+                                          function nameSort(a, b)
+                                          {
+                                               var A = a.get("username").toLowerCase();
+                                               var B = b.get("username").toLowerCase();
+                                               if (A < B){
+                                                  return -1;
+                                               }else if (A > B){
+                                                 return  1;
+                                               }else{
+                                                 return 0;
+                                               }
                                           }
                                            
                                           friendsList = friendsList.sort(nameSort);
@@ -515,8 +533,17 @@ Parse.Cloud.define("getFriendsAvailable", function(request, response) {
                                       friendsList.push(results[0]);
                                        
                                       if(friendsList.length == sortedArray.length){
-                                          nameSort = function(a,b){
-                                              return a.get("username")>b.get("username");
+                                          function nameSort(a, b)
+                                          {
+                                               var A = a.get("username").toLowerCase();
+                                               var B = b.get("username").toLowerCase();
+                                               if (A < B){
+                                                  return -1;
+                                               }else if (A > B){
+                                                 return  1;
+                                               }else{
+                                                 return 0;
+                                               }
                                           }
                                            
                                           friendsList = friendsList.sort(nameSort);
@@ -579,8 +606,17 @@ Parse.Cloud.define("getFriendsOffline", function(request, response) {
                                       friendsList.push(results[0]);
                                        
                                       if(friendsList.length == sortedArray.length){
-                                          nameSort = function(a,b){
-                                              return a.get("username")>b.get("username");
+                                          function nameSort(a, b)
+                                          {
+                                               var A = a.get("username").toLowerCase();
+                                               var B = b.get("username").toLowerCase();
+                                               if (A < B){
+                                                  return -1;
+                                               }else if (A > B){
+                                                 return  1;
+                                               }else{
+                                                 return 0;
+                                               }
                                           }
                                            
                                           friendsList = friendsList.sort(nameSort);
@@ -643,8 +679,17 @@ Parse.Cloud.define("getFriendsOnline", function(request, response) {
                                       friendsList.push(results[0]);
                                        
                                       if(friendsList.length == sortedArray.length){
-                                          nameSort = function(a,b){
-                                              return a.get("username")>b.get("username");
+                                          function nameSort(a, b)
+                                          {
+                                               var A = a.get("username").toLowerCase();
+                                               var B = b.get("username").toLowerCase();
+                                               if (A < B){
+                                                  return -1;
+                                               }else if (A > B){
+                                                 return  1;
+                                               }else{
+                                                 return 0;
+                                               }
                                           }
                                            
                                           friendsList = friendsList.sort(nameSort);
@@ -710,8 +755,17 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
                                         tempArray.push(results[0]);
                                           
                                         if(tempArray.length == onlineAvailableArray.length){
-                                            nameSort = function(a,b){
-                                                return a.get("username")>b.get("username");
+                                            function nameSort(a, b)
+                                            {
+                                                 var A = a.get("username").toLowerCase();
+                                                 var B = b.get("username").toLowerCase();
+                                                 if (A < B){
+                                                    return -1;
+                                                 }else if (A > B){
+                                                   return  1;
+                                                 }else{
+                                                   return 0;
+                                                 }
                                             }
                                                
                                             tempArray = tempArray.sort(nameSort);
@@ -731,8 +785,17 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
                                     tempArray.push(results[0]);
                                       
                                     if(tempArray.length == onlineAvailableArray.length){
-                                        nameSort = function(a,b){
-                                            return a.get("username")>b.get("username");
+                                        function nameSort(a, b)
+                                        {
+                                             var A = a.get("username").toLowerCase();
+                                             var B = b.get("username").toLowerCase();
+                                             if (A < B){
+                                                return -1;
+                                             }else if (A > B){
+                                               return  1;
+                                             }else{
+                                               return 0;
+                                             }
                                         }
                                            
                                         tempArray = tempArray.sort(nameSort);
@@ -749,9 +812,18 @@ Parse.Cloud.define("getFriendsDefault", function(request, response) {
                                                     tempArray.push(results[0]);
                                                      
                                                     if(tempArray.length == onlineUnavailableArray.length){
-                                                        nameSort = function(a,b){
-                                                            return a.get("username")>b.get("username");
-                                                        }
+                                                        function nameSort(a, b)
+                                                          {
+                                                               var A = a.get("username").toLowerCase();
+                                                               var B = b.get("username").toLowerCase();
+                                                               if (A < B){
+                                                                  return -1;
+                                                               }else if (A > B){
+                                                                 return  1;
+                                                               }else{
+                                                                 return 0;
+                                                               }
+                                                          }
                                                          
                                                         tempArray = tempArray.sort(nameSort);
                                                         friendsList = friendsList.concat(tempArray);
@@ -810,8 +882,17 @@ Parse.Cloud.define("getLoggedInUsers", function(request, response) {
   query.find({
         success: function(results){
             if(results.length != 0){
-                nameSort = function(a,b){
-                    return a.get("username")>b.get("username");
+                function nameSort(a, b)
+                {
+                     var A = a.get("username").toLowerCase();
+                     var B = b.get("username").toLowerCase();
+                     if (A < B){
+                        return -1;
+                     }else if (A > B){
+                       return  1;
+                     }else{
+                       return 0;
+                     }
                 }
                  
                 var users = results.sort(nameSort);
@@ -842,8 +923,17 @@ Parse.Cloud.define("getMoreUsers", function(request, response) {
   query.find({
         success: function(results){
             if(results.length != 0){
-                nameSort = function(a,b){
-                    return a.get("username")>b.get("username");
+                function nameSort(a, b)
+                {
+                     var A = a.get("username").toLowerCase();
+                     var B = b.get("username").toLowerCase();
+                     if (A < B){
+                        return -1;
+                     }else if (A > B){
+                       return  1;
+                     }else{
+                       return 0;
+                     }
                 }
                  
                 var users = results.sort(nameSort);

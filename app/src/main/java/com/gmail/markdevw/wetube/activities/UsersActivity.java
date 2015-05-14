@@ -160,7 +160,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userItemAdapter);
 
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -186,7 +186,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     //prevent crashing from scrolling too quickly
                 }
             }
-        });
+        });*/
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_users);
 
@@ -220,7 +220,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     startService(serviceIntent);
                     showSpinner();
 
-                    getLoggedInUsers();
+                    //getLoggedInUsers();
                     getUserTags();
 
                     ParseInstallation installation = ParseInstallation.getCurrentInstallation();
@@ -299,7 +299,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getLoggedInUsers(){
-        final String currentUserId = ParseUser.getCurrentUser().getObjectId();
+        final WeTubeUser currentUser = (WeTubeUser) ParseUser.getCurrentUser();
 
         if(WeTubeApplication.getSharedDataSource().getUsers().size() > 0){
             WeTubeApplication.getSharedDataSource().getUsers().clear();
@@ -309,15 +309,39 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
         ParseCloud.callFunctionInBackground("getLoggedInUsers", params, new FunctionCallback<List<ParseUser>>() {
             @Override
-            public void done(List<ParseUser> userList, com.parse.ParseException e) {
+            public void done(final List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
                     if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
-                            WeTubeUser user = (WeTubeUser) userList.get(i);
+                            final WeTubeUser user = (WeTubeUser) userList.get(i);
+                            WeTubeApplication.getSharedDataSource().getUsers().add(new UserItem(user.getUsername(), user.getObjectId(),
+                                    user.getSessionStatus(), user.getLoggedStatus(), false));
+                        }
 
-                            WeTubeApplication.getSharedDataSource().getUsers()
-                                    .add(new UserItem(user.getUsername(), user.getObjectId(),
-                                            user.getSessionStatus(), user.getLoggedStatus(), false));
+                        for(int i = 0; i < userList.size(); i++){
+                            final WeTubeUser user = (WeTubeUser) userList.get(i);
+                            ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                            q1.whereEqualTo("friend1", user);
+                            q1.whereEqualTo("friend2", currentUser);
+
+                            ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                            q2.whereEqualTo("friend2", user);
+                            q2.whereEqualTo("friend1", currentUser);
+
+                            List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                            queries.add(q1);
+                            queries.add(q2);
+
+                            ParseQuery<Friend> query = ParseQuery.or(queries);
+                            final int j = i;
+                            query.findInBackground(new FindCallback<Friend>() {
+                                @Override
+                                public void done(List<Friend> list, ParseException e) {
+                                    if(e == null && list.size() > 0){
+
+                                    }
+                                }
+                            });
                         }
                     }
                     userItemAdapter.notifyDataSetChanged();
@@ -678,17 +702,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                                                     PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
 
-                                                    if (user.getSessionStatus() || !user.getLoggedStatus()) {
+                                                    if (user.getSessionStatus() || !user.getLoggedStatus() && clickedUser.getFriendStatus()) {
                                                         getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
-                                                    } else {
-                                                getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
-                                            }
-
-                                            popMenu.setOnMenuItemClickListener(UsersActivity.this);
-                                            popMenu.show();
-                                        } else {
-                                            Toast.makeText(UsersActivity.this, "Error searching for " + userItem.getName(), Toast.LENGTH_SHORT).show();
-                                        }
+                                                    } else if(user.getLoggedStatus() && clickedUser.getFriendStatus()) {
+                                                        getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+                                                    }else {
+                                                        getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
+                                                    }
+                                                    popMenu.setOnMenuItemClickListener(UsersActivity.this);
+                                                    popMenu.show();
+                                                } else {
+                                                    Toast.makeText(UsersActivity.this, "Error searching for " + userItem.getName(), Toast.LENGTH_SHORT).show();
+                                                }
                                     }
                                 });
                             }
@@ -1081,7 +1106,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         WeTubeApplication.getSharedDataSource().getUsers().clear();
                         userItemAdapter.notifyDataSetChanged();
                         Toast.makeText(WeTubeApplication.getSharedInstance(),
-                                "Could not find any logged in users with that name",
+                                "Could not find any logged in users with that tag",
                                 Toast.LENGTH_LONG).show();
                     }
                     WeTubeApplication.getSharedDataSource().getUsers().clear();
@@ -1709,7 +1734,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getMoreUsers(int skip, int limit){
-        final String currentUserId = ParseUser.getCurrentUser().getObjectId();
+        final WeTubeUser currentUser = (WeTubeUser) ParseUser.getCurrentUser();
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
@@ -1721,11 +1746,34 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 if (e == null) {
                     if (userList.size() > 0) {
                         for (int i = 0; i < userList.size(); i++) {
-                            WeTubeUser user = (WeTubeUser) userList.get(i);
+                            final WeTubeUser user = (WeTubeUser) userList.get(i);
 
-                            WeTubeApplication.getSharedDataSource().getUsers()
-                                    .add(new UserItem(user.getUsername(), user.getObjectId(),
+                            ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                            q1.whereEqualTo("friend1", user);
+                            q1.whereEqualTo("friend2", currentUser);
+
+                            ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                            q2.whereEqualTo("friend2", user);
+                            q2.whereEqualTo("friend1", currentUser);
+
+                            List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                            queries.add(q1);
+                            queries.add(q2);
+
+                            ParseQuery<Friend> query = ParseQuery.or(queries);
+                            final int j = i;
+                            query.findInBackground(new FindCallback<Friend>() {
+                                @Override
+                                public void done(List<Friend> list, ParseException e) {
+                                    List<UserItem> users = WeTubeApplication.getSharedDataSource().getUsers();
+                                    users.add(new UserItem(user.getUsername(), user.getObjectId(),
                                             user.getSessionStatus(), user.getLoggedStatus(), false));
+                                    if(e == null && list.size() > 0){
+                                        users.get(users.size() - 1).setFriendStatus(true);
+                                    }
+                                    userItemAdapter.notifyDataSetChanged();
+                                }
+                            });
                         }
                     }
                     userItemAdapter.notifyDataSetChanged();

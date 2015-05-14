@@ -84,11 +84,11 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
                 status.setImageResource(R.drawable.available);
             }
 
-            if(userItem.getFriendStatus()){
-                friend.setVisibility(View.VISIBLE);
-            }else{
-                friend.setVisibility(View.GONE);
-            }
+           // if(userItem.getFriendStatus()){
+          //      friend.setVisibility(View.VISIBLE);
+           // }else{
+           //     friend.setVisibility(View.GONE);
+          //  }
         }
 
         @Override

@@ -53,7 +53,6 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseQuery;
-import com.parse.ParseSession;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.models.Blocked;
@@ -211,7 +210,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         handler = new Handler();
 
-        ParseQuery<ParseSession> query = ParseSession.getQuery();
+       /* ParseQuery<ParseSession> query = ParseSession.getQuery();
         query.whereEqualTo("installationId", ParseInstallation.getCurrentInstallation().getInstallationId());
         query.findInBackground(new FindCallback<ParseSession>() {
             @Override
@@ -240,7 +239,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     startActivityForResult(builder.build(), 0);
                 }
             }
-        });
+        });*/
+        ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+        startActivityForResult(builder.build(), 0);
     }
 
     @Override
@@ -270,6 +271,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             });
         }
+    }
+
+    protected void onResume(){
+        super.onResume();
+
+        showNextMessage();
     }
 
     private void showSpinner() {
@@ -317,7 +324,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     user.getSessionStatus(), user.getLoggedStatus(), false));
                         }
 
-                       for(int j = 0; j < userList.size(); j++){
+                       /*for(int j = 0; j < userList.size(); j++){
                             final WeTubeUser user = (WeTubeUser) userList.get(j);
                             ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
                             q1.whereEqualTo("friend1", user);
@@ -342,7 +349,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     }
                                 }
                             });
-                        }
+                        }*/
                     }
                     userItemAdapter.notifyDataSetChanged();
                     if (progressDialog != null) {
@@ -673,87 +680,111 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, final View view, final int index) {
 
-                clickedUser = userItem;
+        clickedUser = userItem;
 
-                ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
-                query.whereEqualTo("blockedBy", WeTubeUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("userId", userItem.getId());
-                query.findInBackground(new FindCallback<Blocked>() {
-                    @Override
-                    public void done(final List<Blocked> list, ParseException e) {
-                        if (list.size() > 0) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                            builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
+        ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
+        query.whereEqualTo("blockedBy", WeTubeUser.getCurrentUser().getObjectId());
+        query.whereEqualTo("userId", userItem.getId());
+        query.findInBackground(new FindCallback<Blocked>() {
+            @Override
+            public void done(final List<Blocked> list, ParseException e) {
+                if (list.size() > 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                    builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
 
-                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    list.get(0).deleteInBackground(new DeleteCallback() {
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            list.get(0).deleteInBackground(new DeleteCallback() {
                                 @Override
                                 public void done(ParseException e) {
                                     Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.setCancelable(false);
-                            builder.show();
-                        } else {
-                            ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
-                            query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("blockedBy", userItem.getId());
-                            query.findInBackground(new FindCallback<Blocked>() {
-                                @Override
-                                public void done(List<Blocked> list, ParseException e) {
-                                    if (list.size() > 0) {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                                        builder.setTitle(clickedUser.getName() + " has you blocked");
+                            dialog.cancel();
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.setCancelable(false);
+                    builder.show();
+                } else {
+                    ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
+                    query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
+                    query.whereEqualTo("blockedBy", userItem.getId());
+                    query.findInBackground(new FindCallback<Blocked>() {
+                        @Override
+                        public void done(List<Blocked> list, ParseException e) {
+                            if (list.size() > 0) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                                builder.setTitle(clickedUser.getName() + " has you blocked");
 
-                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.cancel();
-                                            }
-                                        });
-                                        builder.setCancelable(false);
-                                        builder.show();
-                                    } else {
-                                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                                        query.whereEqualTo("objectId", clickedUser.getId());
-                                        query.findInBackground(new FindCallback<ParseUser>() {
-                                            @Override
-                                            public void done(List<ParseUser> list, ParseException e) {
-                                                if (e == null && list.size() > 0) {
-                                                    WeTubeUser user = (WeTubeUser) list.get(0);
-                                                    clickedUser.setOnlineStatus(user.getLoggedStatus());
-                                                    clickedUser.setSessionStatus(user.getSessionStatus());
-                                                    userItemAdapter.notifyItemChanged(index);
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                builder.setCancelable(false);
+                                builder.show();
+                            } else {
+                                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                                query.whereEqualTo("objectId", clickedUser.getId());
+                                query.findInBackground(new FindCallback<ParseUser>() {
+                                    @Override
+                                    public void done(List<ParseUser> list, ParseException e) {
+                                        if (e == null && list.size() > 0) {
+                                            WeTubeUser user = (WeTubeUser) list.get(0);
+                                            clickedUser.setOnlineStatus(user.getLoggedStatus());
+                                            clickedUser.setSessionStatus(user.getSessionStatus());
+                                            userItemAdapter.notifyItemChanged(index);
 
-                                                    PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
+                                            ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                                            q1.whereEqualTo("friend1", user);
+                                            q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
 
-                                                    if (clickedUser.getOnlineStatus() && clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
-                                                        getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
-                                                    } else if(clickedUser.getOnlineStatus() && !clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
-                                                        getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
-                                                    }else if(clickedUser.getSessionStatus()){
-                                                        getMenuInflater().inflate(R.menu.activity_users_popup_unavailable, popMenu.getMenu());
-                                                    }else if(clickedUser.getOnlineStatus()) {
-                                                        getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
+                                            ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                                            q2.whereEqualTo("friend2", user);
+                                            q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
+
+                                            List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                                            queries.add(q1);
+                                            queries.add(q2);
+
+                                            ParseQuery<Friend> query = ParseQuery.or(queries);
+                                            query.findInBackground(new FindCallback<Friend>() {
+                                                @Override
+                                                public void done(List<Friend> friends, ParseException e) {
+                                                    if (e == null) {
+                                                        if (friends.size() > 0) {
+                                                            clickedUser.setFriendStatus(true);
+                                                        }
+                                                        PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
+
+                                                        if (clickedUser.getOnlineStatus() && clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
+                                                            getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
+                                                        } else if(clickedUser.getOnlineStatus() && !clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
+                                                            getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+                                                        }else if(clickedUser.getSessionStatus()){
+                                                            getMenuInflater().inflate(R.menu.activity_users_popup_unavailable, popMenu.getMenu());
+                                                        }else if(clickedUser.getOnlineStatus()) {
+                                                            getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
+                                                        }else{
+                                                            getMenuInflater().inflate(R.menu.activity_users_popup_offline, popMenu.getMenu());
+                                                        }
+                                                        popMenu.setOnMenuItemClickListener(UsersActivity.this);
+                                                        popMenu.show();
+
                                                     }else{
-                                                        getMenuInflater().inflate(R.menu.activity_users_popup_offline, popMenu.getMenu());
+                                                        Toast.makeText(UsersActivity.this, "Error searching for " + userItem.getName(), Toast.LENGTH_SHORT).show();
                                                     }
-                                                    popMenu.setOnMenuItemClickListener(UsersActivity.this);
-                                                    popMenu.show();
-                                                } else {
-                                                    Toast.makeText(UsersActivity.this, "Error searching for " + userItem.getName(), Toast.LENGTH_SHORT).show();
                                                 }
+                                            });
+                                        }
                                     }
                                 });
                             }
@@ -1441,284 +1472,286 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void showNextMessage() {
-        Message message = messageQueue.poll();
-        ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(msgSplitter)));
+        if(messageQueue != null && messageQueue.size() > 0) {
+            Message message = messageQueue.poll();
+            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(msgSplitter)));
 
-        if(msg.get(0).equals("startsession")) {
-            final String name = msg.get(1);
-            final String id = msg.get(2);
+            if (msg.get(0).equals("startsession")) {
+                final String name = msg.get(1);
+                final String id = msg.get(2);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle("Session request from " + name);
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle("Session request from " + name);
 
-            builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ParseQuery<ParseUser> query = ParseUser.getQuery();
-                    query.whereEqualTo("objectId", id);
-                    query.findInBackground(new FindCallback<ParseUser>() {
-                        @Override
-                        public void done(List<ParseUser> list, ParseException e) {
-                            if(list.size() > 0 && e == null){
-                                WeTubeUser recip = (WeTubeUser) list.get(0);
-                                if(!recip.getSessionStatus() && recip.getLoggedStatus()){
-                                    messageService.sendMessage(id, "sessionaccept" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter +
-                                        ParseUser.getCurrentUser().getObjectId());
+                builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        query.whereEqualTo("objectId", id);
+                        query.findInBackground(new FindCallback<ParseUser>() {
+                            @Override
+                            public void done(List<ParseUser> list, ParseException e) {
+                                if (list.size() > 0 && e == null) {
+                                    WeTubeUser recip = (WeTubeUser) list.get(0);
+                                    if (!recip.getSessionStatus() && recip.getLoggedStatus()) {
+                                        messageService.sendMessage(id, "sessionaccept" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter +
+                                                ParseUser.getCurrentUser().getObjectId());
 
-                                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                                    user.setSessionStatus(true);
-                                    user.saveInBackground();
-                                    WeTubeApplication.getSharedDataSource().setSessionController(false);
-                                    WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(name, id));
-                                }else{
-                                    if(!recip.getLoggedStatus()){
-                                        Toast.makeText(UsersActivity.this, "Session failed to start. User has gone offline", Toast.LENGTH_SHORT).show();
-                                    }else{
-                                        Toast.makeText(UsersActivity.this, "Session failed to start. User is in another session", Toast.LENGTH_SHORT).show();
+                                        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                                        user.setSessionStatus(true);
+                                        user.saveInBackground();
+                                        WeTubeApplication.getSharedDataSource().setSessionController(false);
+                                        WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(name, id));
+                                    } else {
+                                        if (!recip.getLoggedStatus()) {
+                                            Toast.makeText(UsersActivity.this, "Session failed to start. User has gone offline", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(UsersActivity.this, "Session failed to start. User is in another session", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
+                                } else {
+                                    Toast.makeText(UsersActivity.this, "Error finding user", Toast.LENGTH_SHORT).show();
                                 }
-                            }else{
-                                Toast.makeText(UsersActivity.this, "Error finding user", Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    });
-                    dialog.cancel();
-                }
-            });
-            builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    messageService.sendMessage(id, "sessiondecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
-                    dialog.cancel();
-                }
-            });
-            builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    isBlocking = true;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                    builder.setTitle("Are you sure you want to block " + name + " ?");
-
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
-                            block.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    messageService.sendMessage(id, "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
-                                            + ParseUser.getCurrentUser().getObjectId());
-                                }
-                            });
-                            clearDialogsById(id);
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setCancelable(false);
-                    dialog = builder.create();
-                    dialog.show();
-                }
-            });
-            builder.setCancelable(false);
-            dialog = builder.create();
-            dialog.show();
-        }else if(msg.get(0).equals("sessionaccept")){
-            WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-            user.setSessionStatus(true);
-            user.saveInBackground();
-
-            WeTubeApplication.getSharedDataSource().setSessionController(true);
-            WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(msg.get(1), msg.get(2)));
-            Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
-            startActivity(intent);
-        }else if(msg.get(0).equals("sessiondecline")){
-            String name = msg.get(1);
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle(name + " has declined your session request");
-
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.setCancelable(false);
-            dialog = builder.create();
-            dialog.show();
-        }else if(msg.get(0).equals("friendadd")){
-            final String name = msg.get(1);
-            final String id = msg.get(2);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle("Friend request from " + name);
-
-            builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                    messageService.sendMessage(id, "friendaccept" + msgSplitter + user.getUsername() + msgSplitter + user.getObjectId());
-                    dialog.cancel();
-                }
-            });
-            builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    messageService.sendMessage(id, "frienddecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
-                    dialog.cancel();
-                }
-            });
-            builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    isBlocking = true;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                    builder.setTitle("Are you sure you want to block " + name + " ?");
-
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
-                            block.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    messageService.sendMessage(id, "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
-                                            + ParseUser.getCurrentUser().getObjectId());
-                                }
-                            });
-
-                            clearDialogsById(id);
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setCancelable(false);
-                    dialog = builder.create();
-                    dialog.show();
-                }
-            });
-            builder.setCancelable(false);
-            dialog = builder.create();
-            dialog.show();
-        }else if(msg.get(0).equals("frienddecline")){
-            String name = msg.get(1);
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle(name + " has declined your friend request");
-
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.setCancelable(false);
-            dialog = builder.create();
-            dialog.show();
-        } else if (msg.get(0).equals("friendaccept")) {
-            final String name = msg.get(1);
-            final String id = msg.get(2);
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-
-            ParseQuery<ParseUser> query = ParseUser.getQuery();
-            query.whereEqualTo("objectId", id);
-            query.findInBackground(new FindCallback<ParseUser>() {
-                @Override
-                public void done(List<ParseUser> list, ParseException e) {
-                    if (list.size() > 0 && e == null) {
-                        WeTubeUser friend = (WeTubeUser) list.get(0);
-
-                        WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                        navigationDrawerAdapter.notifyDataSetChanged();
-
-                        for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
-                            if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)) {
-                                WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
-                                userItemAdapter.notifyItemChanged(i);
-                            }
-                        }
-
-                        builder.setTitle(name + " accepted your friend request");
-                    } else {
-                        builder.setTitle("Failed to add " + name + " to your friends list");
+                        });
+                        dialog.cancel();
                     }
+                });
+                builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        messageService.sendMessage(id, "sessiondecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
+                        dialog.cancel();
+                    }
+                });
+                builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        isBlocking = true;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle("Are you sure you want to block " + name + " ?");
 
-                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
+                                block.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        messageService.sendMessage(id, "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                                + ParseUser.getCurrentUser().getObjectId());
+                                    }
+                                });
+                                clearDialogsById(id);
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+                builder.setCancelable(false);
+                dialog = builder.create();
+                dialog.show();
+            } else if (msg.get(0).equals("sessionaccept")) {
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                user.setSessionStatus(true);
+                user.saveInBackground();
+
+                WeTubeApplication.getSharedDataSource().setSessionController(true);
+                WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(msg.get(1), msg.get(2)));
+                Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
+                startActivity(intent);
+            } else if (msg.get(0).equals("sessiondecline")) {
+                String name = msg.get(1);
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " has declined your session request");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setCancelable(false);
+                dialog = builder.create();
+                dialog.show();
+            } else if (msg.get(0).equals("friendadd")) {
+                final String name = msg.get(1);
+                final String id = msg.get(2);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle("Friend request from " + name);
+
+                builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                        messageService.sendMessage(id, "friendaccept" + msgSplitter + user.getUsername() + msgSplitter + user.getObjectId());
+                        dialog.cancel();
+                    }
+                });
+                builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        messageService.sendMessage(id, "frienddecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
+                        dialog.cancel();
+                    }
+                });
+                builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        isBlocking = true;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle("Are you sure you want to block " + name + " ?");
+
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
+                                block.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        messageService.sendMessage(id, "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                                + ParseUser.getCurrentUser().getObjectId());
+                                    }
+                                });
+
+                                clearDialogsById(id);
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+                builder.setCancelable(false);
+                dialog = builder.create();
+                dialog.show();
+            } else if (msg.get(0).equals("frienddecline")) {
+                String name = msg.get(1);
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " has declined your friend request");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setCancelable(false);
+                dialog = builder.create();
+                dialog.show();
+            } else if (msg.get(0).equals("friendaccept")) {
+                final String name = msg.get(1);
+                final String id = msg.get(2);
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                query.whereEqualTo("objectId", id);
+                query.findInBackground(new FindCallback<ParseUser>() {
+                    @Override
+                    public void done(List<ParseUser> list, ParseException e) {
+                        if (list.size() > 0 && e == null) {
+                            WeTubeUser friend = (WeTubeUser) list.get(0);
+
+                            WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                    friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                            navigationDrawerAdapter.notifyDataSetChanged();
+
+                            for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+                                if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)) {
+                                    WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
+                                    userItemAdapter.notifyItemChanged(i);
+                                }
+                            }
+
+                            builder.setTitle(name + " accepted your friend request");
+                        } else {
+                            builder.setTitle("Failed to add " + name + " to your friends list");
                         }
-                    });
 
-                    builder.setCancelable(false);
-                    dialog = builder.create();
-                    dialog.show();
-                }
-            });
-        }else if(msg.get(0).equals("friendremove")){
-            final String id = msg.get(2);
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
 
-            for(int i=0; i<WeTubeApplication.getSharedDataSource().getFriends().size(); i++){
-                if(WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(id)){
-                    WeTubeApplication.getSharedDataSource().getFriends().remove(i);
-                    navigationDrawerAdapter.notifyItemRemoved(i);
-                    break;
+                        builder.setCancelable(false);
+                        dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+            } else if (msg.get(0).equals("friendremove")) {
+                final String id = msg.get(2);
+
+                for (int i = 0; i < WeTubeApplication.getSharedDataSource().getFriends().size(); i++) {
+                    if (WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(id)) {
+                        WeTubeApplication.getSharedDataSource().getFriends().remove(i);
+                        navigationDrawerAdapter.notifyItemRemoved(i);
+                        break;
+                    }
                 }
+                for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+                    if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(id)) {
+                        WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
+                        userItemAdapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
+            } else if (msg.get(0).equals("blockuser")) {
+                final String name = msg.get(1);
+                final String id = msg.get(2);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " has blocked you");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setCancelable(false);
+                dialog = builder.create();
+                dialog.show();
+            } else if (msg.get(0).equals("unblock")) {
+                final String name = msg.get(1);
+                final String id = msg.get(2);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                builder.setTitle(name + " has unblocked you");
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setCancelable(false);
+                dialog = builder.create();
+                dialog.show();
+
             }
-            for(int i=0; i<WeTubeApplication.getSharedDataSource().getUsers().size(); i++){
-                if(WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(id)){
-                    WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
-                    userItemAdapter.notifyDataSetChanged();
-                    break;
-                }
+            if (dialog != null) {
+                dialog.setOnDismissListener(this);
             }
-        }else if(msg.get(0).equals("blockuser")){
-            final String name = msg.get(1);
-            final String id = msg.get(2);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle(name + " has blocked you");
-
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.setCancelable(false);
-            dialog = builder.create();
-            dialog.show();
-        }else if(msg.get(0).equals("unblock")){
-            final String name = msg.get(1);
-            final String id = msg.get(2);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-            builder.setTitle(name + " has unblocked you");
-
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.setCancelable(false);
-            dialog = builder.create();
-            dialog.show();
-
-        }
-        if(dialog != null){
-            dialog.setOnDismissListener(this);
         }
     }
 

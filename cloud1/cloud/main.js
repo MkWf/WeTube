@@ -885,7 +885,7 @@ Parse.Cloud.define("getLoggedInUsers", function(request, response) {
   }else{
     query.descending(descending);
   }
-  query.limit(10);
+  query.limit(100);
   
   query.find({
         success: function(results){

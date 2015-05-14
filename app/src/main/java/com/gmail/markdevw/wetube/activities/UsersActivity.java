@@ -53,6 +53,7 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseQuery;
+import com.parse.ParseSession;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.models.Blocked;
@@ -159,7 +160,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userItemAdapter);
 
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+       /* recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -183,7 +184,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     //prevent crashing from scrolling too quickly
                 }
             }
-        });
+        });*/
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_users);
 
@@ -207,10 +208,36 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         handler = new Handler();
 
-        if(savedInstanceState == null){
-            ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
-            startActivityForResult(builder.build(), 0);
-        }
+        ParseQuery<ParseSession> query = ParseSession.getQuery();
+        query.whereEqualTo("installationId", ParseInstallation.getCurrentInstallation().getInstallationId());
+        query.findInBackground(new FindCallback<ParseSession>() {
+            @Override
+            public void done(List<ParseSession> parseSessions, ParseException e) {
+                if(e == null && parseSessions.size() > 0){
+                    drawerLayout.setVisibility(View.VISIBLE);
+                    startService(serviceIntent);
+                    showSpinner();
+
+                    getLoggedInUsers();
+                    getUserTags();
+
+                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    installation.put("user", WeTubeUser.getCurrentUser().getObjectId());
+                    installation.saveInBackground();
+
+                    swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
+                    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            getLoggedInUsers();
+                        }
+                    });
+                }else{
+                    ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+                    startActivityForResult(builder.build(), 0);
+                }
+            }
+        });
     }
 
     @Override
@@ -220,6 +247,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         if(resultCode == 0){
             finish();
         }else{
+            drawerLayout.setVisibility(View.VISIBLE);
             startService(serviceIntent);
             showSpinner();
 
@@ -856,18 +884,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }catch(NullPointerException e){
 
         }
-
-        if(ParseUser.getCurrentUser() != null){
-            WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-            user.setLoggedStatus(false);
-            user.setSessionStatus(false);
-            user.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    ParseUser.logOut();
-                }
-            });
-        }
     }
 
     @Override
@@ -1214,8 +1230,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.cancel();
-                UsersActivity.this.moveTaskToBack(true);
-                UsersActivity.this.finish();
+
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                user.setLoggedStatus(false);
+                user.setSessionStatus(false);
+                user.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        ParseUser.logOut();
+                        UsersActivity.this.moveTaskToBack(true);
+                        UsersActivity.this.finish();
+                    }
+                });
             }
         });
         builder.setCancelable(false);

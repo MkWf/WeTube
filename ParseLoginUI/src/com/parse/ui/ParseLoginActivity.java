@@ -35,7 +35,7 @@ import android.util.Log;
 import android.view.Window;
 
 import com.parse.Parse;
-import com.parse.ParseFacebookUtils;
+//import com.parse.ParseFacebookUtils;
 
 /**
  * Encapsulates the Parse login flow. The user can log in by username/password,
@@ -115,7 +115,7 @@ public class ParseLoginActivity extends FragmentActivity implements
     super.onActivityResult(requestCode, resultCode, data);
 
     // Required for making Facebook login work
-    ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
+    //ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
   }
 
   /**

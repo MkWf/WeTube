@@ -22,6 +22,8 @@
 package com.parse.ui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -56,6 +58,7 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
 
   private static final String LOG_TAG = "ParseLoginFragment";
   private static final String USER_OBJECT_NAME_FIELD = "name";
+    private Activity activity;
 
   private View parseLogin;
   private EditText usernameField;
@@ -116,6 +119,8 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
+      this.activity = activity;
+
 
     if (activity instanceof ParseLoginFragmentListener) {
       loginFragmentListener = (ParseLoginFragmentListener) activity;
@@ -159,8 +164,8 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
     parseLoginButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        String username = usernameField.getText().toString();
-        String password = passwordField.getText().toString();
+        final String username = usernameField.getText().toString();
+        final String password = passwordField.getText().toString();
 
         if (username.length() == 0) {
           if (config.isParseLoginEmailAsUsername()) {
@@ -181,6 +186,12 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
 
                   if (user != null) {
                       loadingFinish();
+                      SharedPreferences sharedpreferences = activity.getSharedPreferences("MyPrefs",
+                              Context.MODE_PRIVATE);
+                      SharedPreferences.Editor editor = sharedpreferences.edit();
+                      editor.putString("userkey", username);
+                      editor.putString("passkey", password);
+                      editor.apply();
                       loginSuccess();
                   } else {
                       loadingFinish();

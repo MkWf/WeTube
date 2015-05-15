@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,6 +50,8 @@ import com.gmail.markdevw.wetube.services.MessageService;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.LogInCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
@@ -240,8 +243,59 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             }
         });*/
-        ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
-        startActivityForResult(builder.build(), 0);
+        SharedPreferences sharedpreferences;
+        sharedpreferences=getSharedPreferences("MyPrefs",
+                Context.MODE_PRIVATE);
+        if(sharedpreferences.contains("userkey") && (sharedpreferences.contains("passkey"))){
+            String user = sharedpreferences.getString("userkey", "fail");
+            String pass = sharedpreferences.getString("passkey", "fail");
+
+            if(user.equals("fail") || pass.equals("fail")){
+                Toast.makeText(this, "Failed to retrieve your login information", Toast.LENGTH_LONG).show();
+                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+                startActivityForResult(builder.build(), 0);
+            }else{
+                ParseUser.logInInBackground(user, pass, new LogInCallback() {
+                    @Override
+                    public void done(ParseUser parseUser, ParseException e) {
+                        if(parseUser != null){
+                            showSpinner();
+                            startService(serviceIntent);
+
+                            getLoggedInUsers();
+                            getUserTags();
+
+                            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                            installation.put("user", WeTubeUser.getCurrentUser().getObjectId());
+                            installation.saveInBackground();
+
+                            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
+                            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                                @Override
+                                public void onRefresh() {
+                                    getLoggedInUsers();
+                                }
+                            });
+                        }else{
+                            if(e != null){
+                                Toast.makeText(UsersActivity.this, com.parse.ui.R.string.com_parse_ui_parse_login_failed_unknown_toast, Toast.LENGTH_LONG);
+                                SharedPreferences sharedpreferences = getSharedPreferences
+                                        ("MyPrefs", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                editor.clear();
+                                editor.commit();
+
+                                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+                                startActivityForResult(builder.build(), 0);
+                            }
+                        }
+                    }
+                });
+            }
+        }else{
+            ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+            startActivityForResult(builder.build(), 0);
+        }
     }
 
     @Override
@@ -292,6 +346,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 if (!success) {
                     Toast.makeText(getApplicationContext(), "Messaging service failed to start", Toast.LENGTH_LONG).show();
                 }else{
+                    drawerLayout.setVisibility(View.VISIBLE);
                     Toast.makeText(getApplicationContext(), "You are now logged in", Toast.LENGTH_LONG).show();
                     WeTubeUser user = (WeTubeUser) WeTubeUser.getCurrentUser();
                     user.setLoggedStatus(true);
@@ -1326,12 +1381,30 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
         builder.setTitle("Are you sure you want to exit?");
 
-        builder.setPositiveButton("Exit without logout", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                UsersActivity.this.moveTaskToBack(true);
-                UsersActivity.this.finish();
+                SharedPreferences sharedpreferences = getSharedPreferences
+                        ("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.clear();
+                editor.commit();
+
+                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                user.setLoggedStatus(false);
+                user.setSessionStatus(false);
+                user.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        ParseUser.logOutInBackground(new LogOutCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                UsersActivity.this.moveTaskToBack(true);
+                                UsersActivity.this.finish();
+                            }
+                        });
+                    }
+                });
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -1340,7 +1413,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 dialog.cancel();
             }
         });
-        builder.setNeutralButton("Exit with logout", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("Exit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.cancel();
@@ -1351,7 +1424,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 user.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        ParseUser.logOut();
                         UsersActivity.this.moveTaskToBack(true);
                         UsersActivity.this.finish();
                     }

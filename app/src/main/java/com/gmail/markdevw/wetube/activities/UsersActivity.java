@@ -275,8 +275,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     protected void onResume(){
         super.onResume();
-
-        showNextMessage();
+        WeTubeApplication.getSharedDataSource().setVideoActivity(false);
     }
 
     private void showSpinner() {
@@ -762,6 +761,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                     if (e == null) {
                                                         if (friends.size() > 0) {
                                                             clickedUser.setFriendStatus(true);
+                                                        }else{
+                                                            clickedUser.setFriendStatus(false);
                                                         }
                                                         PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
 
@@ -905,15 +906,16 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 });
                 break;
             case R.id.popup_remove :
+                final UserItem friend = clickedUser;
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle("Are you sure you want to remove " + clickedUser.getName() + " ?");
+                builder.setTitle("Are you sure you want to remove " + friend.getName() + " ?");
 
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
 
                         ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("objectId", clickedUser.getId());
+                        query.whereEqualTo("objectId", friend.getId());
                         query.findInBackground(new FindCallback<ParseUser>() {
                             @Override
                             public void done(List<ParseUser> parseUsers, ParseException e) {
@@ -938,8 +940,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                 list.get(0).deleteInBackground(new DeleteCallback() {
                                                     @Override
                                                     public void done(ParseException e) {
+                                                        WeTubeApplication.getSharedDataSource().getFriends().remove(friend);
                                                         navigationDrawerAdapter.notifyDataSetChanged();
-                                                        Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(UsersActivity.this, friend.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             }
@@ -1359,6 +1362,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         builder.show();
     }
 
+
+
     private class MyServiceConnection implements ServiceConnection {
 
         @Override
@@ -1399,17 +1404,19 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
-            Date time = message.getTimestamp();
-            if(LOGIN_TIME < time.getTime()){
-                messageQueue.add(message);
+            if(!WeTubeApplication.getSharedDataSource().isInVideoActivity()){
+                Date time = message.getTimestamp();
+                if(LOGIN_TIME < time.getTime()){
+                    messageQueue.add(message);
 
-                if(!isFirstMessage){
-                    if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
+                    if(!isFirstMessage){
+                        if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
+                            showNextMessage();
+                        }
+                    }else{
+                        isFirstMessage = false;
                         showNextMessage();
                     }
-                }else{
-                    isFirstMessage = false;
-                    showNextMessage();
                 }
             }
         }

@@ -45,6 +45,7 @@ public class DataSource {
     private List<PlaylistItem> playlist = new ArrayList<>();
     private boolean isSessionController = false;
     private boolean isPlayerVisible = false;
+    private boolean isInVideoActivity = false;
 
     public DataSource(Context context){
         videos = new ArrayList<VideoItem>();
@@ -93,6 +94,9 @@ public class DataSource {
     public void setCurrentSearch(String search) {this.currentSearch = search; }
     public String getCurrentSearch() { return this.currentSearch; }
     public String getAPI_KEY() { return API_KEY; }
+    public boolean isInVideoActivity() { return isInVideoActivity;}
+    public void setVideoActivity(boolean isInVideoActivity) { this.isInVideoActivity = isInVideoActivity; }
+
 
     public void searchForVideos(String searchTerms){
         setCurrentSearch(searchTerms);

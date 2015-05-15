@@ -128,6 +128,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        WeTubeApplication.getSharedDataSource().setVideoActivity(true);
+
         name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
         id = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId();
 
@@ -912,7 +914,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 builder.show();
             }else if(msg.startsWith("friendadd")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.getTextBody().split(msgSplitter)));
-                final String title = msgSplit.get(1);
+                final String name = msgSplit.get(1);
                 final String id = msgSplit.get(2);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);

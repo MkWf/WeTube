@@ -46,6 +46,8 @@ public class DataSource {
     private boolean isSessionController = false;
     private boolean isPlayerVisible = false;
     private boolean isInVideoActivity = false;
+    private final int MAX_FRIENDS = 100;
+    private int friendSize;
 
     public DataSource(Context context){
         videos = new ArrayList<VideoItem>();
@@ -69,6 +71,9 @@ public class DataSource {
         }
 
     }
+    public int getFriendsSize() { return friendSize; }
+    public void setFriendsSize(int size) { this.friendSize = size;}
+    public int getMaxFriends() { return MAX_FRIENDS; }
     public boolean isPlayerVisible() {return isPlayerVisible;}
     public void setPlayerVisible(boolean isPlayerVisible) { this.isPlayerVisible = isPlayerVisible; }
     public boolean isSessionController() {return isSessionController;}

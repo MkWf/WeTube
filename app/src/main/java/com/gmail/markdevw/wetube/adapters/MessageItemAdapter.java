@@ -84,11 +84,11 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
             this.messageItem = messageItem;
             String message = messageItem.getMessage();
 
-            if(message.startsWith("linkedvideo")){
+            if(message.startsWith(msgSplitter + "linkedvideo")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.split(msgSplitter)));
-                title = msgSplit.get(1);
-                thumbnail = msgSplit.get(2);
-                id = msgSplit.get(3);
+                title = msgSplit.get(2);
+                thumbnail = msgSplit.get(3);
+                id = msgSplit.get(4);
 
                 if(messageItem.getType() == MessageItem.OUTGOING_MSG){
                     thumbnailIn.setVisibility(View.GONE);
@@ -127,7 +127,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         @Override
         public void onClick(View view) {
             String message = messageItem.getMessage();
-            if(message.startsWith("linkedvideo")){
+            if(message.startsWith(msgSplitter + "linkedvideo")){
                 getDelegate().onMessageVideoItemClicked(MessageItemAdapter.this, title, thumbnail, id);
             }
         }

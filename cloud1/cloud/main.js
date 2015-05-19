@@ -1125,6 +1125,7 @@ Parse.Cloud.define("getFriendsOfflineTwo", function(request, response) {
             mainQuery.include("friend1");
             mainQuery.include("friend2");
 
+
             user.set("isLoggedIn", false);
             user.save(null, {
               success: function(gameScore) {
@@ -1237,6 +1238,28 @@ Parse.Cloud.define("getFriendsAtoZTwo", function(request, response) {
                 }
             })
         
+        }
+    })
+});
+
+Parse.Cloud.define("updateLastSeen", function(request, response) {
+     
+    var userId = request.params.userId;
+    var ms = request.params.ms;
+
+    var query = new Parse.Query(Parse.User);
+    query.equalTo("objectId", userId);
+
+    query.find({
+        success: function(users){  
+          var user = users[0];   
+          
+          user.set("seen", ms);
+          user.save(null, {
+              success: function(save) {
+                response.success("updated");
+              }
+          });           
         }
     })
 });

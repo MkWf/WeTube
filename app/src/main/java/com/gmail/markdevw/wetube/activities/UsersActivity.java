@@ -46,6 +46,7 @@ import com.gmail.markdevw.wetube.adapters.UserItemAdapter;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.fragments.ProfileDialogFragment;
+import com.gmail.markdevw.wetube.services.ConnectionService;
 import com.gmail.markdevw.wetube.services.MessageService;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
@@ -87,6 +88,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         DrawerLayout.DrawerListener{
 
     private Intent serviceIntent;
+    private Intent connServiceIntent;
     private ProgressDialog progressDialog;
     private BroadcastReceiver receiver = null;
     private RecyclerView recyclerView;
@@ -149,6 +151,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         navigationRecyclerView.setAdapter(navigationDrawerAdapter);
 
         serviceIntent = new Intent(this, MessageService.class);
+        connServiceIntent = new Intent(this, ConnectionService.class);
 
         userItemAdapter = new UserItemAdapter();
         userItemAdapter.setDelegate(this);
@@ -161,34 +164,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userItemAdapter);
-
-        /*recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                try{
-                    super.onScrolled(recyclerView, dx, dy);
-
-                    totalItemCount = mLayoutManager.getItemCount();
-                    if(totalItemCount >= 20){
-                        lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
-
-                        if(totalItemCount == lastVisibleItem && totalItemCount < MAX_USERS){
-                            Toast.makeText(getBaseContext(), "Loading more users",
-                                    Toast.LENGTH_SHORT).show();
-
-                            getMoreUsers(totalItemCount, 20);
-                        }else if(totalItemCount == lastVisibleItem && totalItemCount >= MAX_USERS){
-                            Toast.makeText(getBaseContext(), "Reached max user limit. Please refresh list.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-                catch(IndexOutOfBoundsException e){
-                    //prevent crashing from scrolling too quickly
-                }
-            }
-        });*/
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_users);
 
@@ -212,36 +187,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         handler = new Handler();
 
-       /* ParseQuery<ParseSession> query = ParseSession.getQuery();
-        query.whereEqualTo("installationId", ParseInstallation.getCurrentInstallation().getInstallationId());
-        query.findInBackground(new FindCallback<ParseSession>() {
-            @Override
-            public void done(List<ParseSession> parseSessions, ParseException e) {
-                if(e == null && parseSessions.size() > 0){
-                    drawerLayout.setVisibility(View.VISIBLE);
-                    startService(serviceIntent);
-                    showSpinner();
-
-                    getLoggedInUsers();
-                    getUserTags();
-
-                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-                    installation.put("user", WeTubeUser.getCurrentUser().getObjectId());
-                    installation.saveInBackground();
-
-                    swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
-                    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
-                            getLoggedInUsers();
-                        }
-                    });
-                }else{
-                    ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
-                    startActivityForResult(builder.build(), 0);
-                }
-            }
-        });*/
         SharedPreferences sharedpreferences;
         sharedpreferences=getSharedPreferences("MyPrefs",
                 Context.MODE_PRIVATE);
@@ -260,6 +205,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         if(parseUser != null){
                             showSpinner();
                             startService(serviceIntent);
+                            //startService(connServiceIntent);
+                            bindService(connServiceIntent, new ServiceConnection() {
+                                @Override
+                                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+
+                                }
+
+                                @Override
+                                public void onServiceDisconnected(ComponentName componentName) {
+
+                                }
+                            }, BIND_AUTO_CREATE);
 
                             getLoggedInUsers();
                             getFriends();
@@ -307,6 +264,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }else{
             drawerLayout.setVisibility(View.VISIBLE);
             startService(serviceIntent);
+            startService(connServiceIntent);
             showSpinner();
 
             getLoggedInUsers();

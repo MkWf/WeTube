@@ -1,6 +1,7 @@
 package com.gmail.markdevw.wetube.api;
 
 import android.content.Context;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.gmail.markdevw.wetube.R;
@@ -48,6 +49,8 @@ public class DataSource {
     private boolean isInVideoActivity = false;
     private final int MAX_FRIENDS = 100;
     private int friendSize;
+    private ActionBarActivity usersActivity;
+    private ActionBarActivity mainActivity;
 
     public DataSource(Context context){
         videos = new ArrayList<VideoItem>();
@@ -71,6 +74,10 @@ public class DataSource {
         }
 
     }
+    public void setMainActivity(ActionBarActivity activity) {this.mainActivity = activity;}
+    public ActionBarActivity getMainActivity() {return mainActivity;}
+    public void setUsersActivity(ActionBarActivity activity) {this.usersActivity = activity;}
+    public ActionBarActivity getUsersActivity() {return usersActivity;}
     public int getFriendsSize() { return friendSize; }
     public void setFriendsSize(int size) { this.friendSize = size;}
     public int getMaxFriends() { return MAX_FRIENDS; }

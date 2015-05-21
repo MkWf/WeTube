@@ -1254,7 +1254,6 @@ Parse.Cloud.define("updateLastSeen", function(request, response) {
         success: function(users){  
           var user = users[0];   
           
-          user.set("seen", ms);
           user.save(null, {
               success: function(save) {
                 response.success("updated");

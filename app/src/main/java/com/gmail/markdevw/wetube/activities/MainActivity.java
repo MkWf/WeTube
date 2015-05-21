@@ -123,6 +123,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        WeTubeApplication.getSharedDataSource().setMainActivity(this);
         WeTubeApplication.getSharedDataSource().setVideoActivity(true);
 
         name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
@@ -439,6 +440,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         user.saveInBackground();
 
         WeTubeApplication.getSharedDataSource().setCurrentRecipient(null);
+        WeTubeApplication.getSharedDataSource().setMainActivity(null);
     }
 
     @Override
@@ -1027,7 +1029,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     playlistSize.setText(currentIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                 }else if(msg.startsWith(msgSplitter + "pause")) {
-                    youTubePlayer.pause();
+                    try{
+                        youTubePlayer.pause();
+                    }catch(NullPointerException e){
+
+                    }
+
                 }else if(msg.startsWith(msgSplitter + "play")) {
                     youTubePlayer.play();
                 }else if(msg.startsWith(msgSplitter + "seek")) {

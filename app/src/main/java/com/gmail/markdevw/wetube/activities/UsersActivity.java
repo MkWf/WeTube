@@ -133,6 +133,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
+        WeTubeApplication.getSharedDataSource().setUsersActivity(this);
+
         adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
 
         toolbar = (Toolbar) findViewById(R.id.tb_activity_users);
@@ -205,8 +207,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         if(parseUser != null){
                             showSpinner();
                             startService(serviceIntent);
-                            //startService(connServiceIntent);
-                            bindService(connServiceIntent, new ServiceConnection() {
+                            startService(connServiceIntent);
+                            /*bindService(connServiceIntent, new ServiceConnection() {
                                 @Override
                                 public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 
@@ -216,7 +218,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 public void onServiceDisconnected(ComponentName componentName) {
 
                                 }
-                            }, BIND_AUTO_CREATE);
+                            }, BIND_AUTO_CREATE);*/
 
                             getLoggedInUsers();
                             getFriends();
@@ -694,121 +696,124 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, final View view, final int index) {
 
-        clickedUser = userItem;
+        try {
+            clickedUser = userItem;
+            ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
+            query.whereEqualTo("blockedBy", WeTubeUser.getCurrentUser().getObjectId());
+            query.whereEqualTo("userId", userItem.getId());
+            query.findInBackground(new FindCallback<Blocked>() {
+                @Override
+                public void done(final List<Blocked> list, ParseException e) {
+                    if (list.size() > 0) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                        builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
 
-        ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
-        query.whereEqualTo("blockedBy", WeTubeUser.getCurrentUser().getObjectId());
-        query.whereEqualTo("userId", userItem.getId());
-        query.findInBackground(new FindCallback<Blocked>() {
-            @Override
-            public void done(final List<Blocked> list, ParseException e) {
-                if (list.size() > 0) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                    builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
-
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            list.get(0).deleteInBackground(new DeleteCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setCancelable(false);
-                    builder.show();
-                } else {
-                    ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
-                    query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
-                    query.whereEqualTo("blockedBy", userItem.getId());
-                    query.findInBackground(new FindCallback<Blocked>() {
-                        @Override
-                        public void done(List<Blocked> list, ParseException e) {
-                            if (list.size() > 0) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                                builder.setTitle(clickedUser.getName() + " has you blocked");
-
-                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                list.get(0).deleteInBackground(new DeleteCallback() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
+                                    public void done(ParseException e) {
+                                        Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                                builder.setCancelable(false);
-                                builder.show();
-                            } else {
-                                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                                query.whereEqualTo("objectId", clickedUser.getId());
-                                query.findInBackground(new FindCallback<ParseUser>() {
-                                    @Override
-                                    public void done(List<ParseUser> list, ParseException e) {
-                                        if (e == null && list.size() > 0) {
-                                            WeTubeUser user = (WeTubeUser) list.get(0);
-                                            clickedUser.setOnlineStatus(user.getLoggedStatus());
-                                            clickedUser.setSessionStatus(user.getSessionStatus());
-                                            userItemAdapter.notifyItemChanged(index);
-
-                                            ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
-                                            q1.whereEqualTo("friend1", user);
-                                            q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
-
-                                            ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
-                                            q2.whereEqualTo("friend2", user);
-                                            q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
-
-                                            List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
-                                            queries.add(q1);
-                                            queries.add(q2);
-
-                                            ParseQuery<Friend> query = ParseQuery.or(queries);
-                                            query.findInBackground(new FindCallback<Friend>() {
-                                                @Override
-                                                public void done(List<Friend> friends, ParseException e) {
-                                                    if (e == null) {
-                                                        if (friends.size() > 0) {
-                                                            clickedUser.setFriendStatus(true);
-                                                        }else{
-                                                            clickedUser.setFriendStatus(false);
-                                                        }
-                                                        PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
-
-                                                        if (clickedUser.getOnlineStatus() && clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
-                                                            getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
-                                                        } else if(clickedUser.getOnlineStatus() && !clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
-                                                            getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
-                                                        }else if(clickedUser.getSessionStatus()){
-                                                            getMenuInflater().inflate(R.menu.activity_users_popup_unavailable, popMenu.getMenu());
-                                                        }else if(clickedUser.getOnlineStatus()) {
-                                                            getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
-                                                        }else{
-                                                            getMenuInflater().inflate(R.menu.activity_users_popup_offline, popMenu.getMenu());
-                                                        }
-                                                        popMenu.setOnMenuItemClickListener(UsersActivity.this);
-                                                        popMenu.show();
-
-                                                    }else{
-                                                        Toast.makeText(UsersActivity.this, "Error searching for " + userItem.getName(), Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
+                                dialog.cancel();
                             }
-                        }
-                    });
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        builder.show();
+                    } else {
+                        ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
+                        query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
+                        query.whereEqualTo("blockedBy", userItem.getId());
+                        query.findInBackground(new FindCallback<Blocked>() {
+                            @Override
+                            public void done(List<Blocked> list, ParseException e) {
+                                if (list.size() > 0) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
+                                    builder.setTitle(clickedUser.getName() + " has you blocked");
+
+                                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    builder.setCancelable(false);
+                                    builder.show();
+                                } else {
+                                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                                    query.whereEqualTo("objectId", clickedUser.getId());
+                                    query.findInBackground(new FindCallback<ParseUser>() {
+                                        @Override
+                                        public void done(List<ParseUser> list, ParseException e) {
+                                            if (e == null && list.size() > 0) {
+                                                WeTubeUser user = (WeTubeUser) list.get(0);
+                                                clickedUser.setOnlineStatus(user.getLoggedStatus());
+                                                clickedUser.setSessionStatus(user.getSessionStatus());
+                                                userItemAdapter.notifyItemChanged(index);
+
+                                                ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                                                q1.whereEqualTo("friend1", user);
+                                                q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
+
+                                                ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                                                q2.whereEqualTo("friend2", user);
+                                                q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
+
+                                                List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                                                queries.add(q1);
+                                                queries.add(q2);
+
+                                                ParseQuery<Friend> query = ParseQuery.or(queries);
+                                                query.findInBackground(new FindCallback<Friend>() {
+                                                    @Override
+                                                    public void done(List<Friend> friends, ParseException e) {
+                                                        if (e == null) {
+                                                            if (friends.size() > 0) {
+                                                                clickedUser.setFriendStatus(true);
+                                                            }else{
+                                                                clickedUser.setFriendStatus(false);
+                                                            }
+                                                            PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
+
+                                                            if (clickedUser.getOnlineStatus() && clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
+                                                                getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
+                                                            } else if(clickedUser.getOnlineStatus() && !clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
+                                                                getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
+                                                            }else if(clickedUser.getSessionStatus()){
+                                                                getMenuInflater().inflate(R.menu.activity_users_popup_unavailable, popMenu.getMenu());
+                                                            }else if(clickedUser.getOnlineStatus()) {
+                                                                getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
+                                                            }else{
+                                                                getMenuInflater().inflate(R.menu.activity_users_popup_offline, popMenu.getMenu());
+                                                            }
+                                                            popMenu.setOnMenuItemClickListener(UsersActivity.this);
+                                                            popMenu.show();
+
+                                                        }else{
+                                                            Toast.makeText(UsersActivity.this, "Error searching for " + userItem.getName(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }catch(NullPointerException e ){
+            //causes crash if user loses connection and tries to click on users
+        }
     }
 
     @Override
@@ -1013,6 +1018,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         try{
             stopService(new Intent(this, MessageService.class));
+            stopService(new Intent(this, ConnectionService.class));
             messageService.removeMessageClientListener(messageClientListener);
             unbindService(serviceConnection);
         }catch(NullPointerException e){

@@ -439,7 +439,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         user.setSessionStatus(false);
         user.saveInBackground();
 
-        youTubePlayer.release();
+        try{
+            youTubePlayer.release();
+        }catch(NullPointerException e){
+
+        }
+
         WeTubeApplication.getSharedDataSource().setCurrentRecipient(null);
         WeTubeApplication.getSharedDataSource().setMainActivity(null);
         WeTubeApplication.getSharedDataSource().getPlaylist().clear();

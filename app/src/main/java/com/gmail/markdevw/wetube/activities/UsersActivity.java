@@ -133,6 +133,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
+        Intent i = getIntent();
+        final int iVal = i.getIntExtra("connloss", 0);
+
         WeTubeApplication.getSharedDataSource().setUsersActivity(this);
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
@@ -198,7 +201,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
             if(user.equals("fail") || pass.equals("fail")){
                 Toast.makeText(this, "Failed to retrieve your login information", Toast.LENGTH_LONG).show();
-                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
                 startActivityForResult(builder.build(), 0);
             }else{
                 ParseUser.logInInBackground(user, pass, new LogInCallback() {
@@ -244,7 +247,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 editor.clear();
                                 editor.commit();
 
-                                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+                                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
                                 startActivityForResult(builder.build(), 0);
                             }
                         }
@@ -252,7 +255,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 });
             }
         }else{
-            ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this);
+            ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
             startActivityForResult(builder.build(), 0);
         }
     }
@@ -1399,6 +1402,34 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         UsersActivity.this.finish();
                     }
                 });
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    public void sessionEndedDialog(String name){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Session End: " + name + " had lost connection");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    public void connectionLossDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("You lost connection to the service");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
         });
         builder.setCancelable(false);

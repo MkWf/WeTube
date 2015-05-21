@@ -22,7 +22,9 @@
 package com.parse.ui;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -89,6 +91,12 @@ public class ParseLoginActivity extends FragmentActivity implements
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    Intent i = getIntent();
+    int val = i.getIntExtra("connloss", 0);
+    if(val == 1){
+        connectionLossDialog();
+    }
+
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
     // Combine options from incoming intent and the activity metadata
@@ -100,6 +108,20 @@ public class ParseLoginActivity extends FragmentActivity implements
           ParseLoginFragment.newInstance(configOptions)).commit();
     }
   }
+
+    public void connectionLossDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("You lost connection to the service");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
 
   @Override
   protected void onDestroy() {

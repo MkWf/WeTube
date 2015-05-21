@@ -81,7 +81,7 @@ public abstract class ParseLoginDispatchActivity extends Activity {
    * @return Intent that can be used to start ParseLoginActivity
    */
   protected Intent getParseLoginIntent() {
-    ParseLoginBuilder builder = new ParseLoginBuilder(this);
+    ParseLoginBuilder builder = new ParseLoginBuilder(this, 0);
     return builder.build();
   }
 

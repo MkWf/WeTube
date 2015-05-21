@@ -29,10 +29,12 @@ import java.util.Collection;
 public class ParseLoginBuilder {
 
   private Context context;
+  private int intentValue;
   private ParseLoginConfig config = new ParseLoginConfig();
 
-  public ParseLoginBuilder(Context context) {
+  public ParseLoginBuilder(Context context, int intentValue) {
     this.context = context;
+    this.intentValue = intentValue;
   }
 
   /**
@@ -307,6 +309,9 @@ public class ParseLoginBuilder {
    */
   public Intent build() {
     Intent intent = new Intent(context, ParseLoginActivity.class);
+    if(intentValue == 1){
+        intent.putExtra("connloss", intentValue);
+    }
     intent.putExtras(config.toBundle());
     return intent;
   }

@@ -386,23 +386,19 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onFullscreen(boolean isFullscreen) {
-        this.isFullscreen = isFullscreen;
         layout();
     }
 
     private void layout() {
         isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
-        if (isFullscreen) {
-            setLayoutSize(playerFragment.getView(), MATCH_PARENT, MATCH_PARENT);
-            chatbar.setVisibility(View.GONE);
-            toolbar.setVisibility(View.GONE);
-        } else if (isPortrait) {
+        if (isPortrait) {
+            isFullscreen = false;
             setLayoutSize(playerFragment.getView(), MATCH_PARENT, WRAP_CONTENT);
             chatbar.setVisibility(View.VISIBLE);
             toolbar.setVisibility(View.VISIBLE);
         } else {
-            int screenWidth = dpToPx(getResources().getConfiguration().screenWidthDp);
+            isFullscreen = true;
             setLayoutSize(playerFragment.getView(), MATCH_PARENT, MATCH_PARENT);
             chatbar.setVisibility(View.GONE);
             toolbar.setVisibility(View.GONE);
@@ -1076,6 +1072,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
                     messageItemAdapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+
+                    if(isFullscreen){
+                        Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }
@@ -1248,10 +1248,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                     messageItemAdapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
-
-                    if(isFullscreen){
-                        Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_SHORT).show();
-                    }
                 }
                 messages.remove(deliveryInfo.getMessageId());
             }

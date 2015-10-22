@@ -391,8 +391,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     private void layout() {
-        isPortrait =
-                getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+        isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
         if (isFullscreen) {
             setLayoutSize(playerFragment.getView(), MATCH_PARENT, MATCH_PARENT);
@@ -1249,6 +1248,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                     messageItemAdapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+
+                    if(isFullscreen){
+                        Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 messages.remove(deliveryInfo.getMessageId());
             }
@@ -1257,116 +1260,4 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
-
-
 }
-
- /*   @Override
-    public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
-        if(messageType == VIDEO_START){
-            youTubePlayer.loadVideos(playlistIds);
-        }else if(messageType == VIDEO_PAUSE){
-            youTubePlayer.pause();
-        }
-    }
-
-            @Override
-        public void onIncomingMessage(MessageClient client, Message message) {
-            String msg = message.getTextBody();
-            if(msg.startsWith("videoplay")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split("---")));
-                playlistIds.clear();
-
-                for(int i = 1; i<msgSplit.size(); i++){
-                    playlistIds.add(msgSplit.get(i));
-                }
-
-                getFragmentManager()
-                        .beginTransaction()
-                        .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
-                        .show(playerFragment)
-                        .addToBackStack(null)
-                        .commit();
-
-                videoList.setVisibility(View.GONE);
-                toolbar.setVisibility(View.GONE);
-                videoChatDivider.setVisibility(View.VISIBLE);
-                MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
-                youTubePlayer.loadVideos(playlistIds);
-            }
-            if(msg.startsWith("/video$") && message.getSenderId().equals(id)){
-                currentVideo = msg.substring(7);
-
-                getFragmentManager()
-                        .beginTransaction()
-                        .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
-                        .show(playerFragment)
-                        .addToBackStack(null)
-                        .commit();
-
-                videoList.setVisibility(View.GONE);
-                toolbar.setVisibility(View.GONE);
-                videoChatDivider.setVisibility(View.VISIBLE);
-                MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
-                youTubePlayer.loadVideo(currentVideo);
-            }else if(msg.equals("/pause$") && message.getSenderId().equals(id) && youTubePlayer != null){
-                youTubePlayer.pause();
-            }else if(msg.equals("/unpause$") && message.getSenderId().equals(id) && youTubePlayer != null){
-                youTubePlayer.play();
-            }else if(msg.startsWith("/seek$") && message.getSenderId().equals(id) && youTubePlayer != null){
-                youTubePlayer.seekToMillis(Integer.parseInt(msg.substring(6)));
-            }else if(msg.startsWith("sessionend-")) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle(name + " has left the session");
-
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                        user.setSessionStatus(false);
-                        user.saveInBackground();
-
-                        MainActivity.super.onBackPressed();
-                    }
-                });
-                builder.setCancelable(false);
-                builder.show();
-            }else if(msg.startsWith("addtoplaylist")) {
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.getTextBody().split("------")));
-                String title = msgSplit.get(1);
-                String thumbnail = msgSplit.get(2);
-                String id = msgSplit.get(3);
-
-                WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id));
-                playlistItemAdapter.notifyDataSetChanged();
-            }else if(msg.startsWith("linkedvideo------")) {
-                WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
-                messageItemAdapter.notifyDataSetChanged();
-                recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
-            }else if(msg.startsWith("playlistnext")) {
-                youTubePlayer.loadVideos(playlistIds, ++playlistIndex, 0);
-            }else if(msg.startsWith("playlistprev")){
-                youTubePlayer.loadVideos(playlistIds, --playlistIndex, 0);
-            }else if(message.getSenderId().equals(id)) {
-                if(isFullscreen || !isPortrait){
-                    Toast.makeText(MainActivity.this, message.getTextBody(), Toast.LENGTH_SHORT).show();
-                }
-
-                WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
-                messageItemAdapter.notifyDataSetChanged();
-                recyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
-            }
-        }
-
-
-
-
-
-
-    */
-
-
-
-

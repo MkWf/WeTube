@@ -196,10 +196,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         sharedpreferences=getSharedPreferences("MyPrefs",
                 Context.MODE_PRIVATE);
         if(sharedpreferences.contains("userkey") && (sharedpreferences.contains("passkey"))){
-            String user = sharedpreferences.getString("userkey", "fail");
-            String pass = sharedpreferences.getString("passkey", "fail");
+            String user = sharedpreferences.getString("userkey", "fa");
+            String pass = sharedpreferences.getString("passkey", "fa");
 
-            if(user.equals("fail") || pass.equals("fail")){
+            if(user.equals("fa") || pass.equals("fa")){
                 Toast.makeText(this, "Failed to retrieve your login information", Toast.LENGTH_LONG).show();
                 ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
                 startActivityForResult(builder.build(), 0);
@@ -240,7 +240,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             });
                         }else{
                             if(e != null){
-                                Toast.makeText(UsersActivity.this, com.parse.ui.R.string.com_parse_ui_parse_login_failed_unknown_toast, Toast.LENGTH_LONG);
+                                Toast.makeText(UsersActivity.this, com.parse.ui.R.string.com_parse_ui_parse_login_failed_unknown_toast, Toast.LENGTH_LONG).show();
                                 SharedPreferences sharedpreferences = getSharedPreferences
                                         ("MyPrefs", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -290,6 +290,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
+    @Override
     protected void onResume(){
         super.onResume();
         WeTubeApplication.getSharedDataSource().setVideoActivity(false);

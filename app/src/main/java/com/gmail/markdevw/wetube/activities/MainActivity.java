@@ -381,7 +381,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         layout();
-
     }
 
     @Override
@@ -405,22 +404,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         }
     }
 
-    private int dpToPx(int dp) {
-        return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
-    }
-
     private static void setLayoutSize(View view, int width, int height) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.width = width;
         params.height = height;
-        view.setLayoutParams(params);
-    }
-
-    private static void setLayoutSizeAndGravity(View view, int width, int height, int gravity) {
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-        params.width = width;
-        params.height = height;
-        params.gravity = gravity;
         view.setLayoutParams(params);
     }
 
@@ -1164,7 +1151,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     youTubePlayer.loadVideos(playlistIds);
                 }else if(msg.startsWith(msgSplitter + "playlistindex")) {
                     ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
-                    String index = msgSplit.get(1);
+                    String index = msgSplit.get(2);
                     int video = Integer.parseInt(index);
 
                     WeTubeApplication.getSharedDataSource().getPlaylist().get(currentIndex).setSelected(false);

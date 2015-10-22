@@ -1042,7 +1042,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     youTubePlayer.play();
                 }else if(msg.startsWith(msgSplitter + "seek")) {
                     ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
-                    int seek = Integer.parseInt(msgSplit.get(1));
+                    int seek = Integer.parseInt(msgSplit.get(2));
                     youTubePlayer.seekToMillis(seek);
                 }else if(msg.startsWith(msgSplitter + "videostart")){
                     youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);

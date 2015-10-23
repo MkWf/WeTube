@@ -115,6 +115,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private boolean hasYourVideoEnded = false;
     private boolean hasTheirVideoEnded = false;
     private boolean hasVideoStarted = false;
+    private boolean isAdPlaying = false;
+    private boolean isRecoveringFromAd = false;
     private int currentIndex = 0;
     private final int MAX_PLAYLIST_SIZE = 50;
 
@@ -549,12 +551,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onAdStarted() {
-
-        WeTubeApplication.getSharedDataSource();
+        isAdPlaying = true;
+        messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "watchingad");
     }
 
     @Override
     public void onVideoStarted() {
+        if(isAdPlaying){
+            isAdPlaying = false;
+            isRecoveringFromAd = true;
+        }
         hasVideoStarted = true;
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
@@ -563,6 +569,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onVideoEnded() {
+        WeTubeApplication.getSharedDataSource();
        // messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoend");
        // messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoended");
     }
@@ -574,47 +581,43 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onPlaying() {
-      /*  if(WeTubeApplication.getSharedDataSource().isSessionController() && isPaused && !hasVideoStarted){
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "play" + msgSplitter);
-            isPaused = false;
-        }else if(hasVideoStarted){
-            hasVideoStarted = false;
+        if(isRecoveringFromAd){
             youTubePlayer.pause();
-        }*/
-        if(hasVideoStarted){
+            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            hasVideoStarted = false;
+        }
+        else if(hasVideoStarted && !isAdPlaying){
             youTubePlayer.pause();
             hasVideoStarted = false;
 
             if(!WeTubeApplication.getSharedDataSource().isSessionController()){
                 messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "videostart");
             }
-        }else if(WeTubeApplication.getSharedDataSource().isSessionController()) {
+        }else if(WeTubeApplication.getSharedDataSource().isSessionController() && !isAdPlaying) {
             messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "play" + msgSplitter);
-            //isPaused = false;
         }
     }
 
     @Override
     public void onPaused() {
-       if(WeTubeApplication.getSharedDataSource().isSessionController()){
-            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "pause" + msgSplitter);
+        if(isRecoveringFromAd){
+            isRecoveringFromAd = false;
         }
+       else if(WeTubeApplication.getSharedDataSource().isSessionController() && !isAdPlaying){
+            messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), msgSplitter + "pause" + msgSplitter);
+       }
     }
 
     @Override
     public void onStopped() {
-
+//        if(isAdPlaying){
+//            isAdPlaying = false;
+//        }
     }
 
     @Override
     public void onBuffering(boolean b) {
-      //  if(b){
-     //       messageType = VIDEO_BUFFER;
-      //      messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "/pause$");
-     ///   }else{
-      //      messageType = VIDEO_BUFFER;
-      //      messageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "/unpause$");
-     //   }
+        WeTubeApplication.getSharedDataSource();
     }
 
     @Override
@@ -1055,6 +1058,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     });
                     builder.setCancelable(false);
                     builder.show();
+                }else if(msg.startsWith(msgSplitter + "watchingad")){
+                    youTubePlayer.pause();
+                    Toast.makeText(WeTubeApplication.getSharedInstance(), "Your video is paused while "
+                            + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName()
+                            + " is viewing an advertisement", Toast.LENGTH_LONG).show();
                 }else{
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
                     messageItemAdapter.notifyDataSetChanged();

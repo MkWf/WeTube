@@ -8,20 +8,15 @@ import android.os.IBinder;
 
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.activities.UsersActivity;
-import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.models.WeTubeUser;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,30 +62,30 @@ public class ConnectionService extends Service {
                         }
                     });
 
-                    if(WeTubeApplication.getSharedDataSource().getCurrentRecipient() != null){
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("objectId", WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId());
-                        query.findInBackground(new FindCallback<ParseUser>() {
-                            @Override
-                            public void done(List<ParseUser> users, ParseException e) {
-                                WeTubeUser user = (WeTubeUser) users.get(0);
-                                long timeCheck = user.getLong("lastSeen");
-                                if(time == timeCheck){
-                                    timesMissed++;
-                                    if(timesMissed == 2){
-                                        String name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
-                                        WeTubeApplication.getSharedDataSource().getMainActivity().finish();
-                                        UsersActivity ua = (UsersActivity) WeTubeApplication.getSharedDataSource().getUsersActivity();
-                                        ua.sessionEndedDialog(name);
-                                    }
-                                }else{
-                                    time = timeCheck;
-                                    timesMissed = 0;
-                                }
-
-                            }
-                        });
-                    }
+//                    if(WeTubeApplication.getSharedDataSource().getCurrentRecipient() != null){
+//                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+//                        query.whereEqualTo("objectId", WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId());
+//                        query.findInBackground(new FindCallback<ParseUser>() {
+//                            @Override
+//                            public void done(List<ParseUser> users, ParseException e) {
+//                                WeTubeUser user = (WeTubeUser) users.get(0);
+//                                long timeCheck = user.getLong("lastSeen");
+//                                if(time == timeCheck){
+//                                    timesMissed++;
+//                                    if(timesMissed == 2){
+//                                        String name = WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName();
+//                                        WeTubeApplication.getSharedDataSource().getMainActivity().finish();
+//                                        UsersActivity ua = (UsersActivity) WeTubeApplication.getSharedDataSource().getUsersActivity();
+//                                        ua.sessionEndedDialog(name);
+//                                    }
+//                                }else{
+//                                    time = timeCheck;
+//                                    timesMissed = 0;
+//                                }
+//
+//                            }
+//                        });
+//                    }
                 }catch(IOException e) {
                     if (count == 0) {
                         count++;

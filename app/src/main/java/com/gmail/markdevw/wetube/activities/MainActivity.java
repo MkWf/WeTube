@@ -545,7 +545,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onLoaded(String s) {
-
         WeTubeApplication.getSharedDataSource();
     }
 
@@ -564,6 +563,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         hasVideoStarted = true;
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+        }else if(isRecoveringFromAd){
+
         }
     }
 
@@ -581,7 +582,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onPlaying() {
-        if(isRecoveringFromAd){
+        if(isRecoveringFromAd && WeTubeApplication.getSharedDataSource().isSessionController()) {
             youTubePlayer.pause();
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
             hasVideoStarted = false;
@@ -1063,6 +1064,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     Toast.makeText(WeTubeApplication.getSharedInstance(), "Your video is paused while "
                             + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName()
                             + " is viewing an advertisement", Toast.LENGTH_LONG).show();
+                    if(WeTubeApplication.getSharedDataSource().isSessionController()){
+                        youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+                    }
                 }else{
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
                     messageItemAdapter.notifyDataSetChanged();

@@ -4,12 +4,15 @@ package com.gmail.markdevw.wetube.api.model;
  * Created by Mark on 4/30/2015.
  */
 public class PlaylistItem {
-    private String title;
-    private String thumbnailURL;
-    private String id;
-    private boolean toBeDeleted;
-    private boolean isSelected;
-    private int index;
+    
+    private String mTitle;
+    private String mThumbnailURL;
+    private String mId;
+    private boolean mIsToBeDeleted;
+    private boolean mIsSelected;
+    private int mItemIndex;
+
+    public PlaylistItem(){ /* Do Noting */ }
 
     public PlaylistItem(String title, String thumbnailURL, String id, int index){
         setTitle(title);
@@ -18,43 +21,23 @@ public class PlaylistItem {
         setIndex(index);
     }
 
-    public PlaylistItem(){}
+    public String getId() { return mId; }
+    public void setId(String id) { this.mId = id; }
 
-    public String getId() {
-        return id;
-    }
+    public String getTitle() { return mTitle; }
+    public void setTitle(String title) { this.mTitle = title; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getThumbnailURL() { return mThumbnailURL; }
+    public void setThumbnailURL(String thumbnail) { this.mThumbnailURL = thumbnail; }
 
-    public String getTitle() {
-        return title;
-    }
+    public boolean isToBeDeleted() { return mIsToBeDeleted;}
+    public void setToBeDeleted(boolean toBeDeleted) { this.mIsToBeDeleted = toBeDeleted;}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public void setSelected(boolean isSelected) { this.mIsSelected = isSelected;}
+    public boolean isSelected() { return mIsSelected;}
 
-    public String getThumbnailURL() {
-        return thumbnailURL;
-    }
-
-    public void setThumbnailURL(String thumbnail) {
-        this.thumbnailURL = thumbnail;
-    }
-
-    public boolean isToBeDeleted() { return toBeDeleted;}
-
-    public void setToBeDeleted(boolean toBeDeleted) { this.toBeDeleted = toBeDeleted;}
-
-    public void setSelected(boolean isSelected) { this.isSelected = isSelected;}
-
-    public boolean isSelected() { return isSelected;}
-
-    public int getIndex() { return index;}
-
-    public void setIndex(int index) { this.index = index;}
+    public int getIndex() { return mItemIndex;}
+    public void setIndex(int index) { this.mItemIndex = index;}
 }
 
 

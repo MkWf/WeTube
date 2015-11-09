@@ -10,7 +10,7 @@ import com.parse.ParseObject;
 @ParseClassName("Blocked")
 public class Blocked extends ParseObject {
 
-    public Blocked(){}
+    public Blocked(){ /* Do Noting */ }
 
     public Blocked(String blockedBy, String blockedUser){
         setBlockedBy(blockedBy);

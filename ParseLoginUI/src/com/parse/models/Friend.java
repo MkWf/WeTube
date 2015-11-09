@@ -10,7 +10,7 @@ import com.parse.ParseObject;
 @ParseClassName("Friend")
 public class Friend extends ParseObject {
 
-    public Friend(){}
+    public Friend(){ /* Do Noting */ }
 
     public Friend(WeTubeUser user, WeTubeUser friend){
         setUser(user);

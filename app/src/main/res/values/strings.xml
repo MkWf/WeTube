@@ -16,4 +16,11 @@
     <string name="search_for_videos">Search for youtube videos</string>
     <string name="search">Search</string>
     <string name="search_for_youtube_videos">Search for youtube videos</string>
+    <string name="play">Play</string>
+    <string name="pass_control">Pass Control</string>
+    <string name="profile">Profile</string>
+    <string name="invite_session">Invite to Session</string>
+    <string name="invite_friend">Send Friend Invite</string>
+    <string name="profile_view">View Profile</string>
+    <string name="remove_friend">Remove this Friend</string>
 </resources>

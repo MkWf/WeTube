@@ -4,4 +4,12 @@
     <string name="clear">Clear</string>
     <string name="parse_app_id">o6iDnraPZeQpUDp8ElDzIXTEKLRkM6DWgNMyvdmq</string>
     <string name="parse_client_key">mqVc4vVF4qaDQ2VMFT9pVtZ1QTpfbzNO49ValUgg</string>
+    <string name="default_chat_text">Type a message...</string>
+    <string name="submit_button">Send</string>
+    <string name="playlist">Playlist</string>
+    <string name="playlist_starting_counter">0/0</string>
+    <string name="user_search">Search by name or tag</string>
+    <string name="search_button">Search</string>
+    <string name="logout">Logout</string>
+    <string name="friends">Friends</string>
 </resources>

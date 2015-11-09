@@ -62,13 +62,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Type a message..."/>
+                android:hint="@string/default_chat_text"/>
 
             <Button
                 android:id="@+id/activity_main_send_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Send"/>
+                android:text="@string/submit_button"/>
 
         </LinearLayout>
 
@@ -88,9 +88,9 @@
             android:background="@color/white">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Playlist"
+                android:text="@string/playlist"
                 android:textSize="18sp"
                 android:paddingLeft="40dp"
                 android:layout_weight="1"
@@ -100,7 +100,7 @@
                 android:id="@+id/playlist_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0/0"
+                android:text="@string/playlist_starting_counter"
                 android:textSize="18sp"
                 android:paddingLeft="20dp"
                 android:textStyle="bold"/>
@@ -114,7 +114,7 @@
             android:layout_weight="1"
             android:background="?android:windowBackground"
             android:scrollbars="vertical"
-            android:layout_gravity="left"/>
+            android:layout_gravity="start"/>
 
     </LinearLayout>
 

@@ -5,41 +5,33 @@ package com.gmail.markdevw.wetube.api.model;
  */
 public class VideoItem {
 
-    private String title;
-    private String description;
-    private String thumbnailURL;
-    private String id;
+    private String mTitle;
+    private String mDescription;
+    private String mThumbnailURL;
+    private String mId;
 
     public String getId() {
-        return id;
+        return mId;
     }
-
     public void setId(String id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public void setTitle(String title) { this.mTitle = title; }
 
     public String getDescription() {
-        return description;
+        return mDescription;
     }
-
     public void setDescription(String description) {
-        this.description = description;
+        this.mDescription = description;
     }
 
     public String getThumbnailURL() {
-        return thumbnailURL;
+        return mThumbnailURL;
     }
-
-    public void setThumbnailURL(String thumbnail) {
-        this.thumbnailURL = thumbnail;
-    }
+    public void setThumbnailURL(String thumbnail) { this.mThumbnailURL = thumbnail; }
 }
 

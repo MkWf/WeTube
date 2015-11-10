@@ -36,7 +36,6 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
         this.delegate = new WeakReference<Delegate>(delegate);
     }
 
-
     @Override
     public ItemAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int index) {
         View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.video_item, viewGroup, false);
@@ -56,32 +55,32 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView thumbnail;
-        TextView title;
-        TextView description;
-        VideoItem videoItem;
+        private ImageView mThumbnail;
+        private TextView mTitle;
+        private TextView mDescription;
+        private VideoItem mVideoItem;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
-            thumbnail = (ImageView) itemView.findViewById(R.id.video_thumbnail);
-            title = (TextView) itemView.findViewById(R.id.video_title);
-            description = (TextView) itemView.findViewById(R.id.video_description);
+            mThumbnail = (ImageView) itemView.findViewById(R.id.video_thumbnail);
+            mTitle = (TextView) itemView.findViewById(R.id.video_title);
+            mDescription = (TextView) itemView.findViewById(R.id.video_description);
 
             itemView.setOnClickListener(this);
         }
 
         void update(VideoItem videoItem) {
-            this.videoItem = videoItem;
+            this.mVideoItem = videoItem;
 
-            title.setText(videoItem.getTitle());
-            description.setText(videoItem.getDescription());
-            Picasso.with(WeTubeApplication.getSharedInstance()).load(videoItem.getThumbnailURL()).into(thumbnail);
+            mTitle.setText(videoItem.getTitle());
+            mDescription.setText(videoItem.getDescription());
+            Picasso.with(WeTubeApplication.getSharedInstance()).load(videoItem.getThumbnailURL()).into(mThumbnail);
         }
 
         @Override
         public void onClick(View view) {
-            getDelegate().onItemClicked(VideoItemAdapter.this, videoItem);
+            getDelegate().onItemClicked(VideoItemAdapter.this, mVideoItem);
         }
     }
 

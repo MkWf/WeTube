@@ -104,7 +104,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private Intent mMessageServiceIntent;
     private Intent mConnectionServiceIntent;
     private ProgressDialog mProgressDialog;
-    private BroadcastReceiver receiver = null;
+    private BroadcastReceiver sinchReceiver;
     private UserItemAdapter mUserItemAdapter;
     private ArrayAdapter<String> mUserTagsAdapter;
     private int mTagSelected;
@@ -274,7 +274,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         mProgressDialog.setMessage("Please wait...");
         mProgressDialog.show();
 
-        receiver = new BroadcastReceiver() {
+        sinchReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Boolean success = intent.getBooleanExtra("success", false);
@@ -293,7 +293,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             }
         };
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("com.gmail.markdevw.wetube.activities.UsersActivity"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(sinchReceiver, new IntentFilter("com.gmail.markdevw.wetube.activities.UsersActivity"));
     }
 
     public void initSwipeRefresh() {
@@ -419,8 +419,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getFriends(){
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
         if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0){
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
@@ -491,8 +489,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getOnlineFriends(){
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
         if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0){
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
@@ -548,8 +544,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getOfflineFriends(){
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
         if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0){
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
@@ -585,8 +579,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getAvailableFriends(){
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
         if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0){
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
@@ -622,8 +614,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getUnavailableFriends(){
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
         if(WeTubeApplication.getSharedDataSource().getFriends().size() > 0){
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
@@ -658,12 +648,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getAlphabeticFriends() {
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
         if (WeTubeApplication.getSharedDataSource().getFriends().size() > 0) {
             WeTubeApplication.getSharedDataSource().getFriends().clear();
         }
-
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", ParseUser.getCurrentUser().getObjectId());
@@ -1007,7 +994,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             stopService(new Intent(this, ConnectionService.class));
             mMessageService.removeMessageClientListener(mMessageClientListener);
             unbindService(mServiceConnection);
-            unregisterReceiver(receiver);
+            unregisterReceiver(sinchReceiver);
         }catch(NullPointerException e){
 
         }

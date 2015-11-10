@@ -79,6 +79,7 @@ import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by Mark on 4/2/2015.
@@ -107,8 +108,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private UserItemAdapter mUserItemAdapter;
     private ArrayAdapter<String> mUserTagsAdapter;
     private int mTagSelected;
-    private String mSearchOptionSelected = getString(R.string.name);
-    private String mSortOptionSelected = getString(R.string.sort_default);
+    private String mSearchOptionSelected;
+    private String mSortOptionSelected;
     private ArrayAdapter<CharSequence> mSearchSpinnerAdapter;
     private ArrayAdapter<CharSequence> mFriendsSpinnerAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -132,6 +133,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
+        ButterKnife.bind(this);
 
         WeTubeApplication.getSharedDataSource().setUsersActivity(this);
 
@@ -140,19 +142,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         initUserSearchSpinner();
         initNavigationDrawer();
         initFriendsListSpinner();
-
-        mUserTagsAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
+        initUserTagsAdapter();
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(searchField.getText().toString().isEmpty()) {
-                    Toast.makeText(UsersActivity.this, "Enter a search first", Toast.LENGTH_LONG).show();
-                }else{
+                if (searchField.getText().toString().isEmpty()) {
+                    Toast.makeText(UsersActivity.this, R.string.enter_a_search_first, Toast.LENGTH_LONG).show();
+                } else {
                     swipeRefreshLayout.setRefreshing(true);
-                    if (mSearchOptionSelected.equals("Name")){
+                    if (mSearchOptionSelected.equals(getString(R.string.name))) {
                         searchByName();
-                    }else{
+                    } else {
                         searchByTag();
                     }
                 }
@@ -160,60 +161,42 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         });
 
         Intent i = getIntent();
-        final int iVal = i.getIntExtra("connloss", 0);
+        final int connectionLossCheck = i.getIntExtra(getString(R.string.connection_loss), 0);
 
-        SharedPreferences sharedpreferences;
-        sharedpreferences=getSharedPreferences("MyPrefs",
+        SharedPreferences sharedpreferences = getSharedPreferences(
+                getString(R.string.shared_prefs),
                 Context.MODE_PRIVATE);
-        if(sharedpreferences.contains("userkey") && (sharedpreferences.contains("passkey"))){
-            String user = sharedpreferences.getString("userkey", "fa");
-            String pass = sharedpreferences.getString("passkey", "fa");
-
+        String userKey = getString(R.string.user_key);
+        String passKey = getString(R.string.pass_key);
+        if(sharedpreferences.contains(userKey) && (sharedpreferences.contains(passKey))){
+            String user = sharedpreferences.getString(userKey, "fa");
+            String pass = sharedpreferences.getString(passKey, "fa");
             if(user.equals("fa") || pass.equals("fa")){
-                Toast.makeText(this, "Failed to retrieve your login information", Toast.LENGTH_LONG).show();
-                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
-                startActivityForResult(builder.build(), 0);
+                Toast.makeText(this, R.string.failed_to_retrieve_login_info, Toast.LENGTH_LONG).show();
+                displayParseLoginUI(connectionLossCheck);
             }else{
                 ParseUser.logInInBackground(user, pass, new LogInCallback() {
                     @Override
                     public void done(ParseUser parseUser, ParseException e) {
                         if(parseUser != null){
                             showSpinner();
-
-                            mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
-                            mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
-                            startService(mMessageServiceIntent);
-                            startService(mConnectionServiceIntent);
-
-                            getLoggedInUsers();
-                            getFriends();
-                            getUserTags();
-
-                            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-                            installation.put("user", WeTubeUser.getCurrentUser().getObjectId());
-                            installation.saveInBackground();
-
-                            initSwipeRefresh();
+                            loginSuccess();
                         }else{
                             if(e != null){
-                                Toast.makeText(UsersActivity.this, com.parse.ui.R.string.com_parse_ui_parse_login_failed_unknown_toast, Toast.LENGTH_LONG).show();
-                                SharedPreferences sharedpreferences = getSharedPreferences
-                                        ("MyPrefs", Context.MODE_PRIVATE);
-                                sharedpreferences.edit()
-                                    .clear()
-                                    .commit();
-
-                                ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
-                                startActivityForResult(builder.build(), 0);
+                                loginFail(connectionLossCheck);
                             }
                         }
                     }
                 });
             }
         }else{
-            ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
-            startActivityForResult(builder.build(), 0);
+            displayParseLoginUI(connectionLossCheck);
         }
+    }
+
+    public void displayParseLoginUI(int connectionLossCheck) {
+        ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, connectionLossCheck);
+        startActivityForResult(builder.build(), 0);
     }
 
     @Override
@@ -251,6 +234,38 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         super.onResume();
         WeTubeApplication.getSharedDataSource().setVideoActivity(false);
         mIsFirstMessage = true;
+    }
+
+    public void loginFail(int connectionLossCheck) {
+        Toast.makeText(UsersActivity.this, com.parse.ui.R.string.com_parse_ui_parse_login_failed_unknown_toast, Toast.LENGTH_LONG).show();
+        SharedPreferences sharedpreferences = getSharedPreferences
+                ("MyPrefs", Context.MODE_PRIVATE);
+        sharedpreferences.edit()
+                .clear()
+                .commit();
+
+        displayParseLoginUI(connectionLossCheck);
+    }
+
+    public void loginSuccess() {
+        mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
+        mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
+        startService(mMessageServiceIntent);
+        startService(mConnectionServiceIntent);
+
+        getLoggedInUsers();
+        getFriends();
+        getUserTags();
+
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("user", WeTubeUser.getCurrentUser().getObjectId());
+        installation.saveInBackground();
+
+        initSwipeRefresh();
+    }
+
+    public void initUserTagsAdapter() {
+        mUserTagsAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
     }
 
     private void showSpinner() {
@@ -302,6 +317,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void initFriendsListSpinner() {
+        mSortOptionSelected = getString(R.string.sort_default);
         mFriendsSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_options, android.R.layout.simple_spinner_item);
         mFriendsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -310,6 +326,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void initUserSearchSpinner() {
+        mSearchOptionSelected = getString(R.string.name);
         mSearchSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.search_options, android.R.layout.simple_spinner_item);
         mSearchSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -615,7 +632,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                               WeTubeApplication.getSharedDataSource().getFriends()
                                   .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                  friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                                          friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
 
                     }
@@ -1019,6 +1036,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             stopService(new Intent(this, ConnectionService.class));
             mMessageService.removeMessageClientListener(mMessageClientListener);
             unbindService(mServiceConnection);
+            unregisterReceiver(receiver);
         }catch(NullPointerException e){
 
         }

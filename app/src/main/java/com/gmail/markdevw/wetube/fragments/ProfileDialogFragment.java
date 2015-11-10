@@ -14,10 +14,16 @@ import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.adapters.ProfileCommonItemAdapter;
 import com.gmail.markdevw.wetube.adapters.ProfileUncommonItemAdapter;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Mark on 4/17/2015.
  */
 public class ProfileDialogFragment extends DialogFragment {
+
+    @Bind(R.id.rv_fragment_profile_dialog_common) RecyclerView commonRecyclerView;
+    @Bind(R.id.rv_fragment_profile_dialog_uncommon) RecyclerView uncommonRecyclerView;
 
     public ProfileDialogFragment() { /* Do Nothing */ }
 
@@ -26,9 +32,7 @@ public class ProfileDialogFragment extends DialogFragment {
         getDialog().setTitle(R.string.shared_tags);
 
         View view = inflater.inflate(R.layout.fragment_profile_dialog, container);
-
-        RecyclerView commonRecyclerView = (RecyclerView) view.findViewById(R.id.rv_fragment_profile_dialog_common);
-        RecyclerView uncommonRecyclerView = (RecyclerView) view.findViewById(R.id.rv_fragment_profile_dialog_uncommon);
+        ButterKnife.bind(this, view);
 
         ProfileCommonItemAdapter profileCommonItemAdapter = new ProfileCommonItemAdapter();
         ProfileUncommonItemAdapter profileUncommonItemAdapter = new ProfileUncommonItemAdapter();

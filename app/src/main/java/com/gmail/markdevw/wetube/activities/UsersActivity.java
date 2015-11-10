@@ -352,8 +352,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void getLoggedInUsers(){
-        final WeTubeUser currentUser = (WeTubeUser) ParseUser.getCurrentUser();
-
         if(WeTubeApplication.getSharedDataSource().getUsers().size() > 0){
             WeTubeApplication.getSharedDataSource().getUsers().clear();
         }
@@ -368,33 +366,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             WeTubeApplication.getSharedDataSource().getUsers().add(new UserItem(user.getUsername(), user.getObjectId(),
                                     user.getSessionStatus(), user.getLoggedStatus(), false));
                         }
-
-                       /*for(int j = 0; j < userList.size(); j++){
-                            final WeTubeUser user = (WeTubeUser) userList.get(j);
-                            ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
-                            q1.whereEqualTo("friend1", user);
-                            q1.whereEqualTo("friend2", currentUser);
-
-                            ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
-                            q2.whereEqualTo("friend2", user);
-                            q2.whereEqualTo("friend1", currentUser);
-
-                            List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
-                            queries.add(q1);
-                            queries.add(q2);
-
-                            ParseQuery<Friend> query = ParseQuery.or(queries);
-                            final int k = j;
-                            query.findInBackground(new FindCallback<Friend>() {
-                                @Override
-                                public void done(List<Friend> list, ParseException e) {
-                                    if(e == null && list.size() > 0){
-                                        WeTubeApplication.getSharedDataSource().getUsers().get(k).setFriendStatus(true);
-                                        mUserItemAdapter.notifyItemChanged(k);
-                                    }
-                                }
-                            });
-                        }*/
                     }
                     mUserItemAdapter.notifyDataSetChanged();
                     if (mProgressDialog != null) {

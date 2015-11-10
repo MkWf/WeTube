@@ -18,7 +18,7 @@ import com.gmail.markdevw.wetube.adapters.ProfileUncommonItemAdapter;
  * Created by Mark on 4/17/2015.
  */
 public class ProfileDialogFragment extends DialogFragment {
-    
+
     public ProfileDialogFragment() { /* Do Nothing */ }
 
     @Override

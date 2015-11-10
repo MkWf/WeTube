@@ -17,13 +17,13 @@ import com.gmail.markdevw.wetube.WeTubeApplication;
 /**
  * Created by Mark on 3/27/2015.
  */
-public class SearchBarFragment extends Fragment implements View.OnClickListener {
+public class SearchBarFragment extends Fragment {
 
-    Button searchButton;
-    EditText searchBox;
-    ImageButton prevPage;
-    ImageButton nextPage;
-    Delegate listener;
+    private Button searchButton;
+    private EditText searchBox;
+    private ImageButton prevPage;
+    private ImageButton nextPage;
+    private Delegate listener;
 
     public static interface Delegate {
         public void onSearchButtonClicked(SearchBarFragment searchBarFragment, EditText search);
@@ -37,7 +37,7 @@ public class SearchBarFragment extends Fragment implements View.OnClickListener 
         try{
             listener = (Delegate) activity;
         }catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnItemClicked");
+            throw new ClassCastException(activity.toString() + " must implement Delegate interface");
         }
     }
 
@@ -50,33 +50,33 @@ public class SearchBarFragment extends Fragment implements View.OnClickListener 
         prevPage = (ImageButton) inflate.findViewById(R.id.fragment_search_prev_page);
         nextPage = (ImageButton) inflate.findViewById(R.id.fragment_search_next_page);
 
-        searchButton.setOnClickListener(this);
-        prevPage.setOnClickListener(this);
-        nextPage.setOnClickListener(this);
-
-        return inflate;
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.fragment_search_search_button:
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 WeTubeApplication.getSharedDataSource().setCurrentSearch(searchBox.getText().toString());
-                listener.onSearchButtonClicked(this, searchBox);
+                listener.onSearchButtonClicked(SearchBarFragment.this, searchBox);
                 if(!searchBox.getText().toString().isEmpty()){
                     prevPage.setVisibility(View.VISIBLE);
                     nextPage.setVisibility(View.VISIBLE);
                 }
-                break;
+            }
+        });
 
-            case R.id.fragment_search_prev_page:
-                listener.onPrevPageButtonClicked(this, searchBox);
-                break;
+        prevPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onPrevPageButtonClicked(SearchBarFragment.this, searchBox);
+            }
+        });
 
-            case R.id.fragment_search_next_page:
-                listener.onNextPageButtonClicked(this, searchBox);
-                break;
-        }
+        nextPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onNextPageButtonClicked(SearchBarFragment.this, searchBox);
+            }
+        });
+
+        return inflate;
     }
 }
 

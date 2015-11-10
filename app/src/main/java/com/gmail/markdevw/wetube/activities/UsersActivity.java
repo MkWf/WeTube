@@ -79,6 +79,8 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import butterknife.Bind;
+
 /**
  * Created by Mark on 4/2/2015.
  */
@@ -86,31 +88,32 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
         NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
         DrawerLayout.DrawerListener{
+    
+    @Bind(R.id.activity_users_search_option)        Spinner searchOptions;
+    @Bind(R.id.activity_users_nav_friends_sort)     Spinner friendsSort;
+    @Bind(R.id.activity_users_search)               EditText searchField;
+    @Bind(R.id.activity_users_send_button)          Button searchButton;
+    @Bind(R.id.tb_activity_users)                   Toolbar toolbar;
+    @Bind(R.id.srl_activity_users)                  SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.rv_activity_users)                   RecyclerView recyclerView;
+    @Bind(R.id.activity_main_logout)                Button logout;
+    @Bind(R.id.rv_nav_activity_users)               RecyclerView navigationRecyclerView;
+    @Bind(R.id.dl_activity_users)                   DrawerLayout drawerLayout;
 
     private Intent serviceIntent;
     private Intent connServiceIntent;
     private ProgressDialog progressDialog;
     private BroadcastReceiver receiver = null;
-    private RecyclerView recyclerView;
-    private Button logout;
     private UserItemAdapter userItemAdapter;
     private Handler handler;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private Toolbar toolbar;
     private ArrayAdapter<String> adapter;
-    private EditText searchField;
-    private Button searchButton;
     private int tagSelect;
-    private Spinner searchOptions;
-    private Spinner friendsSort;
     private String searchOptionSelected = "Name";
     private String sortOptionSelected = "Default";
     ArrayAdapter<CharSequence> spinnerAdapter;
     ArrayAdapter<CharSequence> friendsAdapter;
     private ActionBarDrawerToggle drawerToggle;
-    private DrawerLayout drawerLayout;
     private NavigationDrawerAdapter navigationDrawerAdapter;
-    RecyclerView navigationRecyclerView;
     private ServiceConnection serviceConnection = new MyServiceConnection();
     private MessageService.MessageServiceInterface messageService;
     private MessageClientListener messageClientListener = new MyMessageClientListener();
@@ -121,7 +124,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     boolean isBlocking = false;
     private boolean isLaunch = true;
     private int launchSpinnerCount = 0;
-    int lastVisibleItem, totalItemCount;
     LinearLayoutManager mLayoutManager;
     private final long LOGIN_TIME = System.currentTimeMillis();
     private String msgSplitter = "=-=-=";
@@ -140,17 +142,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
 
-        toolbar = (Toolbar) findViewById(R.id.tb_activity_users);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.dl_activity_users);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
         drawerLayout.setDrawerListener(this);
 
         navigationDrawerAdapter = new NavigationDrawerAdapter();
         navigationDrawerAdapter.setDelegate(this);
-        navigationRecyclerView = (RecyclerView) findViewById(R.id.rv_nav_activity_users);
+
         navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
         navigationRecyclerView.setAdapter(navigationDrawerAdapter);
@@ -161,29 +161,24 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         userItemAdapter = new UserItemAdapter();
         userItemAdapter.setDelegate(this);
 
-        logout = (Button) findViewById(R.id.activity_main_logout);
         logout.setOnClickListener(this);
 
-        recyclerView = (RecyclerView) findViewById(R.id.rv_activity_users);
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userItemAdapter);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_users);
 
-        searchField = (EditText) findViewById(R.id.activity_users_search);
-        searchButton = (Button) findViewById(R.id.activity_users_send_button);
         searchButton.setOnClickListener(this);
 
-        searchOptions = (Spinner) findViewById(R.id.activity_users_search_option);
+
         spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.search_options, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         searchOptions.setAdapter(spinnerAdapter);
         searchOptions.setOnItemSelectedListener(this);
 
-        friendsSort = (Spinner) findViewById(R.id.activity_users_nav_friends_sort);
+
         friendsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_options, android.R.layout.simple_spinner_item);
         friendsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

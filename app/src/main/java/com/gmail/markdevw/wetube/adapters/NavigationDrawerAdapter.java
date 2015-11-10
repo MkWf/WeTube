@@ -14,6 +14,9 @@ import com.gmail.markdevw.wetube.api.model.UserItem;
 
 import java.lang.ref.WeakReference;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Mark on 4/12/2015.
  */
@@ -55,16 +58,15 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView mName;
-        private ImageView mStatus;
+        @Bind(R.id.user_item_name) TextView mName;
+        @Bind(R.id.user_item_status)ImageView mStatus;
+
         private UserItem mUserItem;
         private int mIndex;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
-
-            mName = (TextView) itemView.findViewById(R.id.user_item_name);
-            mStatus = (ImageView) itemView.findViewById(R.id.user_item_status);
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(this);
         }

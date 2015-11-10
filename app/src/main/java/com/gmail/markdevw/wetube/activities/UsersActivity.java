@@ -12,7 +12,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
@@ -84,7 +83,7 @@ import butterknife.Bind;
 /**
  * Created by Mark on 4/2/2015.
  */
-public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate, View.OnClickListener,
+public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate,
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
         NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
         DrawerLayout.DrawerListener{
@@ -96,38 +95,37 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Bind(R.id.tb_activity_users)                   Toolbar toolbar;
     @Bind(R.id.srl_activity_users)                  SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.rv_activity_users)                   RecyclerView recyclerView;
-    @Bind(R.id.activity_main_logout)                Button logout;
     @Bind(R.id.rv_nav_activity_users)               RecyclerView navigationRecyclerView;
     @Bind(R.id.dl_activity_users)                   DrawerLayout drawerLayout;
 
-    private Intent serviceIntent;
-    private Intent connServiceIntent;
-    private ProgressDialog progressDialog;
-    private BroadcastReceiver receiver = null;
-    private UserItemAdapter userItemAdapter;
-    private Handler handler;
-    private ArrayAdapter<String> adapter;
-    private int tagSelect;
-    private String searchOptionSelected = "Name";
-    private String sortOptionSelected = "Default";
-    ArrayAdapter<CharSequence> searchSpinnerAdapter;
-    ArrayAdapter<CharSequence> friendsSpinnerAdapter;
-    private ActionBarDrawerToggle drawerToggle;
-    private NavigationDrawerAdapter navigationDrawerAdapter;
-    private ServiceConnection serviceConnection = new MyServiceConnection();
-    private MessageService.MessageServiceInterface messageService;
-    private MessageClientListener messageClientListener = new MyMessageClientListener();
-    private UserItem clickedUser;
-    private Queue<Message> messageQueue = new LinkedBlockingQueue<>();
-    private AlertDialog dialog;
-    boolean isFirstMessage = true;
-    boolean isBlocking = false;
-    private boolean isLaunch = true;
-    private int launchSpinnerCount = 0;
-    LinearLayoutManager mLayoutManager;
     private final long LOGIN_TIME = System.currentTimeMillis();
-    private String msgSplitter = "=-=-=";
-    private HashMap<String, String> messages = new HashMap<String, String>();
+
+    private Intent mMessageServiceIntent;
+    private Intent mConnectionServiceIntent;
+    private ProgressDialog mProgressDialog;
+    private BroadcastReceiver receiver = null;
+    private UserItemAdapter mUserItemAdapter;
+    private ArrayAdapter<String> mUserTagsAdapter;
+    private int mTagSelected;
+    private String mSearchOptionSelected = getString(R.string.name);
+    private String mSortOptionSelected = getString(R.string.sort_default);
+    private ArrayAdapter<CharSequence> mSearchSpinnerAdapter;
+    private ArrayAdapter<CharSequence> mFriendsSpinnerAdapter;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private NavigationDrawerAdapter mNavigationDrawerAdapter;
+    private ServiceConnection mServiceConnection = new MyServiceConnection();
+    private MessageService.MessageServiceInterface mMessageService;
+    private MessageClientListener mMessageClientListener = new MyMessageClientListener();
+    private UserItem mClickedUser;
+    private Queue<Message> mMessageQueue = new LinkedBlockingQueue<>();
+    private AlertDialog mDialog;
+    boolean mIsFirstMessage = true;
+    boolean mIsBlocking;
+    private boolean mIsLaunch = true;
+    private int mLaunchSpinnerCount;
+    private LinearLayoutManager mLayoutManager;
+    private String mMsgSplitter = "=-=-=";
+    private HashMap<String, String> mMessages = new HashMap<String, String>();
 
 
     @Override
@@ -143,20 +141,26 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         initNavigationDrawer();
         initFriendsListSpinner();
 
+        mUserTagsAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(searchField.getText().toString().isEmpty()) {
+                    Toast.makeText(UsersActivity.this, "Enter a search first", Toast.LENGTH_LONG).show();
+                }else{
+                    swipeRefreshLayout.setRefreshing(true);
+                    if (mSearchOptionSelected.equals("Name")){
+                        searchByName();
+                    }else{
+                        searchByTag();
+                    }
+                }
+            }
+        });
+
         Intent i = getIntent();
         final int iVal = i.getIntExtra("connloss", 0);
-
-        adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
-
-
-        serviceIntent = new Intent(this, MessageService.class);
-        connServiceIntent = new Intent(this, ConnectionService.class);
-
-
-
-        logout.setOnClickListener(this);
-        searchButton.setOnClickListener(this);
-
 
         SharedPreferences sharedpreferences;
         sharedpreferences=getSharedPreferences("MyPrefs",
@@ -175,19 +179,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     public void done(ParseUser parseUser, ParseException e) {
                         if(parseUser != null){
                             showSpinner();
-                            startService(serviceIntent);
-                            startService(connServiceIntent);
-                            /*bindService(connServiceIntent, new ServiceConnection() {
-                                @Override
-                                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 
-                                }
-
-                                @Override
-                                public void onServiceDisconnected(ComponentName componentName) {
-
-                                }
-                            }, BIND_AUTO_CREATE);*/
+                            mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
+                            mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
+                            startService(mMessageServiceIntent);
+                            startService(mConnectionServiceIntent);
 
                             getLoggedInUsers();
                             getFriends();
@@ -197,21 +193,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             installation.put("user", WeTubeUser.getCurrentUser().getObjectId());
                             installation.saveInBackground();
 
-                            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
-                            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                                @Override
-                                public void onRefresh() {
-                                    getLoggedInUsers();
-                                }
-                            });
+                            initSwipeRefresh();
                         }else{
                             if(e != null){
                                 Toast.makeText(UsersActivity.this, com.parse.ui.R.string.com_parse_ui_parse_login_failed_unknown_toast, Toast.LENGTH_LONG).show();
                                 SharedPreferences sharedpreferences = getSharedPreferences
                                         ("MyPrefs", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedpreferences.edit();
-                                editor.clear();
-                                editor.commit();
+                                sharedpreferences.edit()
+                                    .clear()
+                                    .commit();
 
                                 ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
                                 startActivityForResult(builder.build(), 0);
@@ -226,49 +216,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
-    public void initUserListRecyclerView() {
-        userItemAdapter = new UserItemAdapter();
-        userItemAdapter.setDelegate(this);
-
-        mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(userItemAdapter);
-    }
-
-    public void initFriendsListSpinner() {
-        friendsSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_options, android.R.layout.simple_spinner_item);
-        friendsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        friendsSort.setAdapter(friendsSpinnerAdapter);
-        friendsSort.setOnItemSelectedListener(this);
-    }
-
-    public void initUserSearchSpinner() {
-        searchSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.search_options, android.R.layout.simple_spinner_item);
-        searchSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        searchOptions.setAdapter(searchSpinnerAdapter);
-        searchOptions.setOnItemSelectedListener(this);
-    }
-
-    public void initNavigationDrawer() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
-        drawerLayout.setDrawerListener(this);
-
-        navigationDrawerAdapter = new NavigationDrawerAdapter();
-        navigationDrawerAdapter.setDelegate(this);
-
-        navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        navigationRecyclerView.setAdapter(navigationDrawerAdapter);
-    }
-
-    public void initToolbar() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -277,8 +224,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             finish();
         }else{
             drawerLayout.setVisibility(View.VISIBLE);
-            startService(serviceIntent);
-            startService(connServiceIntent);
+            startService(mMessageServiceIntent);
+            startService(mConnectionServiceIntent);
             showSpinner();
 
             getLoggedInUsers();
@@ -303,20 +250,20 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     protected void onResume(){
         super.onResume();
         WeTubeApplication.getSharedDataSource().setVideoActivity(false);
-        isFirstMessage = true;
+        mIsFirstMessage = true;
     }
 
     private void showSpinner() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Loading");
-        progressDialog.setMessage("Please wait...");
-        progressDialog.show();
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle("Loading");
+        mProgressDialog.setMessage("Please wait...");
+        mProgressDialog.show();
 
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Boolean success = intent.getBooleanExtra("success", false);
-                progressDialog.dismiss();
+                mProgressDialog.dismiss();
                 if (!success) {
                     Toast.makeText(getApplicationContext(), "Messaging service failed to start", Toast.LENGTH_LONG).show();
                 }else{
@@ -326,12 +273,65 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     user.setLoggedStatus(true);
                     user.setSessionStatus(false);
                     user.saveInBackground();
-                    bindService(new Intent(UsersActivity.this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
+                    bindService(new Intent(UsersActivity.this, MessageService.class), mServiceConnection, BIND_AUTO_CREATE);
                 }
             }
         };
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("com.gmail.markdevw.wetube.activities.UsersActivity"));
+    }
+
+    public void initSwipeRefresh() {
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLoggedInUsers();
+            }
+        });
+    }
+
+    public void initUserListRecyclerView() {
+        mUserItemAdapter = new UserItemAdapter();
+        mUserItemAdapter.setDelegate(this);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mUserItemAdapter);
+    }
+
+    public void initFriendsListSpinner() {
+        mFriendsSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.sort_options, android.R.layout.simple_spinner_item);
+        mFriendsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        friendsSort.setAdapter(mFriendsSpinnerAdapter);
+        friendsSort.setOnItemSelectedListener(this);
+    }
+
+    public void initUserSearchSpinner() {
+        mSearchSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.search_options, android.R.layout.simple_spinner_item);
+        mSearchSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        searchOptions.setAdapter(mSearchSpinnerAdapter);
+        searchOptions.setOnItemSelectedListener(this);
+    }
+
+    public void initNavigationDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
+        drawerLayout.setDrawerListener(this);
+
+        mNavigationDrawerAdapter = new NavigationDrawerAdapter();
+        mNavigationDrawerAdapter.setDelegate(this);
+
+        navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        navigationRecyclerView.setAdapter(mNavigationDrawerAdapter);
+    }
+
+    public void initToolbar() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void getLoggedInUsers(){
@@ -373,19 +373,19 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 public void done(List<Friend> list, ParseException e) {
                                     if(e == null && list.size() > 0){
                                         WeTubeApplication.getSharedDataSource().getUsers().get(k).setFriendStatus(true);
-                                        userItemAdapter.notifyItemChanged(k);
+                                        mUserItemAdapter.notifyItemChanged(k);
                                     }
                                 }
                             });
                         }*/
                     }
-                    userItemAdapter.notifyDataSetChanged();
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    mUserItemAdapter.notifyDataSetChanged();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
                     swipeRefreshLayout.setRefreshing(false);
                 } else {
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -479,10 +479,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                                 friend.getSessionStatus(), friend.getLoggedStatus(), true));
                                             }
                                         }
-                                        navigationDrawerAdapter.notifyDataSetChanged();
+                                        mNavigationDrawerAdapter.notifyDataSetChanged();
                                         WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriends().size());
-                                        if (progressDialog != null) {
-                                            progressDialog.dismiss();
+                                        if (mProgressDialog != null) {
+                                            mProgressDialog.dismiss();
                                         }
                                     }
                                 });
@@ -490,10 +490,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         }
                     });
                 } else {
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -539,18 +539,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                         friend.getSessionStatus(), friend.getLoggedStatus(), true));
                                     }
                                 }
-                                navigationDrawerAdapter.notifyDataSetChanged();
-                                if (progressDialog != null) {
-                                    progressDialog.dismiss();
+                                mNavigationDrawerAdapter.notifyDataSetChanged();
+                                if (mProgressDialog != null) {
+                                    mProgressDialog.dismiss();
                                 }
                             }
                         }
                     });
                 } else {
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -582,12 +582,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         }
 
                     }
-                    navigationDrawerAdapter.notifyDataSetChanged();
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
                 } else {
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -619,12 +619,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         }
 
                     }
-                    navigationDrawerAdapter.notifyDataSetChanged();
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
                 } else {
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -655,12 +655,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                             friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                     }
-                    navigationDrawerAdapter.notifyDataSetChanged();
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
                 } else {
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -692,12 +692,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                     }
-                    navigationDrawerAdapter.notifyDataSetChanged();
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
                 } else {
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();
@@ -709,7 +709,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public void onItemClicked(UserItemAdapter itemAdapter, final UserItem userItem, final View view, final int index) {
         try {
-            clickedUser = userItem;
+            mClickedUser = userItem;
             ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
             query.whereEqualTo("blockedBy", WeTubeUser.getCurrentUser().getObjectId());
             query.whereEqualTo("userId", userItem.getId());
@@ -719,7 +719,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     if(list != null){
                         if (list.size() > 0) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                            builder.setTitle("You have " + clickedUser.getName() + " blocked. Do you want to unblock this user?");
+                            builder.setTitle("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?");
 
                             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
@@ -727,7 +727,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     list.get(0).deleteInBackground(new DeleteCallback() {
                                         @Override
                                         public void done(ParseException e) {
-                                            Toast.makeText(UsersActivity.this, clickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(UsersActivity.this, mClickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                     dialog.cancel();
@@ -750,7 +750,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 public void done(List<Blocked> list, ParseException e) {
                                     if (list.size() > 0) {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                                        builder.setTitle(clickedUser.getName() + " has you blocked");
+                                        builder.setTitle(mClickedUser.getName() + " has you blocked");
 
                                         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                             @Override
@@ -762,15 +762,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                         builder.show();
                                     } else {
                                         ParseQuery<ParseUser> query = ParseUser.getQuery();
-                                        query.whereEqualTo("objectId", clickedUser.getId());
+                                        query.whereEqualTo("objectId", mClickedUser.getId());
                                         query.findInBackground(new FindCallback<ParseUser>() {
                                             @Override
                                             public void done(List<ParseUser> list, ParseException e) {
                                                 if (e == null && list.size() > 0) {
                                                     WeTubeUser user = (WeTubeUser) list.get(0);
-                                                    clickedUser.setOnlineStatus(user.getLoggedStatus());
-                                                    clickedUser.setSessionStatus(user.getSessionStatus());
-                                                    userItemAdapter.notifyItemChanged(index);
+                                                    mClickedUser.setOnlineStatus(user.getLoggedStatus());
+                                                    mClickedUser.setSessionStatus(user.getSessionStatus());
+                                                    mUserItemAdapter.notifyItemChanged(index);
 
                                                     ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
                                                     q1.whereEqualTo("friend1", user);
@@ -790,19 +790,19 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                         public void done(List<Friend> friends, ParseException e) {
                                                             if (e == null) {
                                                                 if (friends.size() > 0) {
-                                                                    clickedUser.setFriendStatus(true);
+                                                                    mClickedUser.setFriendStatus(true);
                                                                 }else{
-                                                                    clickedUser.setFriendStatus(false);
+                                                                    mClickedUser.setFriendStatus(false);
                                                                 }
                                                                 PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
 
-                                                                if (clickedUser.getOnlineStatus() && clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
+                                                                if (mClickedUser.getOnlineStatus() && mClickedUser.getSessionStatus() && mClickedUser.getFriendStatus()) {
                                                                     getMenuInflater().inflate(R.menu.activity_users_popup_friend_unavailable_offline, popMenu.getMenu());
-                                                                } else if(clickedUser.getOnlineStatus() && !clickedUser.getSessionStatus() && clickedUser.getFriendStatus()) {
+                                                                } else if(mClickedUser.getOnlineStatus() && !mClickedUser.getSessionStatus() && mClickedUser.getFriendStatus()) {
                                                                     getMenuInflater().inflate(R.menu.activity_users_popup_friend, popMenu.getMenu());
-                                                                }else if(clickedUser.getSessionStatus()){
+                                                                }else if(mClickedUser.getSessionStatus()){
                                                                     getMenuInflater().inflate(R.menu.activity_users_popup_unavailable, popMenu.getMenu());
-                                                                }else if(clickedUser.getOnlineStatus()) {
+                                                                }else if(mClickedUser.getOnlineStatus()) {
                                                                     getMenuInflater().inflate(R.menu.activity_users_popup, popMenu.getMenu());
                                                                 }else{
                                                                     getMenuInflater().inflate(R.menu.activity_users_popup_offline, popMenu.getMenu());
@@ -834,18 +834,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, final UserItem userItem, final View view, final int index) {
-        clickedUser = userItem;
+        mClickedUser = userItem;
 
         ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("objectId", clickedUser.getId());
+        query.whereEqualTo("objectId", mClickedUser.getId());
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> list, ParseException e) {
                 if (e == null && list.size() > 0) {
                     WeTubeUser user = (WeTubeUser) list.get(0);
-                    clickedUser.setOnlineStatus(user.getLoggedStatus());
-                    clickedUser.setSessionStatus(user.getSessionStatus());
-                    navigationDrawerAdapter.notifyItemChanged(index);
+                    mClickedUser.setOnlineStatus(user.getLoggedStatus());
+                    mClickedUser.setSessionStatus(user.getSessionStatus());
+                    mNavigationDrawerAdapter.notifyItemChanged(index);
 
                     PopupMenu popMenu = new PopupMenu(UsersActivity.this, view);
 
@@ -870,20 +870,20 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         switch (menuItem.getItemId()) {
             case R.id.popup_session :
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
-                query.whereEqualTo("objectId", clickedUser.getId());
+                query.whereEqualTo("objectId", mClickedUser.getId());
                 query.findInBackground(new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> parseUsers, ParseException e) {
                        if(parseUsers.size() > 0 && e == null) {
                            WeTubeUser user = (WeTubeUser) parseUsers.get(0);
                            if (user.getLoggedStatus() && !user.getSessionStatus()) {
-                               messageService.sendMessage(clickedUser.getId(), msgSplitter + "startsession" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                               mMessageService.sendMessage(mClickedUser.getId(), mMsgSplitter + "startsession" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
                                        + ParseUser.getCurrentUser().getObjectId());
                            } else {
-                               clickedUser.setOnlineStatus(user.getLoggedStatus());
-                               clickedUser.setSessionStatus(user.getSessionStatus());
-                               userItemAdapter.notifyDataSetChanged();
-                               navigationDrawerAdapter.notifyDataSetChanged();
+                               mClickedUser.setOnlineStatus(user.getLoggedStatus());
+                               mClickedUser.setSessionStatus(user.getSessionStatus());
+                               mUserItemAdapter.notifyDataSetChanged();
+                               mNavigationDrawerAdapter.notifyDataSetChanged();
                                if (!user.getLoggedStatus()) {
                                    Toast.makeText(UsersActivity.this, user.getUsername() + " is offline", Toast.LENGTH_LONG).show();
                                } else {
@@ -898,21 +898,21 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 break;
             case R.id.popup_add :
                 if(WeTubeApplication.getSharedDataSource().getFriends().size() < WeTubeApplication.getSharedDataSource().getMaxFriends()){
-                    messageService.sendMessage(clickedUser.getId(), msgSplitter + "friendadd" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                    mMessageService.sendMessage(mClickedUser.getId(), mMsgSplitter + "friendadd" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
                             + ParseUser.getCurrentUser().getObjectId());
                 }else{
                     Toast.makeText(this, "Your friends list is full (100)", Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.popup_profile:
-                params.put("clickedId", clickedUser.getId());
+                params.put("clickedId", mClickedUser.getId());
                 params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
                 ParseCloud.callFunctionInBackground("commonTags", params, new FunctionCallback<List<String>>() {
                     @Override
                     public void done(final List<String> comTags, com.parse.ParseException e) {
                         if (e == null) {
                             HashMap<String, Object> params = new HashMap<String, Object>();
-                            params.put("clickedId", clickedUser.getId());
+                            params.put("clickedId", mClickedUser.getId());
                             params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
                             ParseCloud.callFunctionInBackground("uncommonTags", params, new FunctionCallback<List<String>>() {
                                 @Override
@@ -932,21 +932,21 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                         pdf.show(getFragmentManager(), "Profile");
                                     } else {
                                         Toast.makeText(WeTubeApplication.getSharedInstance(),
-                                                "Error: " + e + ". Failed to start session with " + clickedUser.getName(),
+                                                "Error: " + e + ". Failed to start session with " + mClickedUser.getName(),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
                         } else {
                             Toast.makeText(WeTubeApplication.getSharedInstance(),
-                                    "Error: " + e + ". Failed to start session with " + clickedUser.getName(),
+                                    "Error: " + e + ". Failed to start session with " + mClickedUser.getName(),
                                     Toast.LENGTH_LONG).show();
                         }
                     }
                 });
                 break;
             case R.id.popup_remove :
-                final UserItem friend = clickedUser;
+                final UserItem friend = mClickedUser;
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                 builder.setTitle("Are you sure you want to remove " + friend.getName() + " ?");
 
@@ -982,7 +982,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                     public void done(ParseException e) {
                                                         WeTubeApplication.getSharedDataSource().getFriends().remove(friend);
                                                         WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()-1);
-                                                        navigationDrawerAdapter.notifyDataSetChanged();
+                                                        mNavigationDrawerAdapter.notifyDataSetChanged();
                                                         Toast.makeText(UsersActivity.this, friend.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
@@ -1011,32 +1011,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     @Override
-    public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.activity_users_send_button:
-                if(searchField.getText().toString().isEmpty()) {
-                    Toast.makeText(this, "Enter a search first", Toast.LENGTH_LONG).show();
-                }else{
-                    swipeRefreshLayout.setRefreshing(true);
-                    if (searchOptionSelected.equals("Name")){
-                        searchByName();
-                    }else{
-                        searchByTag();
-                    }
-                }
-                break;
-        }
-    }
-
-    @Override
     public void onDestroy(){
         super.onDestroy();
 
         try{
             stopService(new Intent(this, MessageService.class));
             stopService(new Intent(this, ConnectionService.class));
-            messageService.removeMessageClientListener(messageClientListener);
-            unbindService(serviceConnection);
+            mMessageService.removeMessageClientListener(mMessageClientListener);
+            unbindService(mServiceConnection);
         }catch(NullPointerException e){
 
         }
@@ -1046,7 +1028,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     public void onRestart(){
         super.onRestart();
 
-        isFirstMessage = true;
+        mIsFirstMessage = true;
     }
 
     @Override
@@ -1060,7 +1042,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (drawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -1087,7 +1069,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         newCateg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(final DialogInterface dialog, int which) {
-                                if(adapter.getPosition(input.getText().toString()) != -1){
+                                if(mUserTagsAdapter.getPosition(input.getText().toString()) != -1){
                                     Toast.makeText(getApplicationContext(), input.getText().toString() + " already exists", Toast.LENGTH_LONG).show();
                                 }else if(input.getText().toString().isEmpty()){
                                     Toast.makeText(getApplicationContext(), "Enter a tag first", Toast.LENGTH_LONG).show();
@@ -1101,8 +1083,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                                         }
                                     });
-                                    adapter.add(input.getText().toString());
-                                    adapter.notifyDataSetChanged();
+                                    mUserTagsAdapter.add(input.getText().toString());
+                                    mUserTagsAdapter.notifyDataSetChanged();
                                 }
                                 InputMethodManager imm = (InputMethodManager)UsersActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
@@ -1125,14 +1107,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 minus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(adapter.getCount() == 0){
+                        if(mUserTagsAdapter.getCount() == 0){
                             Toast.makeText(getApplicationContext(), "No tags to remove", Toast.LENGTH_LONG).show();
-                        }else if(tagSelect >= adapter.getCount()){
+                        }else if(mTagSelected >= mUserTagsAdapter.getCount()){
                             Toast.makeText(getApplicationContext(), "Select a tag before deleting", Toast.LENGTH_LONG).show();
-                        }else if(adapter.getCount() > 0) {
+                        }else if(mUserTagsAdapter.getCount() > 0) {
 
                             HashMap<String, Object> params = new HashMap<String, Object>();
-                            params.put("tag", adapter.getItem(tagSelect));
+                            params.put("tag", mUserTagsAdapter.getItem(mTagSelected));
                             params.put("userId", WeTubeUser.getCurrentUser().getObjectId());
                             ParseCloud.callFunctionInBackground("removeTag", params, new FunctionCallback<String>() {
                                 @Override
@@ -1140,16 +1122,16 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                                 }
                             });
-                            adapter.remove(adapter.getItem(tagSelect));
-                            adapter.notifyDataSetChanged();
+                            mUserTagsAdapter.remove(mUserTagsAdapter.getItem(mTagSelected));
+                            mUserTagsAdapter.notifyDataSetChanged();
                         }
                     }
                 });
 
                 categBuilder.setView(dialogView);
-                categBuilder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+                categBuilder.setSingleChoiceItems(mUserTagsAdapter, 0, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        tagSelect = which;
+                        mTagSelected = which;
                     }
                 });
                 categBuilder.show();
@@ -1169,8 +1151,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     WeTubeUser user = (WeTubeUser) userList.get(0);
                     if (user.getList("tags") != null) {
                         List<String> tags = user.getList("tags");
-                        adapter.addAll(tags);
-                        adapter.notifyDataSetChanged();
+                        mUserTagsAdapter.addAll(tags);
+                        mUserTagsAdapter.notifyDataSetChanged();
                     }
                 }
             }
@@ -1180,36 +1162,36 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-        if(!isLaunch){
+        if(!mIsLaunch){
             String selection = (String) parent.getItemAtPosition(pos);
 
             if(selection.equals("Name") || selection.equals("Tag")){
-                searchOptionSelected = selection;
+                mSearchOptionSelected = selection;
             }else{
-                sortOptionSelected = selection;
+                mSortOptionSelected = selection;
 
                 friendsRefreshProgress();
 
-                if(sortOptionSelected.equals("Default")){
+                if(mSortOptionSelected.equals("Default")){
                     getFriends();
-                }else if(sortOptionSelected.equals("Online")){
+                }else if(mSortOptionSelected.equals("Online")){
                     getOnlineFriends();
-                }else if(sortOptionSelected.equals("Offline")){
+                }else if(mSortOptionSelected.equals("Offline")){
                     getOfflineFriends();
-                }else if(sortOptionSelected.equals("Available")){
+                }else if(mSortOptionSelected.equals("Available")){
                     getAvailableFriends();
-                }else if(sortOptionSelected.equals("Unavailable")){
+                }else if(mSortOptionSelected.equals("Unavailable")){
                     getUnavailableFriends();
-                } else if(sortOptionSelected.equals("A-Z")){
+                } else if(mSortOptionSelected.equals("A-Z")){
                     getAlphabeticFriends();
 
                 }
             }
         }else{
-            if(launchSpinnerCount<1){
-                launchSpinnerCount++;
+            if(mLaunchSpinnerCount <1){
+                mLaunchSpinnerCount++;
             }else{
-                isLaunch = false;
+                mIsLaunch = false;
             }
         }
     }
@@ -1233,7 +1215,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 if (e == null) {
                     if (userList.size() == 0) {
                         WeTubeApplication.getSharedDataSource().getUsers().clear();
-                        userItemAdapter.notifyDataSetChanged();
+                        mUserItemAdapter.notifyDataSetChanged();
                         Toast.makeText(WeTubeApplication.getSharedInstance(),
                                 "Could not find any logged in users with that tag",
                                 Toast.LENGTH_LONG).show();
@@ -1270,7 +1252,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     WeTubeApplication.getSharedDataSource().getUsers().get(j).setFriendStatus(true);
                                 }
                                 if (j == WeTubeApplication.getSharedDataSource().getUsers().size() - 1) {
-                                    userItemAdapter.notifyDataSetChanged();
+                                    mUserItemAdapter.notifyDataSetChanged();
                                 }
                             }
                         });
@@ -1298,7 +1280,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         if (e == null) {
                             if (userList.size() == 0) {
                                 WeTubeApplication.getSharedDataSource().getUsers().clear();
-                                userItemAdapter.notifyDataSetChanged();
+                                mUserItemAdapter.notifyDataSetChanged();
                                 Toast.makeText(WeTubeApplication.getSharedInstance(),
                                         "Could not find any logged in users with that name",
                                         Toast.LENGTH_LONG).show();
@@ -1335,7 +1317,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     WeTubeApplication.getSharedDataSource().getUsers().get(j).setFriendStatus(true);
                                         }
                                 if (j == WeTubeApplication.getSharedDataSource().getUsers().size() - 1) {
-                                    userItemAdapter.notifyDataSetChanged();
+                                    mUserItemAdapter.notifyDataSetChanged();
                                 }
                             }
                         });
@@ -1354,13 +1336,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
+        mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -1455,13 +1437,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            messageService = (MessageService.MessageServiceInterface) iBinder;
-            messageService.addMessageClientListener(messageClientListener);
+            mMessageService = (MessageService.MessageServiceInterface) iBinder;
+            mMessageService.addMessageClientListener(mMessageClientListener);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            messageService = null;
+            mMessageService = null;
         }
     }
 
@@ -1469,21 +1451,21 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onMessageFailed(MessageClient client, Message message, MessageFailureInfo failureInfo) {
-            String msg = messages.get(failureInfo.getMessageId());
-            if(msg.startsWith(msgSplitter + "friendadd")) {
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+            String msg = mMessages.get(failureInfo.getMessageId());
+            if(msg.startsWith(mMsgSplitter + "friendadd")) {
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, "Failed to send friend request to " + name, Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(msgSplitter + "friendaccept")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+            }else if(msg.startsWith(mMsgSplitter + "friendaccept")){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, "Failed to accept friend request from " + name, Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(msgSplitter + "startsession")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+            }else if(msg.startsWith(mMsgSplitter + "startsession")){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, "Failed to send session request to " + name, Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(msgSplitter + "sessionaccept")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
+            }else if(msg.startsWith(mMsgSplitter + "sessionaccept")){
+                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, "Failed to start session with " + name, Toast.LENGTH_LONG).show();
             }
@@ -1494,14 +1476,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             if(!WeTubeApplication.getSharedDataSource().isInVideoActivity()){
                 Date time = message.getTimestamp();
                 if(LOGIN_TIME < time.getTime()){
-                    messageQueue.add(message);
+                    mMessageQueue.add(message);
 
-                    if(!isFirstMessage){
-                        if(dialog != null && !dialog.isShowing() && !messageQueue.isEmpty()){
+                    if(!mIsFirstMessage){
+                        if(mDialog != null && !mDialog.isShowing() && !mMessageQueue.isEmpty()){
                             showNextMessage();
                         }
                     }else{
-                        isFirstMessage = false;
+                        mIsFirstMessage = false;
                         showNextMessage();
                     }
                 }
@@ -1510,15 +1492,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         @Override
         public void onMessageSent(MessageClient client, Message message, final String recipientId) {
-            messages.put(message.getMessageId(), message.getTextBody());
+            mMessages.put(message.getMessageId(), message.getTextBody());
         }
 
         @Override
         public void onMessageDelivered(MessageClient client, final MessageDeliveryInfo deliveryInfo) {
-            String msg = messages.get(deliveryInfo.getMessageId());
+            String msg = mMessages.get(deliveryInfo.getMessageId());
             if(msg != null){
-                ArrayList<String> message = new ArrayList<String>(Arrays.asList(msg.split(msgSplitter)));
-                if(msg.startsWith(msgSplitter + "friendaccept")){
+                ArrayList<String> message = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                if(msg.startsWith(mMsgSplitter + "friendaccept")){
                     WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()+1);
                     final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
 
@@ -1538,12 +1520,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                         Toast.makeText(UsersActivity.this, name + " has been added to your friends list", Toast.LENGTH_SHORT).show();
                                         WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                                 friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                                        navigationDrawerAdapter.notifyDataSetChanged();
+                                        mNavigationDrawerAdapter.notifyDataSetChanged();
 
                                         for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
                                             if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
                                                 WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
-                                                userItemAdapter.notifyItemChanged(i);
+                                                mUserItemAdapter.notifyItemChanged(i);
                                             }
                                         }
                                     }else{
@@ -1554,11 +1536,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                         }
                     });
-                }else if(msg.startsWith(msgSplitter + "sessionaccept")){
+                }else if(msg.startsWith(mMsgSplitter + "sessionaccept")){
                     Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                     startActivity(intent);
                 }
-                messages.remove(deliveryInfo.getMessageId());
+                mMessages.remove(deliveryInfo.getMessageId());
             }
         }
 
@@ -1567,9 +1549,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void showNextMessage() {
-        if(messageQueue != null && messageQueue.size() > 0) {
-            Message message = messageQueue.poll();
-            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(msgSplitter)));
+        if(mMessageQueue != null && mMessageQueue.size() > 0) {
+            Message message = mMessageQueue.poll();
+            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
 
             if (msg.get(1).equals("startsession")) {
                 final String name = msg.get(2);
@@ -1589,7 +1571,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 if (list.size() > 0 && e == null) {
                                     WeTubeUser recip = (WeTubeUser) list.get(0);
                                     if (!recip.getSessionStatus() && recip.getLoggedStatus()) {
-                                        messageService.sendMessage(id, msgSplitter + "sessionaccept" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter +
+                                        mMessageService.sendMessage(id, mMsgSplitter + "sessionaccept" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter +
                                                 ParseUser.getCurrentUser().getObjectId());
 
                                         WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
@@ -1615,14 +1597,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        messageService.sendMessage(id, msgSplitter + "sessiondecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
+                        mMessageService.sendMessage(id, mMsgSplitter + "sessiondecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
                         dialog.cancel();
                     }
                 });
                 builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        isBlocking = true;
+                        mIsBlocking = true;
                         AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                         builder.setTitle("Are you sure you want to block " + name + " ?");
 
@@ -1633,7 +1615,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 block.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
-                                        messageService.sendMessage(id, msgSplitter + "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                        mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
                                                 + ParseUser.getCurrentUser().getObjectId());
                                     }
                                 });
@@ -1648,13 +1630,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             }
                         });
                         builder.setCancelable(false);
-                        dialog = builder.create();
-                        dialog.show();
+                        mDialog = builder.create();
+                        mDialog.show();
                     }
                 });
                 builder.setCancelable(false);
-                dialog = builder.create();
-                dialog.show();
+                mDialog = builder.create();
+                mDialog.show();
             } else if (msg.get(1).equals("sessionaccept")) {
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                 user.setSessionStatus(true);
@@ -1676,8 +1658,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                dialog = builder.create();
-                dialog.show();
+                mDialog = builder.create();
+                mDialog.show();
             } else if (msg.get(1).equals("friendadd")) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
@@ -1689,14 +1671,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     builder.setNegativeButton("Friends list is full", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            messageService.sendMessage(id, msgSplitter + "friendfull" + msgSplitter + ParseUser.getCurrentUser().getUsername());
+                            mMessageService.sendMessage(id, mMsgSplitter + "friendfull" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
                             dialog.cancel();
                         }
                     });
                     builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            isBlocking = true;
+                            mIsBlocking = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                             builder.setTitle("Are you sure you want to block " + name + " ?");
 
@@ -1707,7 +1689,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     block.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
-                                            messageService.sendMessage(id, msgSplitter + "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                            mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
                                                     + ParseUser.getCurrentUser().getObjectId());
                                         }
                                     });
@@ -1723,8 +1705,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 }
                             });
                             builder.setCancelable(false);
-                            dialog = builder.create();
-                            dialog.show();
+                            mDialog = builder.create();
+                            mDialog.show();
                         }
                     });
                 }else{
@@ -1732,21 +1714,21 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                            messageService.sendMessage(id, msgSplitter + "friendaccept" + msgSplitter + user.getUsername() + msgSplitter + user.getObjectId());
+                            mMessageService.sendMessage(id, mMsgSplitter + "friendaccept" + mMsgSplitter + user.getUsername() + mMsgSplitter + user.getObjectId());
                             dialog.cancel();
                         }
                     });
                     builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            messageService.sendMessage(id, msgSplitter + "frienddecline" + msgSplitter + ParseUser.getCurrentUser().getUsername());
+                            mMessageService.sendMessage(id, mMsgSplitter + "frienddecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
                             dialog.cancel();
                         }
                     });
                     builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            isBlocking = true;
+                            mIsBlocking = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                             builder.setTitle("Are you sure you want to block " + name + " ?");
 
@@ -1757,7 +1739,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     block.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
-                                            messageService.sendMessage(id, msgSplitter + "blockuser" + msgSplitter + ParseUser.getCurrentUser().getUsername() + msgSplitter
+                                            mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
                                                     + ParseUser.getCurrentUser().getObjectId());
                                         }
                                     });
@@ -1773,14 +1755,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 }
                             });
                             builder.setCancelable(false);
-                            dialog = builder.create();
-                            dialog.show();
+                            mDialog = builder.create();
+                            mDialog.show();
                         }
                     });
                 }
                 builder.setCancelable(false);
-                dialog = builder.create();
-                dialog.show();
+                mDialog = builder.create();
+                mDialog.show();
             } else if (msg.get(1).equals("frienddecline")) {
                 String name = msg.get(2);
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
@@ -1793,8 +1775,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                dialog = builder.create();
-                dialog.show();
+                mDialog = builder.create();
+                mDialog.show();
             } else if (msg.get(1).equals("friendfull")) {
                 String name = msg.get(2);
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
@@ -1807,8 +1789,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                dialog = builder.create();
-                dialog.show();
+                mDialog = builder.create();
+                mDialog.show();
             } else if (msg.get(1).equals("friendaccept")) {
                 WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()+1);
                 final String name = msg.get(2);
@@ -1826,12 +1808,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                             WeTubeApplication.getSharedDataSource().getFriends().add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                     friend.getSessionStatus(), friend.getLoggedStatus(), true));
-                            navigationDrawerAdapter.notifyDataSetChanged();
+                            mNavigationDrawerAdapter.notifyDataSetChanged();
 
                             for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
                                 if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)) {
                                     WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
-                                    userItemAdapter.notifyItemChanged(i);
+                                    mUserItemAdapter.notifyItemChanged(i);
                                 }
                             }
 
@@ -1848,8 +1830,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         });
 
                         builder.setCancelable(false);
-                        dialog = builder.create();
-                        dialog.show();
+                        mDialog = builder.create();
+                        mDialog.show();
                     }
                 });
             } else if (msg.get(1).equals("friendremove")) {
@@ -1859,14 +1841,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 for (int i = 0; i < WeTubeApplication.getSharedDataSource().getFriends().size(); i++) {
                     if (WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(id)) {
                         WeTubeApplication.getSharedDataSource().getFriends().remove(i);
-                        navigationDrawerAdapter.notifyItemRemoved(i);
+                        mNavigationDrawerAdapter.notifyItemRemoved(i);
                         break;
                     }
                 }
                 for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
                     if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(id)) {
                         WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
-                        userItemAdapter.notifyDataSetChanged();
+                        mUserItemAdapter.notifyDataSetChanged();
                         break;
                     }
                 }
@@ -1884,8 +1866,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                dialog = builder.create();
-                dialog.show();
+                mDialog = builder.create();
+                mDialog.show();
             } else if (msg.get(1).equals("unblock")) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
@@ -1900,12 +1882,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
                 });
                 builder.setCancelable(false);
-                dialog = builder.create();
-                dialog.show();
+                mDialog = builder.create();
+                mDialog.show();
 
             }
-            if (dialog != null) {
-                dialog.setOnDismissListener(this);
+            if (mDialog != null) {
+                mDialog.setOnDismissListener(this);
             }
         }
     }
@@ -1914,14 +1896,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
         Message msgToRemove;
 
-        for(Message message : messageQueue) {
-            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(msgSplitter)));
+        for(Message message : mMessageQueue) {
+            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
             if(msg.get(3).equals(id)){
-                messageQueue.remove(message);
+                mMessageQueue.remove(message);
             }
         }
-        isBlocking = false;
-        if(!messageQueue.isEmpty()){
+        mIsBlocking = false;
+        if(!mMessageQueue.isEmpty()){
             showNextMessage();
         }
     }
@@ -1930,7 +1912,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
 
-        if(!messageQueue.isEmpty() && !isBlocking){
+        if(!mMessageQueue.isEmpty() && !mIsBlocking){
             showNextMessage();
         }
     }
@@ -1948,17 +1930,17 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     @Override
     public void onDrawerOpened(View drawerView) {
         friendsRefreshProgress();
-        if(sortOptionSelected.equals("Default")){
+        if(mSortOptionSelected.equals("Default")){
             getFriends();
-        }else if(sortOptionSelected.equals("Online")){
+        }else if(mSortOptionSelected.equals("Online")){
             getOnlineFriends();
-        }else if(sortOptionSelected.equals("Offline")){
+        }else if(mSortOptionSelected.equals("Offline")){
             getOfflineFriends();
-        }else if(sortOptionSelected.equals("Available")){
+        }else if(mSortOptionSelected.equals("Available")){
             getAvailableFriends();
-        }else if(sortOptionSelected.equals("Unavailable")){
+        }else if(mSortOptionSelected.equals("Unavailable")){
             getUnavailableFriends();
-        } else if(sortOptionSelected.equals("A-Z")){
+        } else if(mSortOptionSelected.equals("A-Z")){
             getAlphabeticFriends();
         }
     }
@@ -1969,10 +1951,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void friendsRefreshProgress(){
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Refreshing friends list");
-        progressDialog.setMessage("Please wait...");
-        progressDialog.show();
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle("Refreshing friends list");
+        mProgressDialog.setMessage("Please wait...");
+        mProgressDialog.show();
     }
 
     public void getMoreUsers(int skip, int limit){
@@ -2013,18 +1995,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     if(e == null && list.size() > 0){
                                         users.get(users.size() - 1).setFriendStatus(true);
                                     }
-                                    userItemAdapter.notifyDataSetChanged();
+                                    mUserItemAdapter.notifyDataSetChanged();
                                 }
                             });
                         }
                     }
-                    userItemAdapter.notifyDataSetChanged();
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    mUserItemAdapter.notifyDataSetChanged();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
                     swipeRefreshLayout.setRefreshing(false);
                 } else {
-                    navigationDrawerAdapter.notifyDataSetChanged();
+                    mNavigationDrawerAdapter.notifyDataSetChanged();
                     Toast.makeText(WeTubeApplication.getSharedInstance(),
                             "Error loading user list",
                             Toast.LENGTH_LONG).show();

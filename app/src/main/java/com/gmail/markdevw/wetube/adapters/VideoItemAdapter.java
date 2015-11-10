@@ -15,6 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Mark on 3/26/2015.
  */
@@ -55,17 +58,15 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ImageView mThumbnail;
-        private TextView mTitle;
-        private TextView mDescription;
+        @Bind(R.id.video_thumbnail) ImageView mThumbnail;
+        @Bind(R.id.video_title) TextView mTitle;
+        @Bind(R.id.video_description) TextView mDescription;
+
         private VideoItem mVideoItem;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
-
-            mThumbnail = (ImageView) itemView.findViewById(R.id.video_thumbnail);
-            mTitle = (TextView) itemView.findViewById(R.id.video_title);
-            mDescription = (TextView) itemView.findViewById(R.id.video_description);
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(this);
         }

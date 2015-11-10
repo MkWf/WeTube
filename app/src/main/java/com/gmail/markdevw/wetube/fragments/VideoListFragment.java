@@ -19,17 +19,22 @@ import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.adapters.VideoItemAdapter;
 import com.gmail.markdevw.wetube.api.model.VideoItem;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Created by Mark on 3/27/2015.
  */
 public class VideoListFragment extends Fragment implements VideoItemAdapter.Delegate {
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.fragment_search_search_button) Button mSearchButton;
+    @Bind(R.id.fragment_search_search_video) EditText mSearchBox;
+    @Bind(R.id.fragment_search_prev_page) ImageButton mPrevPage;
+    @Bind(R.id.fragment_search_next_page) ImageButton mNextPage;
+    @Bind(R.id.rv_fragment_video_list) RecyclerView mRecyclerView;
+
     private VideoItemAdapter mVideoItemAdapter;
-    private Button mSearchButton;
-    private EditText mSearchBox;
-    private ImageButton mPrevPage;
-    private ImageButton mNextPage;
     private Delegate mListener;
 
     public static interface Delegate {
@@ -52,51 +57,44 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View inflate = inflater.inflate(R.layout.fragment_video_list, container, false);
-
-        mSearchButton = (Button) inflate.findViewById(R.id.fragment_search_search_button);
-        mSearchBox = (EditText) inflate.findViewById(R.id.fragment_search_search_video);
-        mPrevPage = (ImageButton) inflate.findViewById(R.id.fragment_search_prev_page);
-        mNextPage = (ImageButton) inflate.findViewById(R.id.fragment_search_next_page);
+        View view = inflater.inflate(R.layout.fragment_video_list, container, false);
+        ButterKnife.bind(this, view);
 
         mVideoItemAdapter = new VideoItemAdapter();
         mVideoItemAdapter.setDelegate(this);
 
-        mRecyclerView = (RecyclerView) inflate.findViewById(R.id.rv_fragment_video_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(WeTubeApplication.getSharedInstance()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mVideoItemAdapter);
 
-        mSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        return view;
+    }
+
+    public VideoItemAdapter getVideoItemAdapter() { return mVideoItemAdapter; }
+    public RecyclerView getRecyclerView() { return mRecyclerView; }
+
+    @OnClick({
+            R.id.fragment_search_next_page,
+            R.id.fragment_search_prev_page,
+            R.id.fragment_search_search_button})
+    public void searchBarNavigation(View view){
+        switch(view.getId()){
+            case R.id.fragment_search_next_page:
+                mListener.onNextPageButtonClicked(VideoListFragment.this, mSearchBox);
+                break;
+            case R.id.fragment_search_prev_page:
+                mListener.onPrevPageButtonClicked(VideoListFragment.this, mSearchBox);
+                break;
+            case R.id.fragment_search_search_button:
                 WeTubeApplication.getSharedDataSource().setCurrentSearch(mSearchBox.getText().toString());
                 mListener.onSearchButtonClicked(VideoListFragment.this, mSearchBox);
                 if(!mSearchBox.getText().toString().isEmpty()){
                     mPrevPage.setVisibility(View.VISIBLE);
                     mNextPage.setVisibility(View.VISIBLE);
                 }
-            }
-        });
-
-        mPrevPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.onPrevPageButtonClicked(VideoListFragment.this, mSearchBox);
-            }
-        });
-        mNextPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.onNextPageButtonClicked(VideoListFragment.this, mSearchBox);
-            }
-        });
-
-        return inflate;
+                break;
+        }
     }
-
-    public VideoItemAdapter getVideoItemAdapter() { return mVideoItemAdapter; }
-    public RecyclerView getRecyclerView() { return mRecyclerView; }
 
     @Override
     public void onItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem) {

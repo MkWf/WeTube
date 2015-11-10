@@ -11,29 +11,13 @@ import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.api.DataSource;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 
-import java.lang.ref.WeakReference;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by Mark on 4/17/2015.
  */
 public class ProfileCommonItemAdapter extends RecyclerView.Adapter<ProfileCommonItemAdapter.ItemAdapterViewHolder> {
-
-    public static interface Delegate {
-        public void onItemClicked(ProfileCommonItemAdapter itemAdapter, TagItem tag);
-    }
-
-    private WeakReference<Delegate> delegate;
-
-    public Delegate getDelegate() {
-        if (delegate == null) {
-            return null;
-        }
-        return delegate.get();
-    }
-    public void setDelegate(Delegate delegate) {
-        this.delegate = new WeakReference<Delegate>(delegate);
-    }
-
 
     @Override
     public ItemAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int index) {
@@ -54,13 +38,11 @@ public class ProfileCommonItemAdapter extends RecyclerView.Adapter<ProfileCommon
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView mTag;
+        @Bind(R.id.tag_item_tag) TextView mTag;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
-
-            mTag = (TextView) itemView.findViewById(R.id.tag_item_tag);
-
+            ButterKnife.bind(this, itemView);
         }
 
         void update(TagItem tagItem) {

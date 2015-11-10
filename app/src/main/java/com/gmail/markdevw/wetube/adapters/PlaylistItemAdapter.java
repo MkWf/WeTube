@@ -15,6 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Mark on 4/30/2015.
  */
@@ -57,24 +60,20 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ImageView mThumbnail;
-        private ImageView mDelete;
-        private TextView mTitle;
-        private TextView mCount;
-        private View mItemView;
+        @Bind(R.id.playlist_thumbnail) ImageView mThumbnail;
+        @Bind(R.id.playlist_title) ImageView mDelete;
+        @Bind(R.id.playlist_delete) TextView mTitle;
+        @Bind(R.id.playlist_index) TextView mCount;
 
+        private View mItemView;
         private PlaylistItem mPlaylistItem;
         private int mItemIndex;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
 
             this.mItemView = itemView;
-
-            mThumbnail = (ImageView) itemView.findViewById(R.id.playlist_thumbnail);
-            mTitle = (TextView) itemView.findViewById(R.id.playlist_title);
-            mDelete = (ImageView) itemView.findViewById(R.id.playlist_delete);
-            mCount = (TextView) itemView.findViewById(R.id.playlist_index);
 
             mDelete.setOnClickListener(this);
             itemView.setOnClickListener(this);

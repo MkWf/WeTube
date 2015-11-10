@@ -54,20 +54,17 @@ public class ProfileUncommonItemAdapter extends RecyclerView.Adapter<ProfileUnco
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tag;
-        TagItem tagItem;
+        private TextView mTag;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
-            tag = (TextView) itemView.findViewById(R.id.tag_item_tag);
+            mTag = (TextView) itemView.findViewById(R.id.tag_item_tag);
 
         }
 
         void update(TagItem tagItem) {
-            this.tagItem = tagItem;
-
-            tag.setText(tagItem.getTag());
+            mTag.setText(tagItem.getTag());
         }
     }
 }

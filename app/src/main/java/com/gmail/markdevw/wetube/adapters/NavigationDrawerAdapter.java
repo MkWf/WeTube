@@ -23,16 +23,16 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         public void onNavItemClicked(NavigationDrawerAdapter itemAdapter, UserItem userItem, View view, int index);
     }
 
-    private WeakReference<Delegate> delegate;
+    private WeakReference<Delegate> mDelegate;
 
     public Delegate getDelegate() {
-        if (delegate == null) {
+        if (mDelegate == null) {
             return null;
         }
-        return delegate.get();
+        return mDelegate.get();
     }
     public void setDelegate(Delegate delegate) {
-        this.delegate = new WeakReference<Delegate>(delegate);
+        this.mDelegate = new WeakReference<Delegate>(delegate);
     }
 
 
@@ -55,37 +55,37 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView name;
-        ImageView status;
-        UserItem userItem;
-        int index;
+        private TextView mName;
+        private ImageView mStatus;
+        private UserItem mUserItem;
+        private int mIndex;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
-            name = (TextView) itemView.findViewById(R.id.user_item_name);
-            status = (ImageView) itemView.findViewById(R.id.user_item_status);
+            mName = (TextView) itemView.findViewById(R.id.user_item_name);
+            mStatus = (ImageView) itemView.findViewById(R.id.user_item_status);
 
             itemView.setOnClickListener(this);
         }
 
         void update(UserItem userItem, int index) {
-            this.userItem = userItem;
-            this.index = index;
-            name.setText(userItem.getName());
+            this.mUserItem = userItem;
+            this.mIndex = index;
+            mName.setText(userItem.getName());
 
             if(!userItem.getOnlineStatus()){
-                status.setImageResource(R.drawable.offline);
+                mStatus.setImageResource(R.drawable.offline);
             }else if(userItem.getSessionStatus()){
-                status.setImageResource(R.drawable.unavailable);
+                mStatus.setImageResource(R.drawable.unavailable);
             }else{
-                status.setImageResource(R.drawable.available);
+                mStatus.setImageResource(R.drawable.available);
             }
         }
 
         @Override
         public void onClick(View view) {
-            getDelegate().onNavItemClicked(NavigationDrawerAdapter.this, userItem, view, index);
+            getDelegate().onNavItemClicked(NavigationDrawerAdapter.this, mUserItem, view, mIndex);
         }
     }
 }

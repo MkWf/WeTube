@@ -57,47 +57,47 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView thumbnail;
-        ImageView delete;
-        TextView title;
-        TextView count;
-        PlaylistItem playlistItem;
-        View itemView;
+        private ImageView mThumbnail;
+        private ImageView mDelete;
+        private TextView mTitle;
+        private TextView mCount;
+        private View mItemView;
 
-        int itemIndex;
+        private PlaylistItem mPlaylistItem;
+        private int mItemIndex;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
-            this.itemView = itemView;
+            this.mItemView = itemView;
 
-            thumbnail = (ImageView) itemView.findViewById(R.id.playlist_thumbnail);
-            title = (TextView) itemView.findViewById(R.id.playlist_title);
-            delete = (ImageView) itemView.findViewById(R.id.playlist_delete);
-            count = (TextView) itemView.findViewById(R.id.playlist_index);
+            mThumbnail = (ImageView) itemView.findViewById(R.id.playlist_thumbnail);
+            mTitle = (TextView) itemView.findViewById(R.id.playlist_title);
+            mDelete = (ImageView) itemView.findViewById(R.id.playlist_delete);
+            mCount = (TextView) itemView.findViewById(R.id.playlist_index);
 
-            delete.setOnClickListener(this);
+            mDelete.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
         void update(PlaylistItem playlistItem, int index) {
-            this.playlistItem = playlistItem;
-            this.itemIndex = index;
+            this.mPlaylistItem = playlistItem;
+            this.mItemIndex = index;
 
-            title.setText(playlistItem.getTitle());
-            count.setText(String.valueOf(playlistItem.getIndex()));
-            Picasso.with(WeTubeApplication.getSharedInstance()).load(playlistItem.getThumbnailURL()).into(thumbnail);
+            mTitle.setText(playlistItem.getTitle());
+            mCount.setText(String.valueOf(playlistItem.getIndex()));
+            Picasso.with(WeTubeApplication.getSharedInstance()).load(playlistItem.getThumbnailURL()).into(mThumbnail);
 
             if(WeTubeApplication.getSharedDataSource().isSessionController() && !WeTubeApplication.getSharedDataSource().isPlayerVisible()){
-                delete.setVisibility(View.VISIBLE);
+                mDelete.setVisibility(View.VISIBLE);
             }else{
-                delete.setVisibility(View.GONE);
+                mDelete.setVisibility(View.GONE);
             }
 
             if(playlistItem.isSelected()){
-                itemView.setBackgroundResource(R.color.black_26);
+                mItemView.setBackgroundResource(R.color.black_26);
             }else{
-                itemView.setBackgroundResource(R.color.off_white);
+                mItemView.setBackgroundResource(R.color.off_white);
             }
         }
 
@@ -105,12 +105,12 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         public void onClick(View view) {
             switch(view.getId()){
                 case R.id.playlist_delete:
-                    if(!playlistItem.isToBeDeleted()){
-                        getDelegate().onDeleteItemClicked(PlaylistItemAdapter.this, playlistItem);
+                    if(!mPlaylistItem.isToBeDeleted()){
+                        getDelegate().onDeleteItemClicked(PlaylistItemAdapter.this, mPlaylistItem);
                     }
                     break;
                 default:
-                    getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, playlistItem, itemIndex, itemView);
+                    getDelegate().onPlayListItemClicked(PlaylistItemAdapter.this, mPlaylistItem, mItemIndex, mItemView);
             }
 
         }

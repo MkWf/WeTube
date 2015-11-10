@@ -1,5 +1,6 @@
 package com.gmail.markdevw.wetube.adapters;
 
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,16 +27,16 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         public void onMessageVideoItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id);
     }
 
-    private WeakReference<Delegate> delegate;
+    private WeakReference<Delegate> mDelegate;
 
     public Delegate getDelegate() {
-        if (delegate == null) {
+        if (mDelegate == null) {
             return null;
         }
-        return delegate.get();
+        return mDelegate.get();
     }
     public void setDelegate(Delegate delegate) {
-        this.delegate = new WeakReference<Delegate>(delegate);
+        this.mDelegate = new WeakReference<Delegate>(delegate);
     }
 
 
@@ -58,22 +59,26 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView messageIn;
-        TextView messageOut;
-        ImageView thumbnailIn;
-        ImageView thumbnailOut;
-        MessageItem messageItem;
-        String msgSplitter = "=-=-=";
+        private TextView mMessageIn;
+        private TextView mMessageOut;
+        private ImageView thumbnailIn;
+        private ImageView thumbnailOut;
 
-        String title;
-        String thumbnail;
-        String id;
+        private Resources mResources;
+        private MessageItem mMessageItem;
+        private String mMsgSplitter;
+        private String mTitle;
+        private String mThumbnail;
+        private String mId;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
-            messageIn = (TextView) itemView.findViewById(R.id.message_item_message_incoming);
-            messageOut = (TextView) itemView.findViewById(R.id.message_item_message_outgoing);
+            mResources = WeTubeApplication.getSharedInstance().getResources();
+            mMsgSplitter = mResources.getString(R.string.message_splitter);
+
+            mMessageIn = (TextView) itemView.findViewById(R.id.message_item_message_incoming);
+            mMessageOut = (TextView) itemView.findViewById(R.id.message_item_message_outgoing);
             thumbnailIn = (ImageView) itemView.findViewById(R.id.message_item_thumbnail_incoming);
             thumbnailOut = (ImageView) itemView.findViewById(R.id.message_item_thumbnail_outgoing);
 
@@ -81,54 +86,66 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         }
 
         void update(MessageItem messageItem) {
-            this.messageItem = messageItem;
+            this.mMessageItem = messageItem;
             String message = messageItem.getMessage();
 
-            if(message.startsWith(msgSplitter + "linkedvideo")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.split(msgSplitter)));
-                title = msgSplit.get(2);
-                thumbnail = msgSplit.get(3);
-                id = msgSplit.get(4);
-
-                if(messageItem.getType() == MessageItem.OUTGOING_MSG){
-                    thumbnailIn.setVisibility(View.GONE);
-                    messageIn.setVisibility(View.INVISIBLE);
-
-                    thumbnailOut.setVisibility(View.VISIBLE);
-                    messageOut.setVisibility(View.VISIBLE);
-                    messageOut.setText(title);
-                    Picasso.with(WeTubeApplication.getSharedInstance()).load(thumbnail).into(thumbnailOut);
-                }else{
-                    thumbnailOut.setVisibility(View.GONE);
-                    messageOut.setVisibility(View.INVISIBLE);
-
-                    thumbnailIn.setVisibility(View.VISIBLE);
-                    messageIn.setVisibility(View.VISIBLE);
-                    messageIn.setText(title);
-                    Picasso.with(WeTubeApplication.getSharedInstance()).load(thumbnail).into(thumbnailIn);
-                }
+            if(message.startsWith(mMsgSplitter + mResources.getString(R.string.linked_video))){
+                handleVideoMessages(messageItem, message);
             }else{
-                if(messageItem.getType() == MessageItem.OUTGOING_MSG){
-                    thumbnailIn.setVisibility(View.GONE);
-                    thumbnailOut.setVisibility(View.GONE);
-                    messageIn.setVisibility(View.INVISIBLE);
-                    messageOut.setVisibility(View.VISIBLE);
-                    messageOut.setText(messageItem.getMessage());
-                }else{
-                    thumbnailIn.setVisibility(View.GONE);
-                    thumbnailOut.setVisibility(View.GONE);
-                    messageOut.setVisibility(View.INVISIBLE);
-                    messageIn.setVisibility(View.VISIBLE);
-                    messageIn.setText(messageItem.getMessage());
-                }
+                handleNonVideoMessages(messageItem);
+            }
+        }
+
+        public void handleNonVideoMessages(MessageItem messageItem) {
+            if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+                thumbnailIn.setVisibility(View.GONE);
+                thumbnailOut.setVisibility(View.GONE);
+                mMessageIn.setVisibility(View.INVISIBLE);
+                mMessageOut.setVisibility(View.VISIBLE);
+                mMessageOut.setText(messageItem.getMessage());
+            }else{
+                thumbnailIn.setVisibility(View.GONE);
+                thumbnailOut.setVisibility(View.GONE);
+                mMessageOut.setVisibility(View.INVISIBLE);
+                mMessageIn.setVisibility(View.VISIBLE);
+                mMessageIn.setText(messageItem.getMessage());
+            }
+        }
+
+        public void handleVideoMessages(MessageItem messageItem, String message) {
+            ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.split(mMsgSplitter)));
+            mTitle = msgSplit.get(2);
+            mThumbnail = msgSplit.get(3);
+            mId = msgSplit.get(4);
+
+            if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+                thumbnailIn.setVisibility(View.GONE);
+                mMessageIn.setVisibility(View.INVISIBLE);
+
+                thumbnailOut.setVisibility(View.VISIBLE);
+                mMessageOut.setVisibility(View.VISIBLE);
+                mMessageOut.setText(mTitle);
+                Picasso.with(WeTubeApplication.getSharedInstance())
+                        .load(mThumbnail)
+                        .into(thumbnailOut);
+            }else{
+                thumbnailOut.setVisibility(View.GONE);
+                mMessageOut.setVisibility(View.INVISIBLE);
+
+                thumbnailIn.setVisibility(View.VISIBLE);
+                mMessageIn.setVisibility(View.VISIBLE);
+                mMessageIn.setText(mTitle);
+                Picasso.with(WeTubeApplication.getSharedInstance())
+                        .load(mThumbnail)
+                        .into(thumbnailIn);
             }
         }
 
         @Override
         public void onClick(View view) {
-            String message = messageItem.getMessage();
-            if(message.startsWith(msgSplitter + "linkedvideo")){
-                getDelegate().onMessageVideoItemClicked(MessageItemAdapter.this, title, thumbnail, id);
+            String message = mMessageItem.getMessage();
+            if(message.startsWith(mMsgSplitter + mResources.getString(R.string.linked_video))){
+                getDelegate().onMessageVideoItemClicked(MessageItemAdapter.this, mTitle, mThumbnail, mId);
             }
         }
     }

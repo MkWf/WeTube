@@ -24,4 +24,6 @@
     <string name="profile_view">View Profile</string>
     <string name="remove_friend">Remove this Friend</string>
     <string name="shared_tags">Shared Tags</string>
+    <string name="linked_video">linkedvideo</string>
+    <string name="message_splitter">=-=-=</string>
 </resources>

@@ -55,45 +55,37 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView name;
-        ImageView status;
-        ImageView friend;
-        UserItem userItem;
-        int index;
+        private TextView mName;
+        private ImageView mStatus;
+        private UserItem userItem;
+        private int mIndex;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
 
-            name = (TextView) itemView.findViewById(R.id.user_item_name);
-            status = (ImageView) itemView.findViewById(R.id.user_item_status);
-            friend = (ImageView) itemView.findViewById(R.id.user_item_friend);
+            mName = (TextView) itemView.findViewById(R.id.user_item_name);
+            mStatus = (ImageView) itemView.findViewById(R.id.user_item_status);
 
             itemView.setOnClickListener(this);
         }
 
         void update(UserItem userItem, int index) {
             this.userItem = userItem;
-            this.index = index;
-            name.setText(userItem.getName());
+            this.mIndex = index;
+            mName.setText(userItem.getName());
 
             if(!userItem.getOnlineStatus()) {
-                status.setImageResource(R.drawable.offline);
+                mStatus.setImageResource(R.drawable.offline);
             }else if(userItem.getSessionStatus()){
-                status.setImageResource(R.drawable.unavailable);
+                mStatus.setImageResource(R.drawable.unavailable);
             }else{
-                status.setImageResource(R.drawable.available);
+                mStatus.setImageResource(R.drawable.available);
             }
-
-           // if(userItem.getFriendStatus()){
-          //      friend.setVisibility(View.VISIBLE);
-           // }else{
-           //     friend.setVisibility(View.GONE);
-          //  }
         }
 
         @Override
         public void onClick(View view) {
-            getDelegate().onItemClicked(UserItemAdapter.this, userItem, view, index);
+            getDelegate().onItemClicked(UserItemAdapter.this, userItem, view, mIndex);
         }
     }
 }

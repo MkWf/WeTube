@@ -88,7 +88,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
         NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
         DrawerLayout.DrawerListener{
-    
+
     @Bind(R.id.activity_users_search_option)        Spinner searchOptions;
     @Bind(R.id.activity_users_nav_friends_sort)     Spinner friendsSort;
     @Bind(R.id.activity_users_search)               EditText searchField;
@@ -110,8 +110,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private int tagSelect;
     private String searchOptionSelected = "Name";
     private String sortOptionSelected = "Default";
-    ArrayAdapter<CharSequence> spinnerAdapter;
-    ArrayAdapter<CharSequence> friendsAdapter;
+    ArrayAdapter<CharSequence> searchSpinnerAdapter;
+    ArrayAdapter<CharSequence> friendsSpinnerAdapter;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationDrawerAdapter navigationDrawerAdapter;
     private ServiceConnection serviceConnection = new MyServiceConnection();
@@ -135,57 +135,28 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
+        WeTubeApplication.getSharedDataSource().setUsersActivity(this);
+
+        initToolbar();
+        initUserListRecyclerView();
+        initUserSearchSpinner();
+        initNavigationDrawer();
+        initFriendsListSpinner();
+
         Intent i = getIntent();
         final int iVal = i.getIntExtra("connloss", 0);
 
-        WeTubeApplication.getSharedDataSource().setUsersActivity(this);
-
         adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
-        drawerLayout.setDrawerListener(this);
-
-        navigationDrawerAdapter = new NavigationDrawerAdapter();
-        navigationDrawerAdapter.setDelegate(this);
-
-        navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        navigationRecyclerView.setAdapter(navigationDrawerAdapter);
 
         serviceIntent = new Intent(this, MessageService.class);
         connServiceIntent = new Intent(this, ConnectionService.class);
 
-        userItemAdapter = new UserItemAdapter();
-        userItemAdapter.setDelegate(this);
+
 
         logout.setOnClickListener(this);
-
-        mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(userItemAdapter);
-
-
         searchButton.setOnClickListener(this);
 
-
-        spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.search_options, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        searchOptions.setAdapter(spinnerAdapter);
-        searchOptions.setOnItemSelectedListener(this);
-
-
-        friendsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_options, android.R.layout.simple_spinner_item);
-        friendsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        friendsSort.setAdapter(friendsAdapter);
-        friendsSort.setOnItemSelectedListener(this);
-
-        handler = new Handler();
 
         SharedPreferences sharedpreferences;
         sharedpreferences=getSharedPreferences("MyPrefs",
@@ -253,6 +224,49 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, iVal);
             startActivityForResult(builder.build(), 0);
         }
+    }
+
+    public void initUserListRecyclerView() {
+        userItemAdapter = new UserItemAdapter();
+        userItemAdapter.setDelegate(this);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(userItemAdapter);
+    }
+
+    public void initFriendsListSpinner() {
+        friendsSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.sort_options, android.R.layout.simple_spinner_item);
+        friendsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        friendsSort.setAdapter(friendsSpinnerAdapter);
+        friendsSort.setOnItemSelectedListener(this);
+    }
+
+    public void initUserSearchSpinner() {
+        searchSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.search_options, android.R.layout.simple_spinner_item);
+        searchSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        searchOptions.setAdapter(searchSpinnerAdapter);
+        searchOptions.setOnItemSelectedListener(this);
+    }
+
+    public void initNavigationDrawer() {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
+        drawerLayout.setDrawerListener(this);
+
+        navigationDrawerAdapter = new NavigationDrawerAdapter();
+        navigationDrawerAdapter.setDelegate(this);
+
+        navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        navigationRecyclerView.setAdapter(navigationDrawerAdapter);
+    }
+
+    public void initToolbar() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

@@ -33,6 +33,7 @@ dependencies {
     compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.android.support:recyclerview-v7:22.0.0'
     compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
     compile project(':ParseLoginUI')
     compile files('libs/sinch-android-rtc-3.5.0.jar')
 }

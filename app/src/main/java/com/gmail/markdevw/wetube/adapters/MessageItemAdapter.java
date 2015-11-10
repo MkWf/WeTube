@@ -18,6 +18,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Mark on 4/7/2015.
  */
@@ -59,10 +62,10 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView mMessageIn;
-        private TextView mMessageOut;
-        private ImageView thumbnailIn;
-        private ImageView thumbnailOut;
+        @Bind(R.id.message_item_message_incoming) TextView mMessageIn;
+        @Bind(R.id.message_item_message_outgoing) TextView mMessageOut;
+        @Bind(R.id.message_item_thumbnail_incoming) ImageView thumbnailIn;
+        @Bind(R.id.message_item_thumbnail_outgoing) ImageView thumbnailOut;
 
         private Resources mResources;
         private MessageItem mMessageItem;
@@ -73,14 +76,10 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
 
             mResources = WeTubeApplication.getSharedInstance().getResources();
             mMsgSplitter = mResources.getString(R.string.message_splitter);
-
-            mMessageIn = (TextView) itemView.findViewById(R.id.message_item_message_incoming);
-            mMessageOut = (TextView) itemView.findViewById(R.id.message_item_message_outgoing);
-            thumbnailIn = (ImageView) itemView.findViewById(R.id.message_item_thumbnail_incoming);
-            thumbnailOut = (ImageView) itemView.findViewById(R.id.message_item_thumbnail_outgoing);
 
             itemView.setOnClickListener(this);
         }

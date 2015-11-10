@@ -21,69 +21,69 @@ public class MessageService extends Service implements SinchClientListener {
     private static final String APP_KEY = "1dd42fb4-7483-4acf-baaf-8a17985ee947";
     private static final String APP_SECRET = "axavTzdxn0iRPleS/8fTHA==";
     private static final String ENVIRONMENT = "sandbox.sinch.com";
-    private final MessageServiceInterface serviceInterface = new MessageServiceInterface();
-    private SinchClient sinchClient = null;
-    private MessageClient messageClient = null;
-    private String currentUserId;
-    private LocalBroadcastManager broadcaster;
-    private Intent broadcastIntent = new Intent("com.gmail.markdevw.wetube.activities.UsersActivity");
+
+    private final MessageServiceInterface mServiceInterface = new MessageServiceInterface();
+    private SinchClient mSinchClient = null;
+    private MessageClient mMessageClient = null;
+    private LocalBroadcastManager mBroadcaster;
+    private Intent mBroadcastIntent = new Intent("com.gmail.markdevw.wetube.activities.UsersActivity");
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        String currentUserId = ParseUser.getCurrentUser().getObjectId();
 
         if (currentUserId != null && !isSinchClientStarted()) {
             startSinchClient(currentUserId);
         }
 
-        broadcaster = LocalBroadcastManager.getInstance(this);
+        mBroadcaster = LocalBroadcastManager.getInstance(this);
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     public void startSinchClient(String username) {
-        sinchClient = Sinch.getSinchClientBuilder().context(this).userId(username).applicationKey(APP_KEY)
+        mSinchClient = Sinch.getSinchClientBuilder().context(this).userId(username).applicationKey(APP_KEY)
                 .applicationSecret(APP_SECRET).environmentHost(ENVIRONMENT).build();
 
-        sinchClient.addSinchClientListener(this);
+        mSinchClient.addSinchClientListener(this);
 
-        sinchClient.setSupportMessaging(true);
-        sinchClient.setSupportActiveConnectionInBackground(true);
+        mSinchClient.setSupportMessaging(true);
+        mSinchClient.setSupportActiveConnectionInBackground(true);
 
-        sinchClient.checkManifest();
-        sinchClient.start();
+        mSinchClient.checkManifest();
+        mSinchClient.start();
     }
 
     private boolean isSinchClientStarted() {
-        return sinchClient != null && sinchClient.isStarted();
+        return mSinchClient != null && mSinchClient.isStarted();
     }
 
     @Override
     public void onClientFailed(SinchClient client, SinchError error) {
-        broadcastIntent.putExtra("success", false);
-        broadcaster.sendBroadcast(broadcastIntent);
+        mBroadcastIntent.putExtra("success", false);
+        mBroadcaster.sendBroadcast(mBroadcastIntent);
 
-        sinchClient = null;
+        mSinchClient = null;
     }
 
     @Override
     public void onClientStarted(SinchClient client) {
-        broadcastIntent.putExtra("success", true);
-        broadcaster.sendBroadcast(broadcastIntent);
+        mBroadcastIntent.putExtra("success", true);
+        mBroadcaster.sendBroadcast(mBroadcastIntent);
 
         client.startListeningOnActiveConnection();
-        messageClient = client.getMessageClient();
+        mMessageClient = client.getMessageClient();
     }
 
     @Override
     public void onClientStopped(SinchClient client) {
-        sinchClient = null;
+        mSinchClient = null;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return serviceInterface;
+        return mServiceInterface;
     }
 
     @Override
@@ -95,28 +95,28 @@ public class MessageService extends Service implements SinchClientListener {
     }
 
     public void sendMessage(String recipientUserId, String textBody) {
-        if (messageClient != null) {
+        if (mMessageClient != null) {
             WritableMessage message = new WritableMessage(recipientUserId, textBody);
-            messageClient.send(message);
+            mMessageClient.send(message);
         }
     }
 
     public void addMessageClientListener(MessageClientListener listener) {
-        if (messageClient != null) {
-            messageClient.addMessageClientListener(listener);
+        if (mMessageClient != null) {
+            mMessageClient.addMessageClientListener(listener);
         }
     }
 
     public void removeMessageClientListener(MessageClientListener listener) {
-        if (messageClient != null) {
-            messageClient.removeMessageClientListener(listener);
+        if (mMessageClient != null) {
+            mMessageClient.removeMessageClientListener(listener);
         }
     }
 
     @Override
     public void onDestroy() {
-        sinchClient.stopListeningOnActiveConnection();
-        sinchClient.terminate();
+        mSinchClient.stopListeningOnActiveConnection();
+        mSinchClient.terminate();
     }
 
     public class MessageServiceInterface extends Binder {

@@ -27,110 +27,123 @@ import java.util.Vector;
  * Created by Mark on 3/26/2015.
  */
 public class DataSource {
-    private String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
-    private List<VideoItem> videos;
-    private List<UserItem> users;
-    private List<UserItem> friends;
-    private YouTube youtube;
-    private YouTube.Search.List query;
-    private int currentPage = 0;
-    private String prevPageToken;
-    private String nextPageToken;
-    private String currentSearch;
-    private UserItem currentRecipient;
-    private final long NUMBER_OF_VIDEOS_RETURNED = 20;
-    private List<MessageItem> messages = new Vector<>();
-    private List<String> tags = new ArrayList<>();
-    private List<TagItem> commonTags = new ArrayList<>();
-    private List<TagItem> uncommonTags = new ArrayList<>();
-    private List<PlaylistItem> playlist = new ArrayList<>();
-    private boolean isSessionController = false;
-    private boolean isPlayerVisible = false;
-    private boolean isInVideoActivity = false;
+    private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
+    private final int NUMBER_OF_VIDEOS_RETURNED = 20;
     private final int MAX_FRIENDS = 100;
+
+    private List<VideoItem> mVideos;
+    private List<UserItem> mUsers;
+    private List<UserItem> mFriends;
+    private YouTube.Search.List mQuery;
+    private int mCurrentPage;
+    private String mPrevPageToken;
+    private String mNextPageToken;
+    private String mCurrentSearch;
+    private UserItem mCurrentRecipient;
+    private List<MessageItem> mMessages;
+    private List<TagItem> mCommonTags;
+    private List<TagItem> mUncommonTags;
+    private List<PlaylistItem> mPlaylist;
+    private boolean mIsSessionController;
+    private boolean mIsPlayerVisible;
+    private boolean mIsInVideoActivity;
+
     private int friendSize;
     private ActionBarActivity usersActivity;
     private ActionBarActivity mainActivity;
 
     public DataSource(Context context){
-        videos = new ArrayList<VideoItem>();
-        playlist = new ArrayList<PlaylistItem>();
-        users = new ArrayList<UserItem>();
-        friends = new ArrayList<UserItem>();
-        youtube = new YouTube.Builder(new NetHttpTransport(),
+        mVideos = new ArrayList<>(NUMBER_OF_VIDEOS_RETURNED);
+        mPlaylist = new ArrayList<>();
+        mUsers = new ArrayList<>();
+        mFriends = new ArrayList<>();
+        mMessages = new Vector<>();
+        mCommonTags = new ArrayList<>();
+        mUncommonTags = new ArrayList<>();
+        mPlaylist = new ArrayList<>();
+
+        YouTube youtube = new YouTube.Builder(new NetHttpTransport(),
                 new JacksonFactory(), new HttpRequestInitializer() {
             @Override
             public void initialize(HttpRequest hr) throws IOException {}
         }).setApplicationName(context.getString(R.string.app_name)).build();
 
         try{
-            query = youtube.search().list("id,snippet");
-            query.setKey(API_KEY);
-            query.setType("video");
-            query.setFields("nextPageToken,prevPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)");
-            query.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
+            mQuery = youtube.search().list("id,snippet");
+            mQuery.setKey(API_KEY);
+            mQuery.setType("video");
+            mQuery.setFields("nextPageToken,prevPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)");
+            mQuery.setMaxResults((long) NUMBER_OF_VIDEOS_RETURNED);
         }catch(IOException e){
             Log.d("YC", "Could not initialize: " + e);
         }
-
     }
+
     public void setMainActivity(ActionBarActivity activity) {this.mainActivity = activity;}
     public ActionBarActivity getMainActivity() {return mainActivity;}
+
     public void setUsersActivity(ActionBarActivity activity) {this.usersActivity = activity;}
     public ActionBarActivity getUsersActivity() {return usersActivity;}
+
+    public boolean isInVideoActivity() { return mIsInVideoActivity;}
+    public void setVideoActivity(boolean isInVideoActivity) { this.mIsInVideoActivity = isInVideoActivity; }
+
     public int getFriendsSize() { return friendSize; }
     public void setFriendsSize(int size) { this.friendSize = size;}
     public int getMaxFriends() { return MAX_FRIENDS; }
-    public boolean isPlayerVisible() {return isPlayerVisible;}
-    public void setPlayerVisible(boolean isPlayerVisible) { this.isPlayerVisible = isPlayerVisible; }
-    public boolean isSessionController() {return isSessionController;}
-    public void setSessionController(boolean isController) { this.isSessionController = isController; }
-    public List<PlaylistItem> getPlaylist() { return playlist; }
-    public List<TagItem> getCommonTags() { return commonTags; }
-    public List<TagItem> getUncommonTags() { return uncommonTags; }
-    public List<String> getTags() { return tags; }
-    public List<MessageItem> getMessages() { return messages;}
-    public void setCurrentRecipient(UserItem recipient){ this.currentRecipient = recipient;}
-    public UserItem getCurrentRecipient() { return this.currentRecipient; }
-    public List<VideoItem> getVideos(){
-        return videos;
-    }
-    public List<UserItem> getUsers() { return users; }
-    public List<UserItem> getFriends() { return friends; }
-    public int getCurrentPage(){ return currentPage; }
-    public void setCurrentPage(int currentPage) { this.currentPage = currentPage; }
-    public void setPrevPageToken(String prevPageToken){ this.prevPageToken = prevPageToken; }
-    public void setNextPageToken(String nextPageToken) { this.nextPageToken = nextPageToken; }
-    public String getPrevPageToken() { return prevPageToken; }
-    public String getNextPageToken() { return nextPageToken; }
-    public void setCurrentSearch(String search) {this.currentSearch = search; }
-    public String getCurrentSearch() { return this.currentSearch; }
-    public String getAPI_KEY() { return API_KEY; }
-    public boolean isInVideoActivity() { return isInVideoActivity;}
-    public void setVideoActivity(boolean isInVideoActivity) { this.isInVideoActivity = isInVideoActivity; }
+    public List<UserItem> getFriends() { return mFriends; }
 
+    public boolean isPlayerVisible() {return mIsPlayerVisible;}
+    public void setPlayerVisible(boolean isPlayerVisible) { this.mIsPlayerVisible = isPlayerVisible; }
+
+    public boolean isSessionController() {return mIsSessionController;}
+    public void setSessionController(boolean isController) { this.mIsSessionController = isController; }
+
+    public List<PlaylistItem> getPlaylist() { return mPlaylist; }
+
+    public List<TagItem> getCommonTags() { return mCommonTags; }
+    public List<TagItem> getUncommonTags() { return mUncommonTags; }
+
+    public List<MessageItem> getMessages() { return mMessages;}
+
+    public void setCurrentRecipient(UserItem recipient){ this.mCurrentRecipient = recipient;}
+    public UserItem getCurrentRecipient() { return this.mCurrentRecipient; }
+
+    public List<VideoItem> getVideos(){ return mVideos; }
+
+    public List<UserItem> getUsers() { return mUsers; }
+
+    public int getCurrentPage(){ return mCurrentPage; }
+    public void setPrevPageToken(String prevPageToken){ this.mPrevPageToken = prevPageToken; }
+    public void setNextPageToken(String nextPageToken) { this.mNextPageToken = nextPageToken; }
+    public String getPrevPageToken() { return mPrevPageToken; }
+    public String getNextPageToken() { return mNextPageToken; }
+
+    public void setCurrentSearch(String search) {this.mCurrentSearch = search; }
+    public String getCurrentSearch() { return this.mCurrentSearch; }
+
+    public String getAPI_KEY() { return API_KEY; }
 
     public void searchForVideos(String searchTerms){
         setCurrentSearch(searchTerms);
-        query.setQ(searchTerms);
+        mQuery.setQ(searchTerms);
         try{
-            SearchListResponse response = query.execute();
+            SearchListResponse response = mQuery.execute();
             List<SearchResult> results = response.getItems();
 
             setPrevPageToken(response.getPrevPageToken());
             setNextPageToken(response.getNextPageToken());
 
-            videos.clear();
-            currentPage = 1;
+            mVideos.clear();
+            mCurrentPage = 1;
 
-            List<VideoItem> items = new ArrayList<VideoItem>();
-            for(SearchResult result:results){
+            for(SearchResult result : results){
                 VideoItem item = new VideoItem();
                 item.setTitle(result.getSnippet().getTitle());
                 item.setDescription(result.getSnippet().getDescription());
                 item.setThumbnailURL(result.getSnippet().getThumbnails().getDefault().getUrl());
                 item.setId(result.getId().getVideoId());
-                videos.add(item);
+                mVideos.add(item);
             }
         }catch(IOException e){
             Log.d("YC", "Could not search: "+e);
@@ -140,22 +153,22 @@ public class DataSource {
     public void searchForVideos(String searchTerms, String pageToken){
         if(pageToken == null){
             return;
-        }else if(pageToken.equals(prevPageToken)){
-            currentPage--;
+        }else if(pageToken.equals(mPrevPageToken)){
+            mCurrentPage--;
         }else{
-            currentPage++;
+            mCurrentPage++;
         }
 
-        query.setPageToken(pageToken);
-        query.setQ(searchTerms);
+        mQuery.setPageToken(pageToken);
+        mQuery.setQ(searchTerms);
         try{
-            SearchListResponse response = query.execute();
+            SearchListResponse response = mQuery.execute();
             List<SearchResult> results = response.getItems();
 
             setPrevPageToken(response.getPrevPageToken());
             setNextPageToken(response.getNextPageToken());
 
-            videos.clear();
+            mVideos.clear();
 
             List<VideoItem> items = new ArrayList<VideoItem>();
             for(SearchResult result:results){
@@ -164,31 +177,10 @@ public class DataSource {
                 item.setDescription(result.getSnippet().getDescription());
                 item.setThumbnailURL(result.getSnippet().getThumbnails().getDefault().getUrl());
                 item.setId(result.getId().getVideoId());
-                videos.add(item);
+                mVideos.add(item);
             }
         }catch(IOException e){
             Log.d("YC", "Could not search: "+e);
         }
     }
-
-    /*public void getLoggedInUsers(){
-        String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        //don't include yourself
-        query.whereNotEqualTo("objectId", currentUserId);
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> userList, com.parse.ParseException e) {
-                if (e == null) {
-                    for (int i=0; i<userList.size(); i++) {
-                        users.add(new UserItem(userList.get(i).getUsername()));
-                    }
-                } else {
-                    Toast.makeText(WeTubeApplication.getSharedInstance(),
-                            "Error loading user list",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }*/
 }

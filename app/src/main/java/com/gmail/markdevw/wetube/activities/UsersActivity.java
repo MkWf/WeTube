@@ -110,8 +110,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private int mTagSelected;
     private String mSearchOptionSelected;
     private String mSortOptionSelected;
-    private ArrayAdapter<CharSequence> mSearchSpinnerAdapter;
-    private ArrayAdapter<CharSequence> mFriendsSpinnerAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private NavigationDrawerAdapter mNavigationDrawerAdapter;
     private ServiceConnection mServiceConnection = new MyServiceConnection();
@@ -124,7 +122,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     boolean mIsBlocking;
     private boolean mIsLaunch = true;
     private int mLaunchSpinnerCount;
-    private LinearLayoutManager mLayoutManager;
     private String mMsgSplitter = "=-=-=";
     private HashMap<String, String> mMessages = new HashMap<String, String>();
 
@@ -310,27 +307,30 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         mUserItemAdapter = new UserItemAdapter();
         mUserItemAdapter.setDelegate(this);
 
-        mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mUserItemAdapter);
     }
 
     public void initFriendsListSpinner() {
         mSortOptionSelected = getString(R.string.sort_default);
-        mFriendsSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_options, android.R.layout.simple_spinner_item);
-        mFriendsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        friendsSort.setAdapter(mFriendsSpinnerAdapter);
+        ArrayAdapter<CharSequence> friendsSpinnerAdapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.sort_options,
+                android.R.layout.simple_spinner_item);
+        friendsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        friendsSort.setAdapter(friendsSpinnerAdapter);
         friendsSort.setOnItemSelectedListener(this);
     }
 
     public void initUserSearchSpinner() {
         mSearchOptionSelected = getString(R.string.name);
-        mSearchSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.search_options, android.R.layout.simple_spinner_item);
-        mSearchSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        searchOptions.setAdapter(mSearchSpinnerAdapter);
+        ArrayAdapter<CharSequence> searchSpinnerAdapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.search_options,
+                android.R.layout.simple_spinner_item);
+        searchSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        searchOptions.setAdapter(searchSpinnerAdapter);
         searchOptions.setOnItemSelectedListener(this);
     }
 

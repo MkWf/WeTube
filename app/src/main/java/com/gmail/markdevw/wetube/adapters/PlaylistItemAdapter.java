@@ -61,8 +61,8 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
     class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @Bind(R.id.playlist_thumbnail) ImageView mThumbnail;
-        @Bind(R.id.playlist_title) ImageView mDelete;
-        @Bind(R.id.playlist_delete) TextView mTitle;
+        @Bind(R.id.playlist_delete) ImageView mDelete;
+        @Bind(R.id.playlist_title) TextView mTitle;
         @Bind(R.id.playlist_index) TextView mCount;
 
         private View mItemView;

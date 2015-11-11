@@ -74,7 +74,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  */
 
 public class MainActivity extends ActionBarActivity implements VideoListFragment.Delegate, YouTubePlayer.OnInitializedListener,
-        YouTubePlayer.OnFullscreenListener, View.OnClickListener,
+        YouTubePlayer.OnFullscreenListener,
         YouTubePlayer.PlaybackEventListener, MessageItemAdapter.Delegate,
         YouTubePlayer.PlaylistEventListener, PlaylistItemAdapter.Delegate,
         DrawerLayout.DrawerListener, YouTubePlayer.PlayerStateChangeListener,

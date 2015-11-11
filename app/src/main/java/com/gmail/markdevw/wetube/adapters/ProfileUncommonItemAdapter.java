@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
  * Created by Mark on 4/17/2015.
  */
 public class ProfileUncommonItemAdapter extends RecyclerView.Adapter<ProfileUncommonItemAdapter.ItemAdapterViewHolder> {
-    
+
     @Override
     public ItemAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int index) {
         View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tag_item, viewGroup, false);

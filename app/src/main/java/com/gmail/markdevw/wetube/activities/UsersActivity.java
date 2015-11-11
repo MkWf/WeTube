@@ -207,6 +207,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             finish();
         }else{
             drawerLayout.setVisibility(View.VISIBLE);
+            mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
+            mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
             startService(mMessageServiceIntent);
             startService(mConnectionServiceIntent);
             showSpinner();

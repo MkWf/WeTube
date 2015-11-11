@@ -362,16 +362,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         this.mYouTubePlayer = youTubePlayer;
-        //this.mYouTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE | YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
         this.mYouTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
         this.mYouTubePlayer.setOnFullscreenListener(this);
         this.mYouTubePlayer.setPlaybackEventListener(this);
         this.mYouTubePlayer.setPlayerStateChangeListener(this);
         this.mYouTubePlayer.setPlaylistEventListener(this);
         this.mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-      //  if (!b && currentVideo != null) {
-         //   this.mYouTubePlayer.cueVideo(currentVideo);
-       // }
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             this.mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
         }else{
@@ -573,9 +569,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onVideoEnded() {
-        WeTubeApplication.getSharedDataSource();
-       // mMessageService.mSendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoend");
-       // mMessageService.mSendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videoended");
+
     }
 
     @Override
@@ -1004,7 +998,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                                 .commit();
 
                         mVideoList.setVisibility(View.GONE);
-                        //mToolbar.setVisibility(View.GONE);
                         mVideoChatDivider.setVisibility(View.VISIBLE);
                         MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
@@ -1171,7 +1164,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
                     WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
                     mPlaylistItemAdapter.notifyDataSetChanged();
-                   // mPlayListRecyclerView.smoothScrollBy(0, itemView.getTop());
 
                     mCurrentPlaylistIndex = video;
                     String indexItem = String.valueOf(video + 1);

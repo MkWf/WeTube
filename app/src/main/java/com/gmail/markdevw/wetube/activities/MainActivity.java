@@ -271,7 +271,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem) {
         boolean isMatchFound = false;
         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-        for(int i = 0; i<videos.size(); i++){
+        int size = videos.size();
+        for(int i = 0; i < size; i++){
             if(videos.get(i).getId().equals(videoItem.getId())){
                 Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
                 isMatchFound = true;
@@ -297,7 +298,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onMessageVideoItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id) {
         boolean isMatchFound = false;
         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-        for(int i = 0; i<videos.size(); i++){
+        int size = videos.size();
+        for(int i = 0; i < size; i++){
             if(videos.get(i).getId().equals(id)){
                 Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
                 isMatchFound = true;
@@ -822,7 +824,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
                 ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
                 String title = msgSplit.get(1);
-                for(int i = 0; i<WeTubeApplication.getSharedDataSource().getPlaylist().size(); i++){
+                int size = WeTubeApplication.getSharedDataSource().getPlaylist().size();
+                for(int i = 0; i < size; i++){
                     if(title.equals(WeTubeApplication.getSharedDataSource().getPlaylist().get(i).getTitle())){
                         WeTubeApplication.getSharedDataSource().getPlaylist().get(i).setToBeDeleted(false);
                         break;
@@ -891,7 +894,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
                         WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
                         List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        for(int j = 0; j<list.size(); j++){
+                        int size = list.size();
+                        for(int j = 0; j < size; j++){
                             list.get(j).setIndex(j+1);
                         }
                     }
@@ -927,7 +931,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mCurrentPlaylistIndex = 0;
                     mPlaylistIDs.clear();
                     List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                    for(int i = 0; i<videos.size(); i++) {
+                    int size = videos.size();
+                    for(int i = 0; i < size; i++) {
                         mPlaylistIDs.add(videos.get(i).getId());
                     }
 
@@ -939,7 +944,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                             .commit();
 
                     mVideoList.setVisibility(View.GONE);
-                    //mToolbar.setVisibility(View.GONE);
                     mVideoChatDivider.setVisibility(View.VISIBLE);
                     MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
@@ -986,7 +990,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         mPlaylistIDs.clear();
                         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        for (int i = 0; i < videos.size(); i++) {
+                        int size = videos.size();
+                        for (int i = 0; i < size; i++) {
                             mPlaylistIDs.add(videos.get(i).getId());
                         }
 
@@ -1103,7 +1108,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
                         WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
                         List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        for(int j = 0; j<list.size(); j++){
+                        int size = list.size();
+                        for(int j = 0; j < size; j++){
                             list.get(j).setIndex(j+1);
                         }
                     }
@@ -1137,7 +1143,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     mPlaylistIDs.clear();
                     List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                    for (int i = 0; i < videos.size(); i++) {
+                    int size = videos.size();
+                    for (int i = 0; i < size; i++) {
                         mPlaylistIDs.add(videos.get(i).getId());
                     }
 
@@ -1175,7 +1182,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         mPlaylistIDs.clear();
                         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        for (int i = 0; i < videos.size(); i++) {
+                        int size = videos.size();
+                        for (int i = 0; i < size; i++) {
                             mPlaylistIDs.add(videos.get(i).getId());
                         }
 

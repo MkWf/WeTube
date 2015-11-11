@@ -285,7 +285,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     Toast.makeText(getApplicationContext(), "Messaging service failed to start", Toast.LENGTH_LONG).show();
                 }else{
                     drawerLayout.setVisibility(View.VISIBLE);
-                    Toast.makeText(getApplicationContext(), "You are now logged in", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "You are now logged in as " +
+                            WeTubeUser.getCurrentUser().getUsername(), Toast.LENGTH_LONG).show();
                     WeTubeUser user = (WeTubeUser) WeTubeUser.getCurrentUser();
                     user.setLoggedStatus(true);
                     user.setSessionStatus(false);

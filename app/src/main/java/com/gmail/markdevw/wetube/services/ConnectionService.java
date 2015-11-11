@@ -46,7 +46,6 @@ public class ConnectionService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mTimer = new Timer();
-        mDate = new Date();
 
         TimerTask task = new TimerTask() {
             @Override
@@ -60,16 +59,18 @@ public class ConnectionService extends Service {
                         query.findInBackground(new FindCallback<ParseUser>() {
                             @Override
                             public void done(List<ParseUser> users, ParseException e) {
-                                WeTubeUser user = (WeTubeUser) users.get(0);
-                                long timeCheck = user.getLong("lastSeen");
-                                if(mTime == timeCheck){
-                                    mTimesTheyMissed++;
-                                    if(mTimesTheyMissed == MAX_MISSES){
-                                        returnUserToUsersActivity();
+                                if(e == null){
+                                    WeTubeUser user = (WeTubeUser) users.get(0);
+                                    long timeCheck = user.getLong("lastSeen");
+                                    if(mTime == timeCheck){
+                                        mTimesTheyMissed++;
+                                        if(mTimesTheyMissed == MAX_MISSES){
+                                            returnUserToUsersActivity();
+                                        }
+                                    }else{
+                                        mTime = timeCheck;
+                                        mTimesTheyMissed = 0;
                                     }
-                                }else{
-                                    mTime = timeCheck;
-                                    mTimesTheyMissed = 0;
                                 }
                             }
                         });
@@ -122,11 +123,15 @@ public class ConnectionService extends Service {
         final String userId = ParseUser.getCurrentUser().getObjectId();
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("userId", userId);
-        params.put("ms", mDate.getTime());
+        params.put("ms", new Date().getTime());
         ParseCloud.callFunctionInBackground("updateLastSeen", params, new FunctionCallback<String>() {
             @Override
             public void done(String userList, ParseException e) {
-                //Do Nothing
+                if(e == null){
+                    return;
+                }else{
+                    return;
+                }
             }
         });
     }

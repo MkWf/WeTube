@@ -26,4 +26,12 @@
     <string name="shared_tags">Shared Tags</string>
     <string name="linked_video">linkedvideo</string>
     <string name="message_splitter">=-=-=</string>
+    <string name="name">Name</string>
+    <string name="sort_default">Default</string>
+    <string name="enter_a_search_first">Enter a search first</string>
+    <string name="connection_loss">connloss</string>
+    <string name="shared_prefs">MyPrefs</string>
+    <string name="user_key">userkey</string>
+    <string name="pass_key">passkey</string>
+    <string name="failed_to_retrieve_login_info">Failed to retrieve your login information</string>
 </resources>

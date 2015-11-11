@@ -1011,7 +1011,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             stopService(new Intent(this, ConnectionService.class));
             mMessageService.removeMessageClientListener(mMessageClientListener);
             unbindService(mServiceConnection);
-            unregisterReceiver(sinchReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(sinchReceiver);
         }catch(NullPointerException e){
 
         }

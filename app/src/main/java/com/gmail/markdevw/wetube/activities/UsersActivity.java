@@ -365,8 +365,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(final List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             final WeTubeUser user = (WeTubeUser) userList.get(i);
                             WeTubeApplication.getSharedDataSource().getUsers().add(new UserItem(user.getUsername(), user.getObjectId(),
                                     user.getSessionStatus(), user.getLoggedStatus(), false));
@@ -434,8 +435,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
                             WeTubeApplication.getSharedDataSource().getFriends()
@@ -448,8 +450,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
                             if (e == null) {
-                                if (userList2.size() > 0) {
-                                    for (int i = 0; i < userList2.size(); i++) {
+                                int size = userList2.size();
+                                if (size > 0) {
+                                    for (int i = 0; i < size; i++) {
                                         WeTubeUser friend = (WeTubeUser) userList2.get(i);
 
                                         WeTubeApplication.getSharedDataSource().getFriends()
@@ -461,8 +464,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 ParseCloud.callFunctionInBackground("getFriendsOfflineTwo", params, new FunctionCallback<List<ParseUser>>() {
                                     @Override
                                     public void done(List<ParseUser> userList3, com.parse.ParseException e) {
-                                        if (userList3.size() > 0) {
-                                            for (int i = 0; i < userList3.size(); i++) {
+                                        int size = userList3.size();
+                                        if (size > 0) {
+                                            for (int i = 0; i < size; i++) {
                                                 WeTubeUser friend = (WeTubeUser) userList3.get(i);
 
                                                 WeTubeApplication.getSharedDataSource().getFriends()
@@ -504,8 +508,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
                             WeTubeApplication.getSharedDataSource().getFriends()
@@ -518,9 +523,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     ParseCloud.callFunctionInBackground("getFriendsUnavailableTwo", params, new FunctionCallback<List<ParseUser>>() {
                         @Override
                         public void done(List<ParseUser> userList2, com.parse.ParseException e) {
+                            int size = userList2.size();
                             if (e == null) {
-                                if (userList2.size() > 0) {
-                                    for (int i = 0; i < userList2.size(); i++) {
+                                if (size > 0) {
+                                    for (int i = 0; i < size; i++) {
                                         WeTubeUser friend = (WeTubeUser) userList2.get(i);
 
                                         WeTubeApplication.getSharedDataSource().getFriends()
@@ -559,8 +565,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
                             WeTubeApplication.getSharedDataSource().getFriends()
@@ -594,8 +601,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                     if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                     if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                              WeTubeUser friend = (WeTubeUser) userList.get(i);
 
                               WeTubeApplication.getSharedDataSource().getFriends()
@@ -629,8 +637,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
                             WeTubeApplication.getSharedDataSource().getFriends()
@@ -663,8 +672,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
                             WeTubeApplication.getSharedDataSource().getFriends()
@@ -899,12 +909,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 public void done(List<String> uncomTags, com.parse.ParseException e) {
                                     if (e == null) {
                                         WeTubeApplication.getSharedDataSource().getCommonTags().clear();
-                                        for(int i = 0; i<comTags.size(); i++){
+                                        int size = comTags.size();
+                                        for(int i = 0; i < size; i++){
                                             WeTubeApplication.getSharedDataSource().getCommonTags().add(new TagItem(comTags.get(i)));
                                         }
 
+                                        size = uncomTags.size();
                                         WeTubeApplication.getSharedDataSource().getUncommonTags().clear();
-                                        for(int i = 0; i<uncomTags.size(); i++){
+                                        for(int i = 0; i < size; i++){
                                             WeTubeApplication.getSharedDataSource().getUncommonTags().add(new TagItem(uncomTags.get(i)));
                                         }
 
@@ -1194,7 +1206,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() == 0) {
+                    int size = userList.size();
+                    if (size == 0) {
                         WeTubeApplication.getSharedDataSource().getUsers().clear();
                         mUserItemAdapter.notifyDataSetChanged();
                         Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -1202,14 +1215,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 Toast.LENGTH_LONG).show();
                     }
                     WeTubeApplication.getSharedDataSource().getUsers().clear();
-                    for (int i=0; i<userList.size(); i++) {
+                    for (int i = 0; i < size; i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
 
                         WeTubeApplication.getSharedDataSource().getUsers()
                                 .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
                     }
 
-                    for(int i = 0; i<userList.size(); i++) {
+                    for(int i = 0; i < size; i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
 
                         ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
@@ -1259,7 +1272,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() == 0) {
+                    int size = userList.size();
+                    if (size == 0) {
                         WeTubeApplication.getSharedDataSource().getUsers().clear();
                         mUserItemAdapter.notifyDataSetChanged();
                         Toast.makeText(WeTubeApplication.getSharedInstance(),
@@ -1268,14 +1282,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     }
 
                     WeTubeApplication.getSharedDataSource().getUsers().clear();
-                    for (int i = 0; i < userList.size(); i++) {
+                    for (int i = 0; i < size; i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
 
                         WeTubeApplication.getSharedDataSource().getUsers()
                                 .add(new UserItem(user.getUsername(), user.getObjectId(), user.getSessionStatus(), user.getLoggedStatus(), false));
                     }
 
-                    for (int i = 0; i < userList.size(); i++) {
+                    for (int i = 0; i < size; i++) {
                         final WeTubeUser user = (WeTubeUser) userList.get(i);
 
                         ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
@@ -1504,7 +1518,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                                 friend.getSessionStatus(), friend.getLoggedStatus(), true));
                                         mNavigationDrawerAdapter.notifyDataSetChanged();
 
-                                        for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+                                        int size = WeTubeApplication.getSharedDataSource().getUsers().size();
+                                        for (int i = 0; i < size; i++) {
                                             if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)){
                                                 WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
                                                 mUserItemAdapter.notifyItemChanged(i);
@@ -1792,7 +1807,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                     friend.getSessionStatus(), friend.getLoggedStatus(), true));
                             mNavigationDrawerAdapter.notifyDataSetChanged();
 
-                            for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+                            int size = WeTubeApplication.getSharedDataSource().getUsers().size();
+                            for (int i = 0; i < size; i++) {
                                 if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getName().equals(name)) {
                                     WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(true);
                                     mUserItemAdapter.notifyItemChanged(i);
@@ -1820,14 +1836,17 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()-1);
                 final String id = msg.get(3);
 
-                for (int i = 0; i < WeTubeApplication.getSharedDataSource().getFriends().size(); i++) {
+                int size = WeTubeApplication.getSharedDataSource().getFriends().size();
+                for (int i = 0; i < size; i++) {
                     if (WeTubeApplication.getSharedDataSource().getFriends().get(i).getId().equals(id)) {
                         WeTubeApplication.getSharedDataSource().getFriends().remove(i);
                         mNavigationDrawerAdapter.notifyItemRemoved(i);
                         break;
                     }
                 }
-                for (int i = 0; i < WeTubeApplication.getSharedDataSource().getUsers().size(); i++) {
+
+                size = WeTubeApplication.getSharedDataSource().getUsers().size();
+                for (int i = 0; i < size; i++) {
                     if (WeTubeApplication.getSharedDataSource().getUsers().get(i).getId().equals(id)) {
                         WeTubeApplication.getSharedDataSource().getUsers().get(i).setFriendStatus(false);
                         mUserItemAdapter.notifyDataSetChanged();
@@ -1953,8 +1972,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (userList.size() > 0) {
-                        for (int i = 0; i < userList.size(); i++) {
+                    int size = userList.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             final WeTubeUser user = (WeTubeUser) userList.get(i);
 
                             ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");

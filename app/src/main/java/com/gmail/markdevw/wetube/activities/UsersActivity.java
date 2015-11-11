@@ -112,18 +112,18 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private String mSortOptionSelected;
     private ActionBarDrawerToggle mDrawerToggle;
     private NavigationDrawerAdapter mNavigationDrawerAdapter;
-    private ServiceConnection mServiceConnection = new MyServiceConnection();
+    private ServiceConnection mServiceConnection;
     private MessageService.MessageServiceInterface mMessageService;
-    private MessageClientListener mMessageClientListener = new MyMessageClientListener();
+    private MessageClientListener mMessageClientListener;
     private UserItem mClickedUser;
-    private Queue<Message> mMessageQueue = new LinkedBlockingQueue<>();
+    private Queue<Message> mMessageQueue;
     private AlertDialog mDialog;
     boolean mIsFirstMessage = true;
     boolean mIsBlocking;
     private boolean mIsLaunch = true;
     private int mLaunchSpinnerCount;
     private String mMsgSplitter = "=-=-=";
-    private HashMap<String, String> mMessages = new HashMap<String, String>();
+    private HashMap<String, String> mMessages;
 
 
     @Override
@@ -133,6 +133,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         ButterKnife.bind(this);
 
         WeTubeApplication.getSharedDataSource().setUsersActivity(this);
+
+        mMessageQueue = new LinkedBlockingQueue<>();
+        mMessages = new HashMap<>();
 
         initToolbar();
         initUserListRecyclerView();
@@ -285,6 +288,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     user.setLoggedStatus(true);
                     user.setSessionStatus(false);
                     user.saveInBackground();
+
+                    mServiceConnection = new MyServiceConnection();
                     bindService(new Intent(UsersActivity.this, MessageService.class), mServiceConnection, BIND_AUTO_CREATE);
                 }
             }
@@ -1414,6 +1419,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mMessageService = (MessageService.MessageServiceInterface) iBinder;
+            mMessageClientListener = new MyMessageClientListener();
             mMessageService.addMessageClientListener(mMessageClientListener);
         }
 

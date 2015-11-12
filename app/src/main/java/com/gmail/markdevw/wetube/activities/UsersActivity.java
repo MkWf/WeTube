@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -45,6 +46,7 @@ import com.gmail.markdevw.wetube.adapters.UserItemAdapter;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.fragments.ProfileDialogFragment;
+import com.gmail.markdevw.wetube.fragments.YesNoDialog;
 import com.gmail.markdevw.wetube.services.ConnectionService;
 import com.gmail.markdevw.wetube.services.MessageService;
 import com.parse.DeleteCallback;
@@ -87,7 +89,9 @@ import butterknife.ButterKnife;
 public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate,
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
         NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
-        DrawerLayout.DrawerListener{
+        DrawerLayout.DrawerListener, YesNoDialog.onYesNoDialogOptionClickedListener {
+
+    private static final int UNBLOCK = 0;
 
     @Bind(R.id.activity_users_search_option)        Spinner searchOptions;
     @Bind(R.id.activity_users_nav_friends_sort)     Spinner friendsSort;
@@ -124,6 +128,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private int mLaunchSpinnerCount;
     private String mMsgSplitter = "=-=-=";
     private HashMap<String, String> mMessages;
+    private Blocked dialogHolder;
 
 
     @Override
@@ -711,29 +716,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 public void done(final List<Blocked> list, ParseException e) {
                     if(list != null){
                         if (list.size() > 0) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                            builder.setTitle("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?");
+                            dialogHolder = list.get(0);
 
-                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    list.get(0).deleteInBackground(new DeleteCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            Toast.makeText(UsersActivity.this, mClickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.setCancelable(false);
-                            builder.show();
+                            createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?", UNBLOCK);
                         } else {
                             ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
                             query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
@@ -823,6 +808,17 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }catch(NullPointerException e ){
             //causes crash if user loses connection and tries to click on users
         }
+    }
+
+    public void createYesNoDialog(String title, final int resultType) {
+        DialogFragment dialog = new YesNoDialog();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        args.putString("yes", "Yes");
+        args.putString("no", "No");
+        args.putInt("resultType", resultType);
+        dialog.setArguments(args);
+        dialog.show(getSupportFragmentManager(), "Dialog");
     }
 
     @Override
@@ -1429,6 +1425,26 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         builder.show();
     }
 
+    @Override
+    public void onYesNoDialogFragmentResult(int resultType, int which) {
+        switch(resultType){
+            case UNBLOCK:
+                if (which == -1) {
+                    dialogHolder.deleteInBackground(new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if(e == null){
+                                Toast.makeText(UsersActivity.this, mClickedUser.getName() + " has been unblocked", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(UsersActivity.this, "Failed to unblock " + mClickedUser.getName(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+                break;
+        }
+    }
+
     private class MyServiceConnection implements ServiceConnection {
 
         @Override
@@ -1554,6 +1570,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             if (msg.get(1).equals("startsession")) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
+
+
+
+
+
+
+
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
                 builder.setTitle("Session request from " + name);

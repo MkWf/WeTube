@@ -93,6 +93,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         DrawerLayout.DrawerListener, YesNoDialog.onYesNoDialogOptionClickedListener {
 
     private static final int UNBLOCK = 0;
+    private static final int REMOVE_FRIEND = 1;
 
     @Bind(R.id.activity_users_search_option)        Spinner searchOptions;
     @Bind(R.id.activity_users_nav_friends_sort)     Spinner friendsSort;
@@ -611,13 +612,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             public void done(List<ParseUser> userList, com.parse.ParseException e) {
                 if (e == null) {
                     int size = userList.size();
-                     if (size > 0) {
+                    if (size > 0) {
                         for (int i = 0; i < size; i++) {
-                             WeTubeUser friend = (WeTubeUser) userList.get(i);
+                            WeTubeUser friend = (WeTubeUser) userList.get(i);
 
-                              WeTubeApplication.getSharedDataSource().getFriends()
-                                  .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                          friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                            WeTubeApplication.getSharedDataSource().getFriends()
+                                    .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                            friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
 
                     }
@@ -717,8 +718,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 public void done(final List<Blocked> list, ParseException e) {
                     if(list != null){
                         if (list.size() > 0) {
-                            dialogHolder = list.get(0);
-                            createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?", UNBLOCK);
+                            createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?",
+                                    UNBLOCK,
+                                    list.get(0),
+                                    null,
+                                    null);
                         } else {
                             ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
                             query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
@@ -808,14 +812,27 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         dialog.show(getSupportFragmentManager(), "Dialog");
     }
 
-    public void createYesNoDialog(String title, final int resultType) {
-        DialogFragment dialog = new YesNoDialog();
+    public void createYesNoDialog(String title, final int resultType, Blocked blocked, Friend friend, UserItem userItem) {
+        YesNoDialog dialog = new YesNoDialog();
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putString("yes", "Yes");
         args.putString("no", "No");
         args.putInt("resultType", resultType);
         dialog.setArguments(args);
+
+        if(friend != null){
+            dialog.setFriend(friend);
+        }
+
+        if(blocked != null){
+            dialog.setBlocked(blocked);
+        }
+
+//        if(userItem != null){
+//            dialog.setUserID(userItem);
+//        }
+
         dialog.show(getSupportFragmentManager(), "Dialog");
     }
 
@@ -936,65 +953,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 break;
             case R.id.popup_remove :
                 final UserItem friend = mClickedUser;
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle("Are you sure you want to remove " + friend.getName() + " ?");
-
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, int which) {
-
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("objectId", friend.getId());
-                        query.findInBackground(new FindCallback<ParseUser>() {
-                            @Override
-                            public void done(List<ParseUser> parseUsers, ParseException e) {
-                                if(e == null && parseUsers.size() > 0){
-                                    ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
-                                    q1.whereEqualTo("friend1", parseUsers.get(0));
-                                    q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
-
-                                    ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
-                                    q2.whereEqualTo("friend2", parseUsers.get(0));
-                                    q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
-
-                                    List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
-                                    queries.add(q1);
-                                    queries.add(q2);
-
-                                    ParseQuery<Friend> query = ParseQuery.or(queries);
-                                    query.findInBackground(new FindCallback<Friend>() {
-                                        @Override
-                                        public void done(List<Friend> list, ParseException e) {
-                                            if(e == null && list.size() > 0){
-                                                list.get(0).deleteInBackground(new DeleteCallback() {
-                                                    @Override
-                                                    public void done(ParseException e) {
-                                                        WeTubeApplication.getSharedDataSource().getFriends().remove(friend);
-                                                        WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()-1);
-                                                        mNavigationDrawerAdapter.notifyDataSetChanged();
-                                                        Toast.makeText(UsersActivity.this, friend.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    });
-                                    dialog.cancel();
-                                }
-                            }
-                        });
-
-
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.setCancelable(false);
-                builder.show();
-                break;
+                //createYesNoDialog("Are you sure you want to remove " + friend.getName() + " ?", REMOVE_FRIEND);
         }
         return false;
     }
@@ -1424,11 +1383,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     @Override
-    public void onYesNoDialogFragmentResult(int resultType, int which) {
+    public void onYesNoDialogFragmentResult(int resultType, int which, Blocked blocked, Friend friend) {
         switch(resultType){
             case UNBLOCK:
                 if (which == -1) {
-                    dialogHolder.deleteInBackground(new DeleteCallback() {
+                    blocked.deleteInBackground(new DeleteCallback() {
                         @Override
                         public void done(ParseException e) {
                             if(e == null){
@@ -1440,6 +1399,47 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     });
                 }
                 break;
+            case REMOVE_FRIEND:
+//                if (which == -1) {
+//                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+//                    query.whereEqualTo("objectId", userId);
+//                    query.findInBackground(new FindCallback<ParseUser>() {
+//                        @Override
+//                        public void done(List<ParseUser> parseUsers, ParseException e) {
+//                            if(e == null && parseUsers.size() > 0){
+//                                ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+//                                q1.whereEqualTo("friend1", parseUsers.get(0));
+//                                q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
+//
+//                                ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+//                                q2.whereEqualTo("friend2", parseUsers.get(0));
+//                                q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
+//
+//                                List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+//                                queries.add(q1);
+//                                queries.add(q2);
+//
+//                                ParseQuery<Friend> query = ParseQuery.or(queries);
+//                                query.findInBackground(new FindCallback<Friend>() {
+//                                    @Override
+//                                    public void done(List<Friend> list, ParseException e) {
+//                                        if(e == null && list.size() > 0){
+//                                            list.get(0).deleteInBackground(new DeleteCallback() {
+//                                                @Override
+//                                                public void done(ParseException e) {
+//                                                    WeTubeApplication.getSharedDataSource().getFriends().remove();
+//                                                    WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()-1);
+//                                                    mNavigationDrawerAdapter.notifyDataSetChanged();
+//                                                    Toast.makeText(UsersActivity.this, friend.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
+//                                                }
+//                                            });
+//                                        }
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    });
+//                }
         }
     }
 

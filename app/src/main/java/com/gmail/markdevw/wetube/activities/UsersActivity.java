@@ -45,6 +45,7 @@ import com.gmail.markdevw.wetube.adapters.NavigationDrawerAdapter;
 import com.gmail.markdevw.wetube.adapters.UserItemAdapter;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
+import com.gmail.markdevw.wetube.fragments.OkDialog;
 import com.gmail.markdevw.wetube.fragments.ProfileDialogFragment;
 import com.gmail.markdevw.wetube.fragments.YesNoDialog;
 import com.gmail.markdevw.wetube.services.ConnectionService;
@@ -717,7 +718,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     if(list != null){
                         if (list.size() > 0) {
                             dialogHolder = list.get(0);
-
                             createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?", UNBLOCK);
                         } else {
                             ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
@@ -727,17 +727,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 @Override
                                 public void done(List<Blocked> list, ParseException e) {
                                     if (list.size() > 0) {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                                        builder.setTitle(mClickedUser.getName() + " has you blocked");
-
-                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.cancel();
-                                            }
-                                        });
-                                        builder.setCancelable(false);
-                                        builder.show();
+                                        createOkDialog(mClickedUser.getName() + " has you blocked");
                                     } else {
                                         ParseQuery<ParseUser> query = ParseUser.getQuery();
                                         query.whereEqualTo("objectId", mClickedUser.getId());
@@ -808,6 +798,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }catch(NullPointerException e ){
             //causes crash if user loses connection and tries to click on users
         }
+    }
+
+    public void createOkDialog(String title) {
+        DialogFragment dialog = new OkDialog();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        dialog.setArguments(args);
+        dialog.show(getSupportFragmentManager(), "Dialog");
     }
 
     public void createYesNoDialog(String title, final int resultType) {

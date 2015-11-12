@@ -721,7 +721,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?",
                                     UNBLOCK,
                                     list.get(0),
-                                    null,
                                     null);
                         } else {
                             ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
@@ -812,7 +811,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         dialog.show(getSupportFragmentManager(), "Dialog");
     }
 
-    public void createYesNoDialog(String title, final int resultType, Blocked blocked, Friend friend, UserItem userItem) {
+    public void createYesNoDialog(String title, final int resultType, Blocked blocked, UserItem userItem) {
         YesNoDialog dialog = new YesNoDialog();
         Bundle args = new Bundle();
         args.putString("title", title);
@@ -821,17 +820,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         args.putInt("resultType", resultType);
         dialog.setArguments(args);
 
-        if(friend != null){
-            dialog.setFriend(friend);
-        }
 
         if(blocked != null){
             dialog.setBlocked(blocked);
         }
 
-//        if(userItem != null){
-//            dialog.setUserID(userItem);
-//        }
+        if(userItem != null){
+            dialog.setUser(userItem);
+        }
 
         dialog.show(getSupportFragmentManager(), "Dialog");
     }
@@ -953,7 +949,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 break;
             case R.id.popup_remove :
                 final UserItem friend = mClickedUser;
-                //createYesNoDialog("Are you sure you want to remove " + friend.getName() + " ?", REMOVE_FRIEND);
+                createYesNoDialog("Are you sure you want to remove " + friend.getName() + " ?", REMOVE_FRIEND, null, friend);
         }
         return false;
     }
@@ -1383,7 +1379,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     @Override
-    public void onYesNoDialogFragmentResult(int resultType, int which, Blocked blocked, Friend friend) {
+    public void onYesNoDialogFragmentResult(int resultType, int which, Blocked blocked, final UserItem user) {
         switch(resultType){
             case UNBLOCK:
                 if (which == -1) {
@@ -1400,46 +1396,46 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
                 break;
             case REMOVE_FRIEND:
-//                if (which == -1) {
-//                    ParseQuery<ParseUser> query = ParseUser.getQuery();
-//                    query.whereEqualTo("objectId", userId);
-//                    query.findInBackground(new FindCallback<ParseUser>() {
-//                        @Override
-//                        public void done(List<ParseUser> parseUsers, ParseException e) {
-//                            if(e == null && parseUsers.size() > 0){
-//                                ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
-//                                q1.whereEqualTo("friend1", parseUsers.get(0));
-//                                q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
-//
-//                                ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
-//                                q2.whereEqualTo("friend2", parseUsers.get(0));
-//                                q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
-//
-//                                List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
-//                                queries.add(q1);
-//                                queries.add(q2);
-//
-//                                ParseQuery<Friend> query = ParseQuery.or(queries);
-//                                query.findInBackground(new FindCallback<Friend>() {
-//                                    @Override
-//                                    public void done(List<Friend> list, ParseException e) {
-//                                        if(e == null && list.size() > 0){
-//                                            list.get(0).deleteInBackground(new DeleteCallback() {
-//                                                @Override
-//                                                public void done(ParseException e) {
-//                                                    WeTubeApplication.getSharedDataSource().getFriends().remove();
-//                                                    WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()-1);
-//                                                    mNavigationDrawerAdapter.notifyDataSetChanged();
-//                                                    Toast.makeText(UsersActivity.this, friend.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
-//                                                }
-//                                            });
-//                                        }
-//                                    }
-//                                });
-//                            }
-//                        }
-//                    });
-//                }
+                if (which == -1) {
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo("objectId", user.getId());
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> parseUsers, ParseException e) {
+                            if(e == null && parseUsers.size() > 0){
+                                ParseQuery<Friend> q1 = ParseQuery.getQuery("Friend");
+                                q1.whereEqualTo("friend1", parseUsers.get(0));
+                                q1.whereEqualTo("friend2", ParseUser.getCurrentUser());
+
+                                ParseQuery<Friend> q2 = ParseQuery.getQuery("Friend");
+                                q2.whereEqualTo("friend2", parseUsers.get(0));
+                                q2.whereEqualTo("friend1", ParseUser.getCurrentUser());
+
+                                List<ParseQuery<Friend>> queries = new ArrayList<ParseQuery<Friend>>();
+                                queries.add(q1);
+                                queries.add(q2);
+
+                                ParseQuery<Friend> query = ParseQuery.or(queries);
+                                query.findInBackground(new FindCallback<Friend>() {
+                                    @Override
+                                    public void done(List<Friend> list, ParseException e) {
+                                        if(e == null && list.size() > 0){
+                                            list.get(0).deleteInBackground(new DeleteCallback() {
+                                                @Override
+                                                public void done(ParseException e) {
+                                                    WeTubeApplication.getSharedDataSource().getFriends().remove(user);
+                                                    WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()-1);
+                                                    mNavigationDrawerAdapter.notifyDataSetChanged();
+                                                    Toast.makeText(UsersActivity.this, user.getName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
         }
     }
 

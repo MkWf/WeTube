@@ -209,9 +209,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             drawerLayout.setVisibility(View.VISIBLE);
             mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
             mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
+            showSpinner();
             startService(mMessageServiceIntent);
             startService(mConnectionServiceIntent);
-            showSpinner();
 
             getLoggedInUsers();
             getFriends();
@@ -1428,8 +1428,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         builder.setCancelable(false);
         builder.show();
     }
-
-
 
     private class MyServiceConnection implements ServiceConnection {
 

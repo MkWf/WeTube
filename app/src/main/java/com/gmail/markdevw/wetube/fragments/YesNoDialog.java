@@ -17,7 +17,6 @@ import com.parse.models.Blocked;
  */
 public class YesNoDialog extends DialogFragment {
 
-
     public interface onYesNoDialogOptionClickedListener {
         void onYesNoDialogFragmentResult(int resultType, int which, Blocked blocked, UserItem user);
     }
@@ -36,7 +35,7 @@ public class YesNoDialog extends DialogFragment {
             listener = (onYesNoDialogOptionClickedListener) activity;
         }else {
             throw new ClassCastException(activity.toString()
-                    + " must implement MyListFragment.OnItemSelectedListener");
+                    + " must implement onYesNoOkDialogOptionClickedListener");
         }
     }
 

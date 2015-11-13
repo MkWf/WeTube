@@ -48,6 +48,7 @@ import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.fragments.OkDialog;
 import com.gmail.markdevw.wetube.fragments.ProfileDialogFragment;
 import com.gmail.markdevw.wetube.fragments.YesNoDialog;
+import com.gmail.markdevw.wetube.fragments.YesNoOkDialog;
 import com.gmail.markdevw.wetube.services.ConnectionService;
 import com.gmail.markdevw.wetube.services.MessageService;
 import com.parse.DeleteCallback;
@@ -90,10 +91,13 @@ import butterknife.ButterKnife;
 public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate,
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
         NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
-        DrawerLayout.DrawerListener, YesNoDialog.onYesNoDialogOptionClickedListener {
+        DrawerLayout.DrawerListener, YesNoDialog.onYesNoDialogOptionClickedListener,
+        YesNoOkDialog.onYesNoOkDialogOptionClickedListener {
 
     private static final int UNBLOCK = 0;
-    private static final int REMOVE_FRIEND = 1;
+    private static final int BLOCK = 1;
+    private static final int REMOVE_FRIEND = 2;
+    private static final int SESSION = 3;
 
     @Bind(R.id.activity_users_search_option)        Spinner searchOptions;
     @Bind(R.id.activity_users_nav_friends_sort)     Spinner friendsSort;
@@ -124,14 +128,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private UserItem mClickedUser;
     private Queue<Message> mMessageQueue;
     private AlertDialog mDialog;
+    private DialogFragment mDialogFragment;
     boolean mIsFirstMessage = true;
     boolean mIsBlocking;
     private boolean mIsLaunch = true;
     private int mLaunchSpinnerCount;
     private String mMsgSplitter = "=-=-=";
     private HashMap<String, String> mMessages;
-    private Blocked dialogHolder;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -718,7 +721,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 public void done(final List<Blocked> list, ParseException e) {
                     if(list != null){
                         if (list.size() > 0) {
-                            createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?",
+                            mDialogFragment = createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?",
                                     UNBLOCK,
                                     list.get(0),
                                     null);
@@ -730,7 +733,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 @Override
                                 public void done(List<Blocked> list, ParseException e) {
                                     if (list.size() > 0) {
-                                        createOkDialog(mClickedUser.getName() + " has you blocked");
+                                        mDialogFragment = createOkDialog(mClickedUser.getName() + " has you blocked");
                                     } else {
                                         ParseQuery<ParseUser> query = ParseUser.getQuery();
                                         query.whereEqualTo("objectId", mClickedUser.getId());
@@ -803,15 +806,17 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
-    public void createOkDialog(String title) {
-        DialogFragment dialog = new OkDialog();
+    public DialogFragment createOkDialog(String title) {
+        OkDialog dialog = new OkDialog();
         Bundle args = new Bundle();
         args.putString("title", title);
         dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), "Dialog");
+
+        return dialog;
     }
 
-    public void createYesNoDialog(String title, final int resultType, Blocked blocked, UserItem userItem) {
+    public DialogFragment createYesNoDialog(String title, final int resultType, Blocked blocked, UserItem userItem) {
         YesNoDialog dialog = new YesNoDialog();
         Bundle args = new Bundle();
         args.putString("title", title);
@@ -830,6 +835,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
 
         dialog.show(getSupportFragmentManager(), "Dialog");
+
+        return dialog;
     }
 
     @Override
@@ -949,7 +956,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 break;
             case R.id.popup_remove :
                 final UserItem friend = mClickedUser;
-                createYesNoDialog("Are you sure you want to remove " + friend.getName() + " ?", REMOVE_FRIEND, null, friend);
+                mDialogFragment = createYesNoDialog("Are you sure you want to remove " + friend.getName() + " ?", REMOVE_FRIEND, null, friend);
         }
         return false;
     }
@@ -1351,31 +1358,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void sessionEndedDialog(String name){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Session End: " + name + " had lost connection");
-
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
-    }
-
-    public void connectionLossDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("You lost connection to the service");
-
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
+        mDialogFragment = createOkDialog("Session End: " + name + " had lost connection");
     }
 
     @Override
@@ -1391,6 +1374,20 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             }else{
                                 Toast.makeText(UsersActivity.this, "Failed to unblock " + mClickedUser.getName(), Toast.LENGTH_SHORT).show();
                             }
+                        }
+                    });
+                }
+                break;
+            case BLOCK:
+                if(which == -1){
+                    final String id = user.getId();
+                    clearDialogsById(id);
+                    Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
+                    block.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
+                                    + ParseUser.getCurrentUser().getObjectId());
                         }
                     });
                 }
@@ -1436,6 +1433,50 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         }
                     });
                 }
+                break;
+        }
+    }
+
+    @Override
+    public void onYesNoOkDialogFragmentResult(int resultType, int which, final String name, final String id) {
+        switch(resultType){
+            case SESSION:
+                if (which == -1) {
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo("objectId", id);
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> list, ParseException e) {
+                            if (list.size() > 0 && e == null) {
+                                WeTubeUser recip = (WeTubeUser) list.get(0);
+                                if (!recip.getSessionStatus() && recip.getLoggedStatus()) {
+                                    mMessageService.sendMessage(id, mMsgSplitter + "sessionaccept" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter +
+                                            ParseUser.getCurrentUser().getObjectId());
+
+                                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                                    user.setSessionStatus(true);
+                                    user.saveInBackground();
+                                    WeTubeApplication.getSharedDataSource().setSessionController(false);
+                                    WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(name, id));
+                                } else {
+                                    if (!recip.getLoggedStatus()) {
+                                        Toast.makeText(UsersActivity.this, "Session failed to start. User has gone offline", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(UsersActivity.this, "Session failed to start. User is in another session", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(UsersActivity.this, "Error finding user", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else if(which == -2){
+                    mMessageService.sendMessage(id, mMsgSplitter + "sessiondecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
+                } else if(which == -3){
+                    mIsBlocking = true;
+                    mDialogFragment = createYesNoDialog("Are you sure you want to block " + name + " ?", BLOCK, null, new UserItem(name, id));
+                }
+                break;
         }
     }
 
@@ -1487,6 +1528,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                     if(!mIsFirstMessage){
                         if(mDialog != null && !mDialog.isShowing() && !mMessageQueue.isEmpty()){
+                            showNextMessage();
+                        }else if(mDialogFragment != null && !mDialogFragment.isVisible() && !mMessageQueue.isEmpty()){
                             showNextMessage();
                         }
                     }else{
@@ -1565,93 +1608,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 final String name = msg.get(2);
                 final String id = msg.get(3);
 
+                mDialogFragment = createYesNoOkDialog("Session request from " + name, name, id, "Accept", "Decline", "Block", SESSION);
 
-
-
-
-
-
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle("Session request from " + name);
-
-                builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("objectId", id);
-                        query.findInBackground(new FindCallback<ParseUser>() {
-                            @Override
-                            public void done(List<ParseUser> list, ParseException e) {
-                                if (list.size() > 0 && e == null) {
-                                    WeTubeUser recip = (WeTubeUser) list.get(0);
-                                    if (!recip.getSessionStatus() && recip.getLoggedStatus()) {
-                                        mMessageService.sendMessage(id, mMsgSplitter + "sessionaccept" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter +
-                                                ParseUser.getCurrentUser().getObjectId());
-
-                                        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                                        user.setSessionStatus(true);
-                                        user.saveInBackground();
-                                        WeTubeApplication.getSharedDataSource().setSessionController(false);
-                                        WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(name, id));
-                                    } else {
-                                        if (!recip.getLoggedStatus()) {
-                                            Toast.makeText(UsersActivity.this, "Session failed to start. User has gone offline", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(UsersActivity.this, "Session failed to start. User is in another session", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                } else {
-                                    Toast.makeText(UsersActivity.this, "Error finding user", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                        dialog.cancel();
-                    }
-                });
-                builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mMessageService.sendMessage(id, mMsgSplitter + "sessiondecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
-                        dialog.cancel();
-                    }
-                });
-                builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mIsBlocking = true;
-                        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                        builder.setTitle("Are you sure you want to block " + name + " ?");
-
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
-                                block.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
-                                                + ParseUser.getCurrentUser().getObjectId());
-                                    }
-                                });
-                                clearDialogsById(id);
-                                dialog.cancel();
-                            }
-                        });
-                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                        builder.setCancelable(false);
-                        mDialog = builder.create();
-                        mDialog.show();
-                    }
-                });
-                builder.setCancelable(false);
-                mDialog = builder.create();
-                mDialog.show();
             } else if (msg.get(1).equals("sessionaccept")) {
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                 user.setSessionStatus(true);
@@ -1909,6 +1867,25 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 mDialog.setOnDismissListener(this);
             }
         }
+    }
+
+    public DialogFragment createYesNoOkDialog(final String title, final String name, final String id,
+                                    final String yes, final String no, final String ok,
+                                    final int resultType) {
+        YesNoOkDialog dialog = new YesNoOkDialog();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        args.putString("name", name);
+        args.putString("id", id);
+        args.putString("yes", yes);
+        args.putString("no", no);
+        args.putString("ok", ok);
+        args.putInt("resultType", resultType);
+        dialog.setArguments(args);
+
+        dialog.show(getSupportFragmentManager(), "Dialog");
+
+        return dialog;
     }
 
     public void clearDialogsById(String id){

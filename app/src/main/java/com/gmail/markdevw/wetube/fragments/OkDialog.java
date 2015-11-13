@@ -1,5 +1,6 @@
 package com.gmail.markdevw.wetube.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -12,15 +13,31 @@ import android.support.v4.app.DialogFragment;
  */
 public class OkDialog extends DialogFragment {
 
+    public interface Empty extends DialogDismissInterface{
+
+    }
+
+    private DialogDismissInterface listener;
+
     public OkDialog() {}
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if(activity instanceof DialogDismissInterface) {
+            listener = (DialogDismissInterface) activity;
+        }else {
+            throw new ClassCastException(activity.toString()
+                    + " must implement onYesNoDialogOptionClickedListener");
+        }
+    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
         final String title = args.getString("title", "");
-
-        //getDialog().setCancelable(false);
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
@@ -31,6 +48,12 @@ public class OkDialog extends DialogFragment {
                     }
                 })
                 .create();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        listener.dialogDismiss();
     }
 }
 

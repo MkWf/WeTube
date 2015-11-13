@@ -17,7 +17,7 @@ import com.parse.models.Blocked;
  */
 public class YesNoDialog extends DialogFragment {
 
-    public interface onYesNoDialogOptionClickedListener {
+    public interface onYesNoDialogOptionClickedListener extends DialogDismissInterface {
         void onYesNoDialogFragmentResult(int resultType, int which, Blocked blocked, UserItem user);
     }
 
@@ -35,7 +35,7 @@ public class YesNoDialog extends DialogFragment {
             listener = (onYesNoDialogOptionClickedListener) activity;
         }else {
             throw new ClassCastException(activity.toString()
-                    + " must implement onYesNoOkDialogOptionClickedListener");
+                    + " must implement onYesNoDialogOptionClickedListener");
         }
     }
 
@@ -74,5 +74,11 @@ public class YesNoDialog extends DialogFragment {
     
     public void setUser(UserItem user){
         this.user = user;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        listener.dialogDismiss();
     }
 }

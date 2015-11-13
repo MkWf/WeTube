@@ -13,7 +13,7 @@ import android.support.v4.app.DialogFragment;
  */
 public class YesNoOkDialog extends DialogFragment {
 
-    public interface onYesNoOkDialogOptionClickedListener {
+    public interface onYesNoOkDialogOptionClickedListener extends DialogDismissInterface {
         void onYesNoOkDialogFragmentResult(int resultType, int which, String name, String id);
     }
 
@@ -29,7 +29,7 @@ public class YesNoOkDialog extends DialogFragment {
             listener = (onYesNoOkDialogOptionClickedListener) activity;
         }else {
             throw new ClassCastException(activity.toString()
-                    + " must implement MyListFragment.onYesNoOkDialogOptionClickedListener");
+                    + " must implement onYesNoOkDialogOptionClickedListener");
         }
     }
 
@@ -66,5 +66,11 @@ public class YesNoOkDialog extends DialogFragment {
                 }
             })
             .create();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        listener.dialogDismiss();
     }
 }

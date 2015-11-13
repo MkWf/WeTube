@@ -45,6 +45,7 @@ import com.gmail.markdevw.wetube.adapters.NavigationDrawerAdapter;
 import com.gmail.markdevw.wetube.adapters.UserItemAdapter;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
+import com.gmail.markdevw.wetube.fragments.DialogDismissInterface;
 import com.gmail.markdevw.wetube.fragments.OkDialog;
 import com.gmail.markdevw.wetube.fragments.ProfileDialogFragment;
 import com.gmail.markdevw.wetube.fragments.YesNoDialog;
@@ -92,7 +93,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
         NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
         DrawerLayout.DrawerListener, YesNoDialog.onYesNoDialogOptionClickedListener,
-        YesNoOkDialog.onYesNoOkDialogOptionClickedListener {
+        YesNoOkDialog.onYesNoOkDialogOptionClickedListener, DialogDismissInterface {
 
     private static final int UNBLOCK = 0;
     private static final int BLOCK = 1;
@@ -1491,6 +1492,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
+    @Override
+    public void dialogDismiss() {
+        if(!mMessageQueue.isEmpty() && !mIsBlocking){
+            showNextMessage();
+        }
+    }
+
     private class MyServiceConnection implements ServiceConnection {
 
         @Override
@@ -1632,7 +1640,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 startActivity(intent);
             } else if (msg.get(1).equals("sessiondecline")) {
                 String name = msg.get(2);
-                mDialogFragment = createOkDialog(name + "has declined your session request");
+                mDialogFragment = createOkDialog(name + " has declined your session request");
             } else if (msg.get(1).equals("friendadd")) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
@@ -1764,6 +1772,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             showNextMessage();
         }
     }
+
     @Override
     public void onDrawerStateChanged(int newState) {
     }

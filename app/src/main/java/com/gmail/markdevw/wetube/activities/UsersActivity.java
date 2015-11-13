@@ -1670,38 +1670,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             } else if (msg.get(1).equals("frienddecline")) {
                 String name = msg.get(2);
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle(name + " has declined your friend request");
-
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.setCancelable(false);
-                mDialog = builder.create();
-                mDialog.show();
+                mDialogFragment = createOkDialog(name + " has declined your friend request");
             } else if (msg.get(1).equals("friendfull")) {
                 String name = msg.get(2);
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle(name + "'s friends list is full");
-
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.setCancelable(false);
-                mDialog = builder.create();
-                mDialog.show();
+                mDialogFragment = createOkDialog(name + "'s friends list is full");
             } else if (msg.get(1).equals("friendaccept")) {
                 WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()+1);
                 final String name = msg.get(2);
                 final String id = msg.get(3);
-
-                final AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
 
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
                 query.whereEqualTo("objectId", id);
@@ -1723,21 +1699,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 }
                             }
 
-                            builder.setTitle(name + " accepted your friend request");
+                            mDialogFragment = createOkDialog(name + " accepted your friend request");
                         } else {
-                            builder.setTitle("Failed to add " + name + " to your friends list");
+                            mDialogFragment = createOkDialog("Failed to add " + name + " to your friends list");
                         }
-
-                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-
-                        builder.setCancelable(false);
-                        mDialog = builder.create();
-                        mDialog.show();
                     }
                 });
             } else if (msg.get(1).equals("friendremove")) {
@@ -1763,37 +1728,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             } else if (msg.get(1).equals("blockuser")) {
                 final String name = msg.get(2);
-                final String id = msg.get(3);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle(name + " has blocked you");
-
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.setCancelable(false);
-                mDialog = builder.create();
-                mDialog.show();
+                mDialogFragment = createOkDialog(name + " has blocked you");
             } else if (msg.get(1).equals("unblock")) {
                 final String name = msg.get(2);
-                final String id = msg.get(3);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle(name + " has unblocked you");
-
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.setCancelable(false);
-                mDialog = builder.create();
-                mDialog.show();
-
+                mDialogFragment = createOkDialog(name + " has unblocked you");
             }
             if (mDialog != null) {
                 mDialog.setOnDismissListener(this);
@@ -1840,11 +1780,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             showNextMessage();
         }
     }
-
-
     @Override
     public void onDrawerStateChanged(int newState) {
-
     }
 
     @Override

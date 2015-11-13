@@ -1727,9 +1727,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                 mDialogFragment = createOkDialog(name + " has unblocked you");
             }
-            if (mDialog != null) {
-                mDialog.setOnDismissListener(this);
-            }
         }
     }
 
@@ -1764,15 +1761,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             showNextMessage();
         }
     }
-
-
-    @Override
-    public void onDismiss(DialogInterface dialogInterface) {
-        if(!mMessageQueue.isEmpty() && !mIsBlocking){
-            showNextMessage();
-        }
-    }
-
+    
     @Override
     public void onDrawerStateChanged(int newState) {
     }

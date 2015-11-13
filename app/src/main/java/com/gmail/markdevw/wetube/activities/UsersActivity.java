@@ -98,6 +98,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private static final int BLOCK = 1;
     private static final int REMOVE_FRIEND = 2;
     private static final int SESSION = 3;
+    private static final int FRIEND_ADD = 4;
 
     @Bind(R.id.activity_users_search_option)        Spinner searchOptions;
     @Bind(R.id.activity_users_nav_friends_sort)     Spinner friendsSort;
@@ -1434,6 +1435,22 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     });
                 }
                 break;
+            case FRIEND_ADD:
+                final String id = user.getId();
+                if(which == -1){
+                    mMessageService.sendMessage(id, mMsgSplitter + "friendfull" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
+                }else if(which == -2){
+                    clearDialogsById(id);
+                    Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
+                    block.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
+                                    + ParseUser.getCurrentUser().getObjectId());
+                        }
+                    });
+                }
+                break;
         }
     }
 
@@ -1477,6 +1494,16 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     mDialogFragment = createYesNoDialog("Are you sure you want to block " + name + " ?", BLOCK, null, new UserItem(name, id));
                 }
                 break;
+            case FRIEND_ADD:
+                if(which == -1){
+                    final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                    mMessageService.sendMessage(id, mMsgSplitter + "friendaccept" + mMsgSplitter + user.getUsername() + mMsgSplitter + user.getObjectId());
+                }else if(which == -2){
+                    mMessageService.sendMessage(id, mMsgSplitter + "frienddecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
+                }else if(which == -3){
+                    mIsBlocking = true;
+                    mDialogFragment = createYesNoDialog("Are you sure you want to block " + name + " ?", BLOCK, null, new UserItem(name, id));
+                }
         }
     }
 
@@ -1527,7 +1554,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     mMessageQueue.add(message);
 
                     if(!mIsFirstMessage){
-                        if(mDialog != null && !mDialog.isShowing() && !mMessageQueue.isEmpty()){
+                        if (mDialog != null && !mDialog.isShowing() && !mMessageQueue.isEmpty()){
                             showNextMessage();
                         }else if(mDialogFragment != null && !mDialogFragment.isVisible() && !mMessageQueue.isEmpty()){
                             showNextMessage();
@@ -1621,121 +1648,26 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 startActivity(intent);
             } else if (msg.get(1).equals("sessiondecline")) {
                 String name = msg.get(2);
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle(name + " has declined your session request");
-
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.setCancelable(false);
-                mDialog = builder.create();
-                mDialog.show();
+                mDialogFragment = createOkDialog(name + "has declined your session request");
             } else if (msg.get(1).equals("friendadd")) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                builder.setTitle("Friend request from " + name);
-
                 if(WeTubeApplication.getSharedDataSource().getFriendsSize() == WeTubeApplication.getSharedDataSource().getMaxFriends()){
-                    builder.setNegativeButton("Friends list is full", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mMessageService.sendMessage(id, mMsgSplitter + "friendfull" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mIsBlocking = true;
-                            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                            builder.setTitle("Are you sure you want to block " + name + " ?");
+                    DialogFragment dialog = new YesNoDialog();
+                    Bundle b = new Bundle();
+                    b.putString("title", "Friend request from " + name + " but your friend's list is full");
+                    b.putString("yes", "Friend's list full");
+                    b.putString("no", "Block");
+                    b.putInt("resultType", FRIEND_ADD);
 
-                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
-                                    block.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
-                                                    + ParseUser.getCurrentUser().getObjectId());
-                                        }
-                                    });
+                    dialog.setArguments(b);
+                    dialog.show(getSupportFragmentManager(), "Dialog");
 
-                                    clearDialogsById(id);
-                                    dialog.dismiss();
-                                }
-                            });
-                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.setCancelable(false);
-                            mDialog = builder.create();
-                            mDialog.show();
-                        }
-                    });
+                    mDialogFragment = dialog;
                 }else{
-                    builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                            mMessageService.sendMessage(id, mMsgSplitter + "friendaccept" + mMsgSplitter + user.getUsername() + mMsgSplitter + user.getObjectId());
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mMessageService.sendMessage(id, mMsgSplitter + "frienddecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mIsBlocking = true;
-                            AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-                            builder.setTitle("Are you sure you want to block " + name + " ?");
-
-                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Blocked block = new Blocked(ParseUser.getCurrentUser().getObjectId(), id);
-                                    block.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            mMessageService.sendMessage(id, mMsgSplitter + "blockuser" + mMsgSplitter + ParseUser.getCurrentUser().getUsername() + mMsgSplitter
-                                                    + ParseUser.getCurrentUser().getObjectId());
-                                        }
-                                    });
-
-                                    clearDialogsById(id);
-                                    dialog.dismiss();
-                                }
-                            });
-                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.setCancelable(false);
-                            mDialog = builder.create();
-                            mDialog.show();
-                        }
-                    });
+                    mDialogFragment = createYesNoOkDialog("Friend request from " + name, name, id, "Accept", "Decline", "Block", FRIEND_ADD);
                 }
-                builder.setCancelable(false);
-                mDialog = builder.create();
-                mDialog.show();
             } else if (msg.get(1).equals("frienddecline")) {
                 String name = msg.get(2);
                 AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);

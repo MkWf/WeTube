@@ -99,6 +99,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private static final int REMOVE_FRIEND = 2;
     private static final int SESSION = 3;
     private static final int FRIEND_ADD = 4;
+    private static final int LOGOUT = 5;
 
     @Bind(R.id.activity_users_search_option)        Spinner searchOptions;
     @Bind(R.id.activity_users_nav_friends_sort)     Spinner friendsSort;
@@ -1302,60 +1303,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(UsersActivity.this);
-        builder.setTitle("Are you sure you want to exit?");
-
-        builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                SharedPreferences sharedpreferences = getSharedPreferences
-                        ("MyPrefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.clear();
-                editor.commit();
-
-                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                user.setLoggedStatus(false);
-                user.setSessionStatus(false);
-                user.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        ParseUser.logOutInBackground(new LogOutCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                UsersActivity.this.moveTaskToBack(true);
-                                UsersActivity.this.finish();
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.setNeutralButton("Exit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                dialog.cancel();
-
-                WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                user.setLoggedStatus(false);
-                user.setSessionStatus(false);
-                user.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        UsersActivity.this.moveTaskToBack(true);
-                        UsersActivity.this.finish();
-                    }
-                });
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
+        mDialogFragment = createYesNoOkDialog("Are you sure you want to exit?", null, null, "Logout", "No", "Exit", LOGOUT);
     }
 
     public void sessionEndedDialog(String name){
@@ -1503,6 +1451,42 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }else if(which == -3){
                     mIsBlocking = true;
                     mDialogFragment = createYesNoDialog("Are you sure you want to block " + name + " ?", BLOCK, null, new UserItem(name, id));
+                }
+                break;
+            case LOGOUT:
+                if(which == -1){
+                    SharedPreferences sharedpreferences = getSharedPreferences
+                            ("MyPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.clear();
+                    editor.commit();
+
+                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                    user.setLoggedStatus(false);
+                    user.setSessionStatus(false);
+                    user.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            ParseUser.logOutInBackground(new LogOutCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    UsersActivity.this.moveTaskToBack(true);
+                                    UsersActivity.this.finish();
+                                }
+                            });
+                        }
+                    });
+                }else if(which == -3){
+                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+                    user.setLoggedStatus(false);
+                    user.setSessionStatus(false);
+                    user.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            UsersActivity.this.moveTaskToBack(true);
+                            UsersActivity.this.finish();
+                        }
+                    });
                 }
         }
     }

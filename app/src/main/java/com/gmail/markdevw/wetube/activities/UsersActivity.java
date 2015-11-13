@@ -91,7 +91,7 @@ import butterknife.ButterKnife;
  */
 public class UsersActivity extends ActionBarActivity implements UserItemAdapter.Delegate,
         AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener,
-        NavigationDrawerAdapter.Delegate, DialogInterface.OnDismissListener,
+        NavigationDrawerAdapter.Delegate,
         DrawerLayout.DrawerListener, YesNoDialog.onYesNoDialogOptionClickedListener,
         YesNoOkDialog.onYesNoOkDialogOptionClickedListener, DialogDismissInterface {
 
@@ -130,7 +130,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private MessageClientListener mMessageClientListener;
     private UserItem mClickedUser;
     private Queue<Message> mMessageQueue;
-    private AlertDialog mDialog;
     private DialogFragment mDialogFragment;
     boolean mIsFirstMessage = true;
     boolean mIsBlocking;
@@ -1546,9 +1545,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     mMessageQueue.add(message);
 
                     if(!mIsFirstMessage){
-                        if (mDialog != null && !mDialog.isShowing() && !mMessageQueue.isEmpty()){
-                            showNextMessage();
-                        }else if(mDialogFragment != null && !mDialogFragment.isVisible() && !mMessageQueue.isEmpty()){
+                        if(mDialogFragment != null && !mDialogFragment.isVisible() && !mMessageQueue.isEmpty()){
                             showNextMessage();
                         }
                     }else{
@@ -1761,7 +1758,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             showNextMessage();
         }
     }
-    
+
     @Override
     public void onDrawerStateChanged(int newState) {
     }

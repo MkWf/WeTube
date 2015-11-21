@@ -21,6 +21,35 @@ public class YesNoDialog extends DialogFragment {
         void onYesNoDialogFragmentResult(int resultType, int which, Blocked blocked, UserItem user);
     }
 
+    public static class Builder {
+        private Bundle args = new Bundle();
+        private YesNoDialog dialog = new YesNoDialog();
+
+        public Builder(String title) {
+            args.putString("title", title);
+        }
+
+        public Builder setResultType(int resultType){
+            args.putInt("resultType", resultType);
+            return this;
+        }
+
+        public Builder setBlocked(Blocked blocked){
+            dialog.setBlocked(blocked);
+            return this;
+        }
+
+        public Builder setUser(UserItem user){
+            dialog.setUser(user);
+            return this;
+        }
+
+        public DialogFragment create(){
+            dialog.setArguments(args);
+            return dialog;
+        }
+    }
+
     private onYesNoDialogOptionClickedListener listener;
     private Blocked blocked;
     private UserItem user;
@@ -44,22 +73,19 @@ public class YesNoDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
         final String title = args.getString("title", "");
-        String yes = args.getString("yes", "");
-        String no = args.getString("no", "");
         final int resultType = args.getInt("resultType", -1);
-        final String userId = args.getString("userId", "");
 
         //getDialog().setCancelable(false);
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
-                .setPositiveButton(yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onYesNoDialogFragmentResult(resultType, which, blocked, user);
                     }
                 })
-                .setNegativeButton(no, new DialogInterface.OnClickListener() {
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onYesNoDialogFragmentResult(resultType, which, blocked, user);

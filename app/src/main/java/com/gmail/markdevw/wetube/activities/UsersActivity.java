@@ -723,10 +723,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 public void done(final List<Blocked> list, ParseException e) {
                     if(list != null){
                         if (list.size() > 0) {
-                            mDialogFragment = createYesNoDialog("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?",
-                                    UNBLOCK,
-                                    list.get(0),
-                                    null);
+                            mDialogFragment = new YesNoDialog.Builder("You have " + mClickedUser.getName() + " blocked. Do you want to unblock this user?")
+                                    .setBlocked(list.get(0))
+                                    .setUser(userItem)
+                                    .setResultType(UNBLOCK)
+                                    .create();
+                            mDialogFragment.show(getSupportFragmentManager(), "Dialog");
+
                         } else {
                             ParseQuery<Blocked> query = ParseQuery.getQuery("Blocked");
                             query.whereEqualTo("userId", WeTubeUser.getCurrentUser().getObjectId());
@@ -813,29 +816,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         dialog.show(getSupportFragmentManager(), "Dialog");
 
         mDialogFragment = dialog;
-    }
-
-    public DialogFragment createYesNoDialog(String title, final int resultType, Blocked blocked, UserItem userItem) {
-        YesNoDialog dialog = new YesNoDialog();
-        Bundle args = new Bundle();
-        args.putString("title", title);
-        args.putString("yes", "Yes");
-        args.putString("no", "No");
-        args.putInt("resultType", resultType);
-        dialog.setArguments(args);
-
-
-        if(blocked != null){
-            dialog.setBlocked(blocked);
-        }
-
-        if(userItem != null){
-            dialog.setUser(userItem);
-        }
-
-        dialog.show(getSupportFragmentManager(), "Dialog");
-
-        return dialog;
     }
 
     @Override
@@ -955,7 +935,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 break;
             case R.id.popup_remove :
                 final UserItem friend = mClickedUser;
-                mDialogFragment = createYesNoDialog("Are you sure you want to remove " + friend.getName() + " ?", REMOVE_FRIEND, null, friend);
+                mDialogFragment = new YesNoDialog.Builder("Are you sure you want to remove " + friend.getName() + " ?")
+                        .setUser(friend)
+                        .setResultType(REMOVE_FRIEND)
+                        .create();
+                mDialogFragment.show(getSupportFragmentManager(), "Dialog");
         }
         return false;
     }
@@ -1436,7 +1420,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     mMessageService.sendMessage(id, mMsgSplitter + "sessiondecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
                 } else if(which == -3){
                     mIsBlocking = true;
-                    mDialogFragment = createYesNoDialog("Are you sure you want to block " + name + " ?", BLOCK, null, new UserItem(name, id));
+                    mDialogFragment = new YesNoDialog.Builder("Are you sure you want to block " + name + " ?")
+                            .setUser(new UserItem(name, id))
+                            .setResultType(BLOCK)
+                            .create();
+                    mDialogFragment.show(getSupportFragmentManager(), "Dialog");
                 }
                 break;
             case FRIEND_ADD:
@@ -1447,7 +1435,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     mMessageService.sendMessage(id, mMsgSplitter + "frienddecline" + mMsgSplitter + ParseUser.getCurrentUser().getUsername());
                 }else if(which == -3){
                     mIsBlocking = true;
-                    mDialogFragment = createYesNoDialog("Are you sure you want to block " + name + " ?", BLOCK, null, new UserItem(name, id));
+                    mDialogFragment = new YesNoDialog.Builder("Are you sure you want to block " + name + " ?")
+                            .setUser(new UserItem(name, id))
+                            .setResultType(BLOCK)
+                            .create();
+                    mDialogFragment.show(getSupportFragmentManager(), "Dialog");
                 }
                 break;
             case LOGOUT:

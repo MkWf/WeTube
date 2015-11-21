@@ -29,6 +29,16 @@ public class YesNoDialog extends DialogFragment {
             args.putString("title", title);
         }
 
+        public Builder setYes(String replaceYes){
+            args.putString("yes", replaceYes);
+            return this;
+        }
+
+        public Builder setNo(String replaceNo){
+            args.putString("no", replaceNo);
+            return this;
+        }
+
         public Builder setResultType(int resultType){
             args.putInt("resultType", resultType);
             return this;
@@ -73,19 +83,21 @@ public class YesNoDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
         final String title = args.getString("title", "");
+        String yes = args.getString("yes", "yes");
+        String no = args.getString("no", "no");
         final int resultType = args.getInt("resultType", -1);
 
         //getDialog().setCancelable(false);
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onYesNoDialogFragmentResult(resultType, which, blocked, user);
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onYesNoDialogFragmentResult(resultType, which, blocked, user);

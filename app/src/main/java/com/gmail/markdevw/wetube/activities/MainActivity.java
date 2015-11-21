@@ -64,6 +64,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -119,6 +120,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         WeTubeApplication.getSharedDataSource().setMainActivity(this);
         WeTubeApplication.getSharedDataSource().setVideoActivity(true);

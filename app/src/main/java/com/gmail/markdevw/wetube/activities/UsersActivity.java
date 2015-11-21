@@ -1284,7 +1284,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     @Override
     public void onBackPressed() {
-        mDialogFragment = createYesNoOkDialog("Are you sure you want to exit?", null, null, "Logout", "No", "Exit", LOGOUT);
+        mDialogFragment = new YesNoOkDialog.Builder("Are you sure you want to exit?")
+                .setYes("Logout")
+                .setNo("No")
+                .setOk("Exit")
+                .setResultType(LOGOUT)
+                .create();
+        mDialogFragment.show(getSupportFragmentManager(), "Dialog");
     }
 
     public void sessionEndedDialog(String name){
@@ -1613,7 +1619,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 final String name = msg.get(2);
                 final String id = msg.get(3);
 
-                mDialogFragment = createYesNoOkDialog("Session request from " + name, name, id, "Accept", "Decline", "Block", SESSION);
+                mDialogFragment = new YesNoOkDialog.Builder("Session request from " + name)
+                        .setName(name)
+                        .setId(id)
+                        .setYes("Accept")
+                        .setNo("Decline")
+                        .setOk("Block")
+                        .setResultType(SESSION)
+                        .create();
+                mDialogFragment.show(getSupportFragmentManager(), "Dialog");
 
             } else if (msg.get(1).equals("sessionaccept")) {
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
@@ -1632,19 +1646,22 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 final String id = msg.get(3);
 
                 if(WeTubeApplication.getSharedDataSource().getFriendsSize() == WeTubeApplication.getSharedDataSource().getMaxFriends()){
-                    DialogFragment dialog = new YesNoDialog();
-                    Bundle b = new Bundle();
-                    b.putString("title", "Friend request from " + name + " but your friend's list is full");
-                    b.putString("yes", "Friend's list full");
-                    b.putString("no", "Block");
-                    b.putInt("resultType", FRIEND_ADD);
-
-                    dialog.setArguments(b);
-                    dialog.show(getSupportFragmentManager(), "Dialog");
-
-                    mDialogFragment = dialog;
+                    mDialogFragment = new YesNoDialog.Builder("Friend request from " + name + " but your friend's list is full")
+                            .setYes("Friend's list is full")
+                            .setNo("Block")
+                            .setResultType(FRIEND_ADD)
+                            .create();
+                    mDialogFragment.show(getSupportFragmentManager(), "Dialog");
                 }else{
-                    mDialogFragment = createYesNoOkDialog("Friend request from " + name, name, id, "Accept", "Decline", "Block", FRIEND_ADD);
+                    mDialogFragment = new YesNoOkDialog.Builder("Friend request from " + name)
+                            .setName(name)
+                            .setId(id)
+                            .setYes("Accept")
+                            .setNo("Decline")
+                            .setOk("Block")
+                            .setResultType(FRIEND_ADD)
+                            .create();
+                    mDialogFragment.show(getSupportFragmentManager(), "Dialog");
                 }
             } else if (msg.get(1).equals("frienddecline")) {
                 String name = msg.get(2);
@@ -1714,25 +1731,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 createOkDialog(name + " has unblocked you");
             }
         }
-    }
-
-    public DialogFragment createYesNoOkDialog(final String title, final String name, final String id,
-                                    final String yes, final String no, final String ok,
-                                    final int resultType) {
-        YesNoOkDialog dialog = new YesNoOkDialog();
-        Bundle args = new Bundle();
-        args.putString("title", title);
-        args.putString("name", name);
-        args.putString("id", id);
-        args.putString("yes", yes);
-        args.putString("no", no);
-        args.putString("ok", ok);
-        args.putInt("resultType", resultType);
-        dialog.setArguments(args);
-
-        dialog.show(getSupportFragmentManager(), "Dialog");
-
-        return dialog;
     }
 
     public void clearDialogsById(String id){

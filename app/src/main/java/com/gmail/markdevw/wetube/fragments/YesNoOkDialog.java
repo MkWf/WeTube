@@ -17,6 +17,50 @@ public class YesNoOkDialog extends DialogFragment {
         void onYesNoOkDialogFragmentResult(int resultType, int which, String name, String id);
     }
 
+    public static class Builder {
+        private Bundle args = new Bundle();
+        private YesNoOkDialog dialog = new YesNoOkDialog();
+
+        public Builder(String title) {
+            args.putString("title", title);
+        }
+
+        public Builder setName(String name){
+            args.putString("name", name);
+            return this;
+        }
+
+        public Builder setId(String id){
+            args.putString("id", id);
+            return this;
+        }
+
+        public Builder setYes(String replaceYes){
+            args.putString("yes", replaceYes);
+            return this;
+        }
+
+        public Builder setNo(String replaceNo){
+            args.putString("no", replaceNo);
+            return this;
+        }
+
+        public Builder setOk(String replaceOk){
+            args.putString("ok", replaceOk);
+            return this;
+        }
+
+        public Builder setResultType(int resultType){
+            args.putInt("resultType", resultType);
+            return this;
+        }
+
+        public DialogFragment create(){
+            dialog.setArguments(args);
+            return dialog;
+        }
+    }
+
     private onYesNoOkDialogOptionClickedListener listener;
 
     public YesNoOkDialog() {}
@@ -37,12 +81,12 @@ public class YesNoOkDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
-        String title = args.getString("title", "");
-        String yes = args.getString("yes", "");
-        String no = args.getString("no", "");
-        String ok = args.getString("ok", "");
-        final String name = args.getString("name", "");
-        final String id = args.getString("id", "");
+        String title = args.getString("title", "title");
+        String yes = args.getString("yes", "yes");
+        String no = args.getString("no", "no");
+        String ok = args.getString("ok", "ok");
+        final String name = args.getString("name", "name");
+        final String id = args.getString("id", "id");
         final int resultType = args.getInt("resultType", -1);
 
         return new AlertDialog.Builder(getActivity())

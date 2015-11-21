@@ -735,7 +735,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 @Override
                                 public void done(List<Blocked> list, ParseException e) {
                                     if (list.size() > 0) {
-                                        mDialogFragment = createOkDialog(mClickedUser.getName() + " has you blocked");
+                                         createOkDialog(mClickedUser.getName() + " has you blocked");
                                     } else {
                                         ParseQuery<ParseUser> query = ParseUser.getQuery();
                                         query.whereEqualTo("objectId", mClickedUser.getId());
@@ -808,14 +808,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
-    public DialogFragment createOkDialog(String title) {
-        OkDialog dialog = new OkDialog();
-        Bundle args = new Bundle();
-        args.putString("title", title);
-        dialog.setArguments(args);
+    public void createOkDialog(String title) {
+        DialogFragment dialog = OkDialog.newInstance(title);
         dialog.show(getSupportFragmentManager(), "Dialog");
 
-        return dialog;
+        mDialogFragment = dialog;
     }
 
     public DialogFragment createYesNoDialog(String title, final int resultType, Blocked blocked, UserItem userItem) {
@@ -1307,7 +1304,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void sessionEndedDialog(String name){
-        mDialogFragment = createOkDialog("Session End: " + name + " had lost connection");
+        createOkDialog("Session End: " + name + " had lost connection");
     }
 
     @Override
@@ -1637,7 +1634,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 startActivity(intent);
             } else if (msg.get(1).equals("sessiondecline")) {
                 String name = msg.get(2);
-                mDialogFragment = createOkDialog(name + " has declined your session request");
+                createOkDialog(name + " has declined your session request");
             } else if (msg.get(1).equals("friendadd")) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
@@ -1659,10 +1656,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 }
             } else if (msg.get(1).equals("frienddecline")) {
                 String name = msg.get(2);
-                mDialogFragment = createOkDialog(name + " has declined your friend request");
+                 createOkDialog(name + " has declined your friend request");
             } else if (msg.get(1).equals("friendfull")) {
                 String name = msg.get(2);
-                mDialogFragment = createOkDialog(name + "'s friends list is full");
+                createOkDialog(name + "'s friends list is full");
             } else if (msg.get(1).equals("friendaccept")) {
                 WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()+1);
                 final String name = msg.get(2);
@@ -1688,9 +1685,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 }
                             }
 
-                            mDialogFragment = createOkDialog(name + " accepted your friend request");
+                            createOkDialog(name + " accepted your friend request");
                         } else {
-                            mDialogFragment = createOkDialog("Failed to add " + name + " to your friends list");
+                            createOkDialog("Failed to add " + name + " to your friends list");
                         }
                     }
                 });
@@ -1718,11 +1715,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             } else if (msg.get(1).equals("blockuser")) {
                 final String name = msg.get(2);
 
-                mDialogFragment = createOkDialog(name + " has blocked you");
+                createOkDialog(name + " has blocked you");
             } else if (msg.get(1).equals("unblock")) {
                 final String name = msg.get(2);
 
-                mDialogFragment = createOkDialog(name + " has unblocked you");
+                createOkDialog(name + " has unblocked you");
             }
         }
     }

@@ -17,6 +17,15 @@ public class OkDialog extends DialogFragment {
 
     }
 
+    public static OkDialog newInstance(String title){
+        OkDialog dialog = new OkDialog();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        dialog.setArguments(args);
+
+        return dialog;
+    }
+
     private DialogDismissInterface listener;
 
     public OkDialog() {}

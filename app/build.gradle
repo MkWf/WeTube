@@ -36,5 +36,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile project(':ParseLoginUI')
     compile files('libs/sinch-android-rtc-3.5.0.jar')
+    compile 'io.reactivex:rxjava:1.0.17'
 }
 

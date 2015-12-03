@@ -22,7 +22,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Mark on 5/19/2015.
@@ -30,13 +35,14 @@ import java.util.TimerTask;
 public class ConnectionService extends Service {
 
     private static final int MAX_MISSES = 2;
-    private static final long PERIOD = 5000;
+    private static final long PERIOD = 5;
 
     private Timer mTimer;
     private Date mDate;
     private int mTimesYouMissed;
     private long mTime;
     private int mTimesTheyMissed;
+    private Subscription mSubscription;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -45,46 +51,54 @@ public class ConnectionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mTimer = new Timer();
+        mSubscription = Observable.interval(0, PERIOD, TimeUnit.SECONDS, Schedulers.io())
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onCompleted() {
 
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    updateUserLastSeen();
+                    }
 
-                    if(WeTubeApplication.getSharedDataSource().getCurrentRecipient() != null){
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("objectId", WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId());
-                        query.findInBackground(new FindCallback<ParseUser>() {
-                            @Override
-                            public void done(List<ParseUser> users, ParseException e) {
-                                if(e == null){
-                                    WeTubeUser user = (WeTubeUser) users.get(0);
-                                    long timeCheck = user.getLong("lastSeen");
-                                    if(mTime == timeCheck){
-                                        mTimesTheyMissed++;
-                                        if(mTimesTheyMissed == MAX_MISSES){
-                                            returnUserToUsersActivity();
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+                        try {
+                            updateUserLastSeen();
+
+                            if(WeTubeApplication.getSharedDataSource().getCurrentRecipient() != null){
+                                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                                query.whereEqualTo("objectId", WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId());
+                                query.findInBackground(new FindCallback<ParseUser>() {
+                                    @Override
+                                    public void done(List<ParseUser> users, ParseException e) {
+                                        if(e == null){
+                                            WeTubeUser user = (WeTubeUser) users.get(0);
+                                            long timeCheck = user.getLong("lastSeen");
+                                            if(mTime == timeCheck){
+                                                mTimesTheyMissed++;
+                                                if(mTimesTheyMissed == MAX_MISSES){
+                                                    returnUserToUsersActivity();
+                                                }
+                                            }else{
+                                                mTime = timeCheck;
+                                                mTimesTheyMissed = 0;
+                                            }
                                         }
-                                    }else{
-                                        mTime = timeCheck;
-                                        mTimesTheyMissed = 0;
                                     }
-                                }
+                                });
                             }
-                        });
+                        }catch(IOException e) {
+                            mTimesYouMissed++;
+                            if (mTimesYouMissed >= MAX_MISSES) {
+                                clearSavedLoginData();
+                                returnUserToLoginScreen();
+                            }
+                        }
                     }
-                }catch(IOException e) {
-                    mTimesYouMissed++;
-                    if (mTimesYouMissed >= MAX_MISSES) {
-                        clearSavedLoginData();
-                        returnUserToLoginScreen();
-                    }
-                }
-            }
-        };
-        mTimer.scheduleAtFixedRate(task, 0, PERIOD);
+                });
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -139,7 +153,6 @@ public class ConnectionService extends Service {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        mTimer.purge();
-        mTimer.cancel();
+        mSubscription.unsubscribe();
     }
 }

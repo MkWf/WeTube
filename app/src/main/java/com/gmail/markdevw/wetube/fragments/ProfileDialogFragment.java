@@ -29,7 +29,7 @@ public class ProfileDialogFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getDialog().setTitle(R.string.shared_tags);
+        getDialog().setTitle(R.string.activities_usersactivity_view_profile_shared_tags);
 
         View view = inflater.inflate(R.layout.fragment_profile_dialog, container);
         ButterKnife.bind(this, view);

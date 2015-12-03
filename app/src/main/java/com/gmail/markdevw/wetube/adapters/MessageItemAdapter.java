@@ -88,7 +88,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
             this.mMessageItem = messageItem;
             String message = messageItem.getMessage();
 
-            if(message.startsWith(mMsgSplitter + mResources.getString(R.string.linked_video))){
+            if(message.startsWith(mMsgSplitter + mResources.getString(R.string.activities_mainactivity_chat_linked_video))){
                 handleVideoMessages(messageItem, message);
             }else{
                 handleNonVideoMessages(messageItem);
@@ -143,7 +143,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         @Override
         public void onClick(View view) {
             String message = mMessageItem.getMessage();
-            if(message.startsWith(mMsgSplitter + mResources.getString(R.string.linked_video))){
+            if(message.startsWith(mMsgSplitter + mResources.getString(R.string.activities_mainactivity_chat_linked_video))){
                 getDelegate().onMessageVideoItemClicked(MessageItemAdapter.this, mTitle, mThumbnail, mId);
             }
         }

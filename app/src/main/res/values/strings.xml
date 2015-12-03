@@ -1,37 +1,62 @@
 <resources>
     <string name="app_name">WeTube</string>
-    <string name="send">Send</string>
-    <string name="clear">Clear</string>
+
+    <!-- Parse -->
     <string name="parse_app_id">o6iDnraPZeQpUDp8ElDzIXTEKLRkM6DWgNMyvdmq</string>
     <string name="parse_client_key">mqVc4vVF4qaDQ2VMFT9pVtZ1QTpfbzNO49ValUgg</string>
-    <string name="default_chat_text">Type a message...</string>
-    <string name="submit_button">Send</string>
-    <string name="playlist">Playlist</string>
-    <string name="playlist_starting_counter">0/0</string>
-    <string name="user_search">Search by name or tag</string>
-    <string name="search_button">Search</string>
-    <string name="logout">Logout</string>
-    <string name="friends">Friends</string>
-    <string name="other_tags">Other Tags</string>
-    <string name="search_for_videos">Search for youtube videos</string>
-    <string name="search">Search</string>
-    <string name="search_for_youtube_videos">Search for youtube videos</string>
-    <string name="play">Play</string>
-    <string name="pass_control">Pass Control</string>
-    <string name="profile">Profile</string>
-    <string name="invite_session">Invite to Session</string>
-    <string name="invite_friend">Send Friend Invite</string>
-    <string name="profile_view">View Profile</string>
-    <string name="remove_friend">Remove this Friend</string>
-    <string name="shared_tags">Shared Tags</string>
-    <string name="linked_video">linkedvideo</string>
+
+    <!-- Users Activity Toolbar -->
+    <string name="activities.usersactivity.toolbar_profile">Profile</string>
+
+    <!-- Users Activity User Search -->
+    <string name="activities.usersactivity.user_search_default_text">Search by name or tag</string>
+    <string name="activities.usersactivity.user_search_button">Search</string>
+    <string name="activities.usersactivity.spinner_name_search">Name</string>
+    <string name="activities.usersactivity.no_search_input_error">Enter a search first</string>
+
+    <!-- Users Activity View Profile -->
+    <string name="activities.usersactivity.view_profile_other_tags">Other Tags</string>
+    <string name="activities.usersactivity.view_profile_shared_tags">Shared Tags</string>
+
+    <!-- Users Activity Navigation Drawer -->
+    <string name="activities.usersactivity.nav_friends_title">Friends</string>
+    <string name="activities.usersactivity.nav_spinner_default">Default</string>
+
+    <!-- Users Activity Dialogs -->
+    <string name="activities.usersactivity.logout">Logout</string>
+    <string name="activities.usersactivity.invite_session">Invite to Session</string>
+    <string name="activities.usersactivity.invite_friend">Send Friend Invite</string>
+    <string name="activities.usersactivity.profile_view">View Profile</string>
+    <string name="activities.usersactivity.remove_friend">Remove this Friend</string>
+
+    <!-- Main Activity Toolbar -->
+    <string name="activities.mainactivity.toolbar_play">Play</string>
+    <string name="activities.mainactivity.toolbar_pass_control">Pass Control</string>
+
+    <!-- Main Activity Chat -->
+    <string name="activities.mainactivity.chat_default_text">Type a message&#8230;</string>
+    <string name="activities.mainactivity.chat_send_button">Send</string>
+    <string name="activities.mainactivity.chat_linked_video">linkedvideo</string>
+
+    <!-- Main Activity Playlist -->
+    <string name="activities.mainactivity.nav_playlist_title">Playlist</string>
+    <string name="activities.mainactivity.nav_playlist_starting_counter">0/0</string>
+
+    <!-- Main Activity Video Search -->
+    <string name="activities.mainactivity.search_default_text">Search for youtube videos</string>
+    <string name="activities.mainactivity.search_button">Search</string>
+
+    <!-- Shared Preferences -->
+    <string name="sharedprefs.filename">MyPrefs</string>
+    <string name="sharedprefs.user_key">userkey</string>
+    <string name="sharedprefs.pass_key">passkey</string>
+    <string name="sharedprefs.fail">Failed to retrieve your login information</string>
+
+    <!-- Message Splitter -->
     <string name="message_splitter">=-=-=</string>
-    <string name="name">Name</string>
-    <string name="sort_default">Default</string>
-    <string name="enter_a_search_first">Enter a search first</string>
+
+    <!-- Connection Loss Bundle Extra -->
     <string name="connection_loss">connloss</string>
-    <string name="shared_prefs">MyPrefs</string>
-    <string name="user_key">userkey</string>
-    <string name="pass_key">passkey</string>
-    <string name="failed_to_retrieve_login_info">Failed to retrieve your login information</string>
+
+
 </resources>

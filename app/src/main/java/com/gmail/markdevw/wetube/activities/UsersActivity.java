@@ -160,10 +160,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             @Override
             public void onClick(View view) {
                 if (searchField.getText().toString().isEmpty()) {
-                    Toast.makeText(UsersActivity.this, R.string.enter_a_search_first, Toast.LENGTH_LONG).show();
+                    Toast.makeText(UsersActivity.this, R.string.activities_usersactivity_no_search_input_error, Toast.LENGTH_LONG).show();
                 } else {
                     swipeRefreshLayout.setRefreshing(true);
-                    if (mSearchOptionSelected.equals(getString(R.string.name))) {
+                    if (mSearchOptionSelected.equals(getString(R.string.activities_usersactivity_spinner_name_search))) {
                         searchByName();
                     } else {
                         searchByTag();
@@ -178,13 +178,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         SharedPreferences sharedpreferences = getSharedPreferences(
                 getString(R.string.shared_prefs),
                 Context.MODE_PRIVATE);
-        String userKey = getString(R.string.user_key);
-        String passKey = getString(R.string.pass_key);
+        String userKey = getString(R.string.sharedprefs_user_key);
+        String passKey = getString(R.string.sharedprefs_pass_key);
         if(sharedpreferences.contains(userKey) && (sharedpreferences.contains(passKey))){
             String user = sharedpreferences.getString(userKey, "fa");
             String pass = sharedpreferences.getString(passKey, "fa");
             if(user.equals("fa") || pass.equals("fa")){
-                Toast.makeText(this, R.string.failed_to_retrieve_login_info, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.sharedprefs_fail, Toast.LENGTH_LONG).show();
                 displayParseLoginUI(connectionLossCheck);
             }else{
                 ParseUser.logInInBackground(user, pass, new LogInCallback() {
@@ -333,7 +333,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void initFriendsListSpinner() {
-        mSortOptionSelected = getString(R.string.sort_default);
+        mSortOptionSelected = getString(R.string.activities_usersactivity_nav_spinner_default);
         ArrayAdapter<CharSequence> friendsSpinnerAdapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.sort_options,
@@ -344,7 +344,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void initUserSearchSpinner() {
-        mSearchOptionSelected = getString(R.string.name);
+        mSearchOptionSelected = getString(R.string.activities_usersactivity_spinner_name_search);
         ArrayAdapter<CharSequence> searchSpinnerAdapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.search_options,

@@ -3,11 +3,11 @@
 
 
     <item android:id="@+id/popup_session"
-        android:title="@string/invite_session"
+        android:title="@string/activities.usersactivity.invite_session"
         android:orderInCategory="0"/>
 
     <item android:id="@+id/popup_profile"
-        android:title="@string/profile_view"
+        android:title="@string/activities.usersactivity.profile_view"
         android:orderInCategory="1"/>
 
     <item android:id="@+id/popup_remove"

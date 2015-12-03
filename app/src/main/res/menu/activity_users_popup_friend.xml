@@ -1,7 +1,5 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
     <item android:id="@+id/popup_session"
         android:title="@string/activities.usersactivity.invite_session"
         android:orderInCategory="0"/>
@@ -11,7 +9,7 @@
         android:orderInCategory="1"/>
 
     <item android:id="@+id/popup_remove"
-        android:title="Remove this Friend"
+        android:title="@string/activities.usersactivity.remove_friend"
         android:orderInCategory="2"/>
 
 </menu>

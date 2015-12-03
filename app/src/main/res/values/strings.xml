@@ -57,6 +57,7 @@
 
     <!-- Connection Loss Bundle Extra -->
     <string name="connection_loss">connloss</string>
+    <string name="activities.usersactivity.profile_title">Add a tag</string>
 
 
 </resources>

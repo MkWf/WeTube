@@ -170,7 +170,6 @@ public class DataSource {
 
             mVideos.clear();
 
-            List<VideoItem> items = new ArrayList<VideoItem>();
             for(SearchResult result:results){
                 VideoItem item = new VideoItem();
                 item.setTitle(result.getSnippet().getTitle());

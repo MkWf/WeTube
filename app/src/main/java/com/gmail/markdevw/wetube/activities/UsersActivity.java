@@ -1820,7 +1820,6 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             queries.add(q2);
 
                             ParseQuery<Friend> query = ParseQuery.or(queries);
-                            final int j = i;
                             query.findInBackground(new FindCallback<Friend>() {
                                 @Override
                                 public void done(List<Friend> list, ParseException e) {

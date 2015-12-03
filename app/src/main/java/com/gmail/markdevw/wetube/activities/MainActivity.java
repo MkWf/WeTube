@@ -567,7 +567,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
         }else if(mIsRecoveringFromAd){
-
+            //Do Nothing
         }
     }
 
@@ -649,8 +649,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     public void clearDialogsById(String id){
-
-        Message msgToRemove;
 
         for(Message message : mMessageQueue) {
             ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
@@ -1247,7 +1245,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + "play") || msg.startsWith(mMsgSplitter + "friendaccept") || msg.startsWith(mMsgSplitter + "frienddecline")
                         || msg.startsWith(mMsgSplitter + "sessionaccept") || msg.startsWith(mMsgSplitter +  "friendfull") || msg.startsWith(mMsgSplitter + "blockuser")
                         || msg.startsWith(mMsgSplitter + "seek") || msg.startsWith(mMsgSplitter + "videostart")){
-                    //do nothing
+                    //Do Nothing
                 }else{
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                     mMessageItemAdapter.notifyDataSetChanged();

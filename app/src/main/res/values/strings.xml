@@ -78,7 +78,7 @@
 
 
     <!-- Main Activity Chat -->
-    <string name="activities_mainactivity_chat_default_text">Type a message...;</string>
+    <string name="activities_mainactivity_chat_default_text">Type a message&#8230;</string>
     <string name="activities_mainactivity_chat_send_button">Send</string>
     <string name="activities_mainactivity_chat_linked_video">linkedvideo</string>
 
@@ -89,7 +89,7 @@
 
 
     <!-- Main Activity Video Search -->
-    <string name="activities_mainactivity_search_default_text">Search for youtube videos</string>
+    <string name="activities_mainactivity_search_default_text">Search for YouTube videos</string>
     <string name="activities_mainactivity_search_button">Search</string>
 
 

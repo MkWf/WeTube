@@ -698,7 +698,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             WeTubeUser friend = (WeTubeUser) userList.get(i);
 
                             WeTubeApplication.getSharedDataSource().getFriends()
-                            .add(new UserItem(friend.getUsername(), friend.getObjectId(),
+                                .add(new UserItem(friend.getUsername(), friend.getObjectId(),
                                     friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                     }

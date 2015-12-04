@@ -83,8 +83,8 @@ public class YesNoDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
         final String title = args.getString("title", "");
-        String yes = args.getString("yes", "yes");
-        String no = args.getString("no", "no");
+        String yes = args.getString("yes", "Yes");
+        String no = args.getString("no", "No");
         final int resultType = args.getInt("resultType", -1);
 
         //getDialog().setCancelable(false);

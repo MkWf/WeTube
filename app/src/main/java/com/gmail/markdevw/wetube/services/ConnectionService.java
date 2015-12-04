@@ -8,6 +8,7 @@ import android.os.IBinder;
 
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.activities.UsersActivity;
+import com.gmail.markdevw.wetube.api.DataSource;
 import com.parse.FindCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -103,9 +104,9 @@ public class ConnectionService extends Service {
     }
 
     public void returnUserToUsersActivity() {
-        WeTubeApplication.getSharedDataSource().getMainActivity().finish();
-        UsersActivity ua = (UsersActivity) WeTubeApplication.getSharedDataSource().getUsersActivity();
-        ua.sessionEndedDialog(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName());
+        DataSource ds = WeTubeApplication.getSharedDataSource();
+        ds.getMainActivity().finish();
+        ((UsersActivity) ds.getUsersActivity()).setSessionConnEnd(true);
     }
 
     public void returnUserToLoginScreen() {

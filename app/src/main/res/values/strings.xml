@@ -129,7 +129,7 @@
 
     <string name="activities_usersactivity_dialog_session_request_decline">" has declined your session request"</string>
 
-    <string name="activities_usersactivity_dialog_connection_loss_session_end_partial1">"Session End: "</string>
+    <string name="activities_usersactivity_dialog_connection_loss_session_end_partial1">"Session Ended: Your session partner had lost connection"</string>
     <string name="activities_usersactivity_dialog_connection_loss_session_end_partial2">" had lost connection"</string>
 
     <string name="activities_usersactivity_dialog_logout_title">Are you sure you want to exit?</string>

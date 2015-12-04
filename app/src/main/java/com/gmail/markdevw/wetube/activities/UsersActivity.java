@@ -137,6 +137,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     private int mLaunchSpinnerCount;
     private String mMsgSplitter;
     private HashMap<String, String> mMessages;
+    private boolean sessionConnEnd;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -250,6 +251,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         super.onResume();
         WeTubeApplication.getSharedDataSource().setVideoActivity(false);
         mIsFirstMessage = true;
+
+        if(sessionConnEnd){
+            sessionEndedDialog();
+            sessionConnEnd = false;
+        }
     }
 
     public void loginFail(int connectionLossCheck) {
@@ -699,7 +705,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                             WeTubeApplication.getSharedDataSource().getFriends()
                                 .add(new UserItem(friend.getUsername(), friend.getObjectId(),
-                                    friend.getSessionStatus(), friend.getLoggedStatus(), true));
+                                        friend.getSessionStatus(), friend.getLoggedStatus(), true));
                         }
                     }
                     mNavigationDrawerAdapter.notifyDataSetChanged();
@@ -1318,10 +1324,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
     }
 
-    public void sessionEndedDialog(String name){
-        createOkDialog(getString(R.string.activities_usersactivity_dialog_connection_loss_session_end_partial1)
-                + name
-                + getString(R.string.activities_usersactivity_dialog_connection_loss_session_end_partial2));
+    public void sessionEndedDialog(){
+        createOkDialog(getString(R.string.activities_usersactivity_dialog_connection_loss_session_end_partial1));
     }
 
     @Override
@@ -1557,6 +1561,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         if(!mMessageQueue.isEmpty() && !mIsBlocking){
             showNextMessage();
         }
+    }
+
+    public void setSessionConnEnd(boolean sessionConnEnd) {
+        this.sessionConnEnd = sessionConnEnd;
     }
 
     private class MyServiceConnection implements ServiceConnection {

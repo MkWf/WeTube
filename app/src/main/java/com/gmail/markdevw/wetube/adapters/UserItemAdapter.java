@@ -35,7 +35,7 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserItemAdapter.ItemAd
         return delegate.get();
     }
     public void setDelegate(Delegate delegate) {
-        this.delegate = new WeakReference<Delegate>(delegate);
+        this.delegate = new WeakReference<>(delegate);
     }
 
 

@@ -37,7 +37,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         return delegate.get();
     }
     public void setDelegate(Delegate delegate) {
-        this.delegate = new WeakReference<Delegate>(delegate);
+        this.delegate = new WeakReference<>(delegate);
     }
 
 

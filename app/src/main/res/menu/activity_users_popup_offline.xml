@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/popup_profile"
-        android:title="@string/activities.usersactivity.profile_view"
+        android:title="@string/activities_usersactivity_popup_view_profile"
         android:orderInCategory="0"/>
 </menu>

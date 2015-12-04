@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_play"
         android:icon="@mipmap/ic_video_play"
-        android:title="@string/activities.mainactivity.toolbar_play"
+        android:title="@string/activities_mainactivity_toolbar_play"
         android:orderInCategory="0"
         app:showAsAction="always"/>
 
     <item android:id="@+id/action_pass_control"
         android:icon="@mipmap/ic_activity_main_pass_control"
-        android:title="@string/activities.mainactivity.toolbar_pass_control"
+        android:title="@string/activities_mainactivity_toolbar_pass_control"
         android:orderInCategory="1"
         app:showAsAction="always"/>
 </menu>

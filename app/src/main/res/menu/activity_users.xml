@@ -4,7 +4,7 @@
 
     <item android:id="@+id/action_profile"
         android:icon="@mipmap/ic_activity_users_profile"
-        android:title="@string/activities.usersactivity.toolbar_profile"
+        android:title="@string/activities_usersactivity_toolbar_profile"
         android:orderInCategory="0"
         app:showAsAction="always"/>
 

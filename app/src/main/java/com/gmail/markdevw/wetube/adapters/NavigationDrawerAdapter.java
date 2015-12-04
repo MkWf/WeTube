@@ -35,7 +35,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         return mDelegate.get();
     }
     public void setDelegate(Delegate delegate) {
-        this.mDelegate = new WeakReference<Delegate>(delegate);
+        this.mDelegate = new WeakReference<>(delegate);
     }
 
 

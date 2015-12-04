@@ -11,7 +11,7 @@
         android:layout_weight="1"/>
 
     <TextView
-        android:text="@string/activities.usersactivity.view_profile_other_tags"
+        android:text="@string/activities_usersactivity_view_profile_other_tags"
         android:layout_marginLeft="14dp"
         android:textColor="@android:color/holo_blue_light"
         android:textSize="22sp"

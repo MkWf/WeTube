@@ -36,7 +36,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
         return delegate.get();
     }
     public void setDelegate(Delegate delegate) {
-        this.delegate = new WeakReference<Delegate>(delegate);
+        this.delegate = new WeakReference<>(delegate);
     }
 
     @Override

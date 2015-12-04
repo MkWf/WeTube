@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:text="@string/activities.usersactivity.profile_title"
+        android:text="@string/activities_usersactivity_dialog_user_profile_title"
         android:layout_marginLeft="10dp"
         android:layout_weight="1"
         android:layout_marginTop="10dp"

@@ -651,7 +651,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void clearDialogsById(String id){
 
         for(Message message : mMessageQueue) {
-            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
+            ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
             if(msg.get(3).equals(id)){
                 mMessageQueue.remove(message);
             }
@@ -665,7 +665,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void showNextMessage() {
         if (mMessageQueue != null && mMessageQueue.size() > 0) {
             Message message = mMessageQueue.poll();
-            ArrayList<String> msg = new ArrayList<String>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
+            ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
 
             if (msg.get(1).equals("friendadd")) {
                 final String name = msg.get(2);
@@ -814,15 +814,15 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                                     MessageFailureInfo failureInfo) {
             String msg = mMessages.get(failureInfo.getMessageId());
             if(msg.startsWith(mMsgSplitter + "addtoplaylist")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to add " + title + " to playlist", Toast.LENGTH_LONG).show();
             }else if(msg.startsWith(mMsgSplitter + "linkedvideo")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to add " + title + " to chat", Toast.LENGTH_LONG).show();
             }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
-                ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String title = msgSplit.get(1);
                 int size = WeTubeApplication.getSharedDataSource().getPlaylist().size();
                 for(int i = 0; i < size; i++){
@@ -875,7 +875,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }
             }else{
                 if (msg.startsWith(mMsgSplitter + "addtoplaylist")) {
-                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
+                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
                     String title = msgSplit.get(2);
                     String thumbnail = msgSplit.get(3);
                     String id = msgSplit.get(4);
@@ -888,7 +888,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mMessageItemAdapter.notifyDataSetChanged();
                     mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
                 } else if (msg.startsWith(mMsgSplitter + "deleteitemplaylist")) {
-                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);
                     int i = Integer.parseInt(index);
                     if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
@@ -971,7 +971,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     mYouTubePlayer.previous();
                 }else if(msg.startsWith(mMsgSplitter + "playlistindex")) {
-                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);
                     int video = Integer.parseInt(index);
 
@@ -1032,7 +1032,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + "play")) {
                     mYouTubePlayer.play();
                 }else if(msg.startsWith(mMsgSplitter + "seek")) {
-                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     int seek = Integer.parseInt(msgSplit.get(2));
                     mYouTubePlayer.seekToMillis(seek);
                 }else if(msg.startsWith(mMsgSplitter + "videostart")){
@@ -1089,7 +1089,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             String msg = mMessages.get(deliveryInfo.getMessageId());
             if(msg != null){
                 if(msg.startsWith(mMsgSplitter + "addtoplaylist")){
-                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String title = msgSplit.get(2);
                     String thumbnail = msgSplit.get(3);
                     String id = msgSplit.get(4);
@@ -1102,7 +1102,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mMessageItemAdapter.notifyDataSetChanged();
                     mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
                 }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
-                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);
                     int i = Integer.parseInt(index);
                     if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
@@ -1164,7 +1164,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     mYouTubePlayer.loadVideos(mPlaylistIDs);
                 }else if(msg.startsWith(mMsgSplitter + "playlistindex")) {
-                    ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(msg.split(mMsgSplitter)));
+                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);
                     int video = Integer.parseInt(index);
 

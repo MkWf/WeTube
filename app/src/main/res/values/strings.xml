@@ -5,59 +5,217 @@
     <string name="parse_app_id">o6iDnraPZeQpUDp8ElDzIXTEKLRkM6DWgNMyvdmq</string>
     <string name="parse_client_key">mqVc4vVF4qaDQ2VMFT9pVtZ1QTpfbzNO49ValUgg</string>
 
+    <string name="parse_user">user</string>
+    <string name="parse_getLoggedInUsers">getLoggedInUsers</string>
+    <string name="parse_fail_load_users">Error loading user list</string>
+    <string name="parse_userId">userId</string>
+    <string name="parse_ascending">ascending</string>
+    <string name="parse_descending">descending</string>
+    <string name="parse_objectId">objectId</string>
+    <string name="parse_username">username</string>
+    <string name="parse_updatedAt">updatedAt</string>
+    <string name="parse_createdAt">createdAt</string>
+    <string name="parse_getFriendsAvailable">getFriendsAvailableTwo</string>
+    <string name="parse_getFriendsUnavailable">getFriendsUnavailableTwo</string>
+    <string name="parse_getFriendsOffline">getFriendsOfflineTwo</string>
+    <string name="parse_getFriendsAtoZ">getFriendsAtoZTwo</string>
+    <string name="parse_blocked">Blocked</string>
+    <string name="parse_blockedby">blockedBy</string>
+    <string name="parse_friend">Friend</string>
+    <string name="parse_friend1">friend1</string>
+    <string name="parse_friend2">friend2</string>
+    <string name="parse_fail_user_search">"Error searching for "</string>
+    <string name="parse_user_offline_toast_partial1">" is offline"</string>
+    <string name="parse_user_already_in_session_toast_partial1">" is already in a session"</string>
+    <string name="parse_friends_list_full">Your friends list is full (100)</string>
+    <string name="parse_clickedId">clickedId</string>
+    <string name="parse_common_tags">commonTags</string>
+    <string name="parse_uncommon_tags">uncommonTags</string>
+    <string name="parse_toast_session_fail_partial1">"Error: "</string>
+    <string name="parse_toast_session_fail_partial2">". Failed to start session with "</string>
+    <string name="parse_getMoreUsers">getMoreUsers</string>
+    <string name="parse_skip">skip</string>
+    <string name="parse_limit">limit</string>
+    <string name="parse_isLoggedIn">isLoggedIn</string>
+    <string name="parse_tags">tags</string>
+    <string name="parse_tag">tag</string>
+    <string name="parse_add_tag">addTag</string>
+    <string name="parse_remove_tag">removeTag</string>
+    <string name="parse_user_search_by_name_fail_toast">Could not find any logged in users with that name</string>
+    <string name="parse_user_search_by_tag_fail_toast">Could not find any logged in users with that tag</string>
+
+
     <!-- Users Activity Toolbar -->
-    <string name="activities.usersactivity.toolbar_profile">Profile</string>
+    <string name="activities_usersactivity_toolbar_profile">Profile</string>
+
 
     <!-- Users Activity User Search -->
-    <string name="activities.usersactivity.user_search_default_text">Search by name or tag</string>
-    <string name="activities.usersactivity.user_search_button">Search</string>
-    <string name="activities.usersactivity.spinner_name_search">Name</string>
-    <string name="activities.usersactivity.no_search_input_error">Enter a search first</string>
+    <string name="activities_usersactivity_user_search_default_text">Search by name or tag</string>
+    <string name="activities_usersactivity_user_search_button">Search</string>
+    <string name="activities_usersactivity_spinner_name_search">Name</string>
+    <string name="activities_usersactivity_spinner_tag_search">Tag</string>
+    <string name="activities_usersactivity_no_search_input_error">Enter a search first</string>
+
 
     <!-- Users Activity View Profile -->
-    <string name="activities.usersactivity.view_profile_other_tags">Other Tags</string>
-    <string name="activities.usersactivity.view_profile_shared_tags">Shared Tags</string>
+    <string name="activities_usersactivity_view_profile_other_tags">Other Tags</string>
+    <string name="activities_usersactivity_view_profile_shared_tags">Shared Tags</string>
+
 
     <!-- Users Activity Navigation Drawer -->
-    <string name="activities.usersactivity.nav_friends_title">Friends</string>
-    <string name="activities.usersactivity.nav_spinner_default">Default</string>
+    <string name="activities_usersactivity_nav_friends_title">Friends</string>
+    <string name="activities_usersactivity_nav_spinner_default">Default</string>
+    <string name="activities_usersactivity_nav_spinner_online">Online</string>
+    <string name="activities_usersactivity_nav_spinner_offline">Offline</string>
+    <string name="activities_usersactivity_nav_spinner_available">Available</string>
+    <string name="activities_usersactivity_nav_spinner_unavailable">Unavailable</string>
+    <string name="activities_usersactivity_nav_spinner_a_to_z">A-Z</string>
 
-    <!-- Users Activity Dialogs -->
-    <string name="activities.usersactivity.logout">Logout</string>
-    <string name="activities.usersactivity.invite_session">Invite to Session</string>
-    <string name="activities.usersactivity.invite_friend">Send Friend Invite</string>
-    <string name="activities.usersactivity.profile_view">View Profile</string>
-    <string name="activities.usersactivity.remove_friend">Remove this Friend</string>
 
     <!-- Main Activity Toolbar -->
-    <string name="activities.mainactivity.toolbar_play">Play</string>
-    <string name="activities.mainactivity.toolbar_pass_control">Pass Control</string>
+    <string name="activities_mainactivity_toolbar_play">Play</string>
+    <string name="activities_mainactivity_toolbar_pass_control">Pass Control</string>
+
 
     <!-- Main Activity Chat -->
-    <string name="activities.mainactivity.chat_default_text">Type a message&#8230;</string>
-    <string name="activities.mainactivity.chat_send_button">Send</string>
-    <string name="activities.mainactivity.chat_linked_video">linkedvideo</string>
+    <string name="activities_mainactivity_chat_default_text">Type a message...;</string>
+    <string name="activities_mainactivity_chat_send_button">Send</string>
+    <string name="activities_mainactivity_chat_linked_video">linkedvideo</string>
+
 
     <!-- Main Activity Playlist -->
-    <string name="activities.mainactivity.nav_playlist_title">Playlist</string>
-    <string name="activities.mainactivity.nav_playlist_starting_counter">0/0</string>
+    <string name="activities_mainactivity_nav_playlist_title">Playlist</string>
+    <string name="activities_mainactivity_nav_playlist_starting_counter">0/0</string>
+
 
     <!-- Main Activity Video Search -->
-    <string name="activities.mainactivity.search_default_text">Search for youtube videos</string>
-    <string name="activities.mainactivity.search_button">Search</string>
+    <string name="activities_mainactivity_search_default_text">Search for youtube videos</string>
+    <string name="activities_mainactivity_search_button">Search</string>
+
 
     <!-- Shared Preferences -->
-    <string name="sharedprefs.filename">MyPrefs</string>
-    <string name="sharedprefs.user_key">userkey</string>
-    <string name="sharedprefs.pass_key">passkey</string>
-    <string name="sharedprefs.fail">Failed to retrieve your login information</string>
+    <string name="sharedprefs_filename">MyPrefs</string>
+    <string name="sharedprefs_user_key">userkey</string>
+    <string name="sharedprefs_pass_key">passkey</string>
+    <string name="sharedprefs_default_key">fa</string>
+    <string name="sharedprefs_fail">Failed to retrieve your login information</string>
 
-    <!-- Message Splitter -->
-    <string name="message_splitter">=-=-=</string>
 
     <!-- Connection Loss Bundle Extra -->
     <string name="connection_loss">connloss</string>
-    <string name="activities.usersactivity.profile_title">Add a tag</string>
+
+    <string name="activities_usersactivity_progress_dialog_title">Loading</string>
+    <string name="activities_usersactivity_progress_dialog_message">Please wait&#8230;</string>
+    <string name="activities_usersactivity_sinchreceiver_intent_extra">success</string>
+    <string name="activities_usersactivity_sinchreceiver_fail">Messaging service failed to start</string>
+    <string name="activities_usersactivity_sinchreceiver_success">"You are now logged in as "</string>
+    <string name="activities_usersactivity_packagename">com.gmail.markdevw.wetube.activities.UsersActivity</string>
+
+    <!-- Dialogs -->
+    <string name="activities_usersactivity_dialog_default_tag">Dialog</string>
+    <string name="activities_usersactivity_dialog_question_mark">"?"</string>
+
+    <string name="activities_usersactivity_dialog_unblock_title_partial1">"You have "</string>
+    <string name="activities_usersactivity_dialog_unblock_title_partial2">" blocked. Do you want to unblock this user?"</string>
+    <string name="activities_usersactivity_dialog_unblock_title_partial3">" has unblocked you"</string>
+
+    <string name="activities_usersactivity_dialog_blocked_title_partial">" has you blocked"</string>
+    <string name="activities_usersactivity_dialog_blocked_title_partial2">" has blocked you"</string>
+
+    <string name="activities_usersactivity_dialog_block_user_title_partial">"Are you sure you want to block "</string>
+
+    <string name="activities_usersactivity_dialog_remove_friend_title_partial1">"Are you sure you want to remove "</string>
+    <string name="activities_usersactivity_dialog_remove_friend_title_partial2">" ?"</string>
+
+    <string name="activities_usersactivity_dialog_session_request_decline">" has declined your session request"</string>
+
+    <string name="activities_usersactivity_dialog_connection_loss_session_end_partial1">"Session End: "</string>
+    <string name="activities_usersactivity_dialog_connection_loss_session_end_partial2">" had lost connection"</string>
+
+    <string name="activities_usersactivity_dialog_logout_title">Are you sure you want to exit?</string>
+    <string name="activities_usersactivity_dialog_logout_yes">Logout</string>
+    <string name="activities_usersactivity_dialog_logout_no">No</string>
+    <string name="activities_usersactivity_dialog_logout_ok">Exit</string>
+
+    <string name="activities_usersactivity_dialog_request_accept">Accept</string>
+    <string name="activities_usersactivity_dialog_request_decline">Decline</string>
+    <string name="activities_usersactivity_dialog_request_block">Block</string>
+
+
+    <string name="activities_usersactivity_dialog_friend_request_partial">"Friend request from "</string>
+    <string name="activities_usersactivity_dialog_friend_request_accept_partial">" accepted your friend request"</string>
+    <string name="activities_usersactivity_dialog_friend_request_decline_partial">" has declined your friend request"</string>
+
+    <string name="activities_usersactivity_dialog_friend_add_fail_partial1">"Failed to add "</string>
+    <string name="activities_usersactivity_dialog_friend_add_fail_partial2">" to your friends list"</string>
+
+    <string name="activities_usersactivity_dialog_friend_list_full">\'s friends list is full</string>
+    <string name="activities_usersactivity_dialog_friend_list_full2">Friend\'s list is full</string>
+    <string name="activities_usersactivity_dialog_friend_list_full3">" but your friend's list is full"</string>
+
+    <string name="activities_usersactivity_dialog_user_profile_title">Add a tag</string>
+    <string name="activities_usersactivity_dialog_user_profile_add_tag">Add a new tag</string>
+
+
+    <!-- Popup Menu Titles -->
+    <string name="activities_usersactivity_popup_invite_session">Invite to Session</string>
+    <string name="activities_usersactivity_popup_invite_friend">Send Friend Invite</string>
+    <string name="activities_usersactivity_popup_view_profile">View Profile</string>
+    <string name="activities_usersactivity_popup_remove_friend">Remove this Friend</string>
+
+
+    <!-- Toast Messages -->
+    <string name="activities_usersactivity_toast_user_unblocked_partial">" has been unblocked"</string>
+    <string name="activities_usersactivity_toast_user_unblocked_fail_partial">"Failed to unblock "</string>
+
+    <string name="activities_usersactivity_toast_friend_remove">" has been removed from your friends list"</string>
+
+    <string name="activities_usersactivity_toast_friend_added_partial">" has been added to your friends list"</string>
+
+    <string name="activities_usersactivity_toast_friend_request_fail_partial1">"Failed to send friend request to "</string>
+    <string name="activities_usersactivity_toast_friend_request_fail_partial2">"Failed to accept friend request from "</string>
+
+    <string name="activities_usersactivity_toast_session_request_fail_partial1">"Failed to send session request to "</string>
+    <string name="activities_usersactivity_toast_session_start_fail_partial1">"Failed to start session with "</string>
+
+    <string name="activities_usersactivity_toast_session_start_fail_user_offline">Session failed to start. User has gone offline</string>
+    <string name="activities_usersactivity_toast_session_start_fail_user_unavailable">Session failed to start. User is in another session</string>
+
+    <string name="activities_usersactivity_toast_tag_remove_fail1">No tags to remove</string>
+    <string name="activities_usersactivity_toast_tag_remove_fail2">Select a tag before deleting</string>
+
+    <string name="activities_usersactivity_toast_friend_add_fail_partial1">"Failed to add "</string>
+    <string name="activities_usersactivity_toast_friend_add_fail_partial2">" to your friends list"</string>
+
+    <string name="activities_usersactivity_toast_find_user_fail">Error finding user</string>
+
+
+    <!-- Sinch Message Types -->
+    <string name="sinch_message_splitter">=-=-=</string>
+
+    <string name="sinch_friendadd">friendadd</string>
+    <string name="sinch_friendremove">friendremove</string>
+    <string name="sinch_friendaccept">friendaccept</string>
+    <string name="sinch_friendfull">friendfull</string>
+    <string name="sinch_frienddecline">frienddecline</string>
+
+    <string name="sinch_startsession">startsession</string>
+    <string name="sinch_sessiondecline">sessiondecline</string>
+    <string name="sinch_sessionaccept">"sessionaccept"</string>
+
+    <string name="sinch_blockuser">blockuser</string>
+    <string name="sinch_unblock">unblock</string>
+
+
+    <!-- Progress Dialogs -->
+    <string name="activities_usersactivity_progress_friends_refresh_title">Refreshing friends list</string>
+    <string name="activities_usersactivity_progress_friends_refresh_message">Please wait&#8230;</string>
+    <string name="activities_usersactivity_dialog_category_add_ok">OK</string>
+    <string name="activities_usersactivity_dialog_category_add_fail_partial1">" already exists"</string>
+    <string name="activities_usersactivity_dialog_category_add_fail2">Enter a tag first</string>
+    <string name="activities_usersactivity_dialog_category_add_cancel">Cancel</string>
+    <string name="parse_tag_splitter">" "</string>
+    <string name="activities_usersactivity_dialog_session_request_partial">"Session request from "</string>
 
 
 </resources>

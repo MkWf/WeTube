@@ -39,7 +39,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         return mDelegate.get();
     }
     public void setDelegate(Delegate delegate) {
-        this.mDelegate = new WeakReference<Delegate>(delegate);
+        this.mDelegate = new WeakReference<>(delegate);
     }
 
 
@@ -79,7 +79,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
             ButterKnife.bind(this, itemView);
 
             mResources = WeTubeApplication.getSharedInstance().getResources();
-            mMsgSplitter = mResources.getString(R.string.message_splitter);
+            mMsgSplitter = mResources.getString(R.string.sinch_message_splitter);
 
             itemView.setOnClickListener(this);
         }
@@ -112,7 +112,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         }
 
         public void handleVideoMessages(MessageItem messageItem, String message) {
-            ArrayList<String> msgSplit = new ArrayList<String>(Arrays.asList(message.split(mMsgSplitter)));
+            ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
             mTitle = msgSplit.get(2);
             mThumbnail = msgSplit.get(3);
             mId = msgSplit.get(4);

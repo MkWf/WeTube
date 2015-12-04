@@ -9,7 +9,6 @@ import android.os.IBinder;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.activities.UsersActivity;
 import com.parse.FindCallback;
-import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -135,19 +134,10 @@ public class ConnectionService extends Service {
         url.openStream();
 
         final String userId = ParseUser.getCurrentUser().getObjectId();
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        HashMap<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("ms", new Date().getTime());
-        ParseCloud.callFunctionInBackground("updateLastSeen", params, new FunctionCallback<String>() {
-            @Override
-            public void done(String userList, ParseException e) {
-                if(e == null){
-                    return;
-                }else{
-                    return;
-                }
-            }
-        });
+        ParseCloud.callFunctionInBackground("updateLastSeen", params);
     }
 
     @Override

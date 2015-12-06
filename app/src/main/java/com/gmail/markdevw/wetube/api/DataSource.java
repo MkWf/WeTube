@@ -4,16 +4,11 @@ import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
-import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
@@ -62,21 +57,7 @@ public class DataSource {
         mUncommonTags = new ArrayList<>();
         mPlaylist = new ArrayList<>();
 
-        YouTube youtube = new YouTube.Builder(new NetHttpTransport(),
-                new JacksonFactory(), new HttpRequestInitializer() {
-            @Override
-            public void initialize(HttpRequest hr) throws IOException {}
-        }).setApplicationName(context.getString(R.string.app_name)).build();
-
-        try{
-            mQuery = youtube.search().list("id,snippet");
-            mQuery.setKey(API_KEY);
-            mQuery.setType("video");
-            mQuery.setFields("nextPageToken,prevPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)");
-            mQuery.setMaxResults((long) NUMBER_OF_VIDEOS_RETURNED);
-        }catch(IOException e){
-            Log.d("YC", "Could not initialize: " + e);
-        }
+        
     }
 
     public void setMainActivity(ActionBarActivity activity) {this.mainActivity = activity;}

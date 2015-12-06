@@ -27,6 +27,13 @@ import retrofit.Retrofit;
  * Created by Mark on 3/26/2015.
  */
 public class DataSource {
+
+    public interface VideoResponseListener{
+        public void onSuccess();
+        public void onError();
+    }
+
+
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
     private final int NUMBER_OF_VIDEOS_RETURNED = 50;
     private final int MAX_FRIENDS = 100;

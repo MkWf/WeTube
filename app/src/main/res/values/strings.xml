@@ -216,6 +216,7 @@
     <string name="activities_usersactivity_dialog_category_add_cancel">Cancel</string>
     <string name="parse_tag_splitter">" "</string>
     <string name="activities_usersactivity_dialog_session_request_partial">"Session request from "</string>
+    <string name="youtube_baseUrl">https://www.googleapis.com/</string>
 
 
 </resources>

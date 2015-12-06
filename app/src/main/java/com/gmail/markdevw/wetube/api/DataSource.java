@@ -3,6 +3,7 @@ package com.gmail.markdevw.wetube.api;
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 
+import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
@@ -12,6 +13,9 @@ import com.gmail.markdevw.wetube.api.model.video.VideoItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 
 /**
  * Created by Mark on 3/26/2015.
@@ -40,6 +44,7 @@ public class DataSource {
     private int friendSize;
     private ActionBarActivity usersActivity;
     private ActionBarActivity mainActivity;
+    private YouTubeAPI youTubeAPI;
 
     public DataSource(Context context){
         mVideos = new ArrayList<>(NUMBER_OF_VIDEOS_RETURNED);
@@ -50,6 +55,13 @@ public class DataSource {
         mCommonTags = new ArrayList<>();
         mUncommonTags = new ArrayList<>();
         mPlaylist = new ArrayList<>();
+
+        youTubeAPI = new Retrofit.Builder()
+                .baseUrl(context.getString(R.string.youtube_baseUrl))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(YouTubeAPI.class);
+
     }
 
     public void setMainActivity(ActionBarActivity activity) {this.mainActivity = activity;}

@@ -155,6 +155,7 @@ public class DataSource {
                 @Override
                 public void onFailure(Throwable t) {
                     Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    t.printStackTrace();
                 }
             });
     }

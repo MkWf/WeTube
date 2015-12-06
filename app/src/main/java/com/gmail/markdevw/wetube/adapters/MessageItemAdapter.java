@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -66,6 +67,10 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         @Bind(R.id.message_item_message_outgoing) TextView mMessageOut;
         @Bind(R.id.message_item_thumbnail_incoming) ImageView thumbnailIn;
         @Bind(R.id.message_item_thumbnail_outgoing) ImageView thumbnailOut;
+        @Bind(R.id.message_item_incoming)
+        LinearLayout msgIn;
+        @Bind(R.id.message_item_outgoing)
+        LinearLayout msgOut;
 
         private Resources mResources;
         private MessageItem mMessageItem;
@@ -97,12 +102,18 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
         public void handleNonVideoMessages(MessageItem messageItem) {
             if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+                msgOut.setVisibility(View.VISIBLE);
+                msgIn.setVisibility(View.GONE);
+
                 thumbnailIn.setVisibility(View.GONE);
                 thumbnailOut.setVisibility(View.GONE);
                 mMessageIn.setVisibility(View.INVISIBLE);
                 mMessageOut.setVisibility(View.VISIBLE);
                 mMessageOut.setText(messageItem.getMessage());
             }else{
+                msgIn.setVisibility(View.VISIBLE);
+                msgOut.setVisibility(View.GONE);
+
                 thumbnailIn.setVisibility(View.GONE);
                 thumbnailOut.setVisibility(View.GONE);
                 mMessageOut.setVisibility(View.INVISIBLE);
@@ -118,6 +129,9 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
             mId = msgSplit.get(4);
 
             if(messageItem.getType() == MessageItem.OUTGOING_MSG){
+                msgOut.setVisibility(View.VISIBLE);
+                msgIn.setVisibility(View.GONE);
+
                 thumbnailIn.setVisibility(View.GONE);
                 mMessageIn.setVisibility(View.INVISIBLE);
 
@@ -128,6 +142,9 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                         .load(mThumbnail)
                         .into(thumbnailOut);
             }else{
+                msgIn.setVisibility(View.VISIBLE);
+                msgOut.setVisibility(View.GONE);
+
                 thumbnailOut.setVisibility(View.GONE);
                 mMessageOut.setVisibility(View.INVISIBLE);
 

@@ -36,6 +36,7 @@ import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.adapters.MessageItemAdapter;
 import com.gmail.markdevw.wetube.adapters.PlaylistItemAdapter;
 import com.gmail.markdevw.wetube.adapters.VideoItemAdapter;
+import com.gmail.markdevw.wetube.api.DataSource;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
@@ -208,22 +209,22 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if(search.isEmpty()){
             Toast.makeText(this, "Enter a search keyword first", Toast.LENGTH_LONG).show();
         }else{
-            new Thread(){
-                public void run(){
-                    mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "Started search for " + search.toUpperCase() + "...");
-                    WeTubeApplication.getSharedDataSource().searchForVideos(search);
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Fragment f = getFragmentManager().findFragmentByTag("Video");
-                            VideoListFragment vlf = (VideoListFragment) f;
-                            vlf.getVideoItemAdapter().notifyDataSetChanged();
-                            vlf.getRecyclerView().scrollToPosition(0);
-                            mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
-                        }
-                    });
+            mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "Started search for " + search.toUpperCase() + "...");
+            WeTubeApplication.getSharedDataSource().searchForVideos(search, new DataSource.VideoResponseListener() {
+                @Override
+                public void onSuccess() {
+                    Fragment f = getFragmentManager().findFragmentByTag("Video");
+                    VideoListFragment vlf = (VideoListFragment) f;
+                    vlf.getVideoItemAdapter().notifyDataSetChanged();
+                    vlf.getRecyclerView().scrollToPosition(0);
+                    mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
                 }
-            }.start();
+
+                @Override
+                public void onError() {
+                    Toast.makeText(MainActivity.this, "Failed to search for " + search, Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
@@ -231,42 +232,42 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onPrevPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox) {
         final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
 
-        new Thread(){
-            public void run(){
-                WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getPrevPageToken());
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Fragment f = getFragmentManager().findFragmentByTag("Video");
-                        VideoListFragment vlf = (VideoListFragment) f;
-                        vlf.getVideoItemAdapter().notifyDataSetChanged();
-                        vlf.getRecyclerView().scrollToPosition(0);
-                        mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
-                    }
-                });
+        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getPrevPageToken(), new DataSource.VideoResponseListener() {
+            @Override
+            public void onSuccess() {
+                Fragment f = getFragmentManager().findFragmentByTag("Video");
+                VideoListFragment vlf = (VideoListFragment) f;
+                vlf.getVideoItemAdapter().notifyDataSetChanged();
+                vlf.getRecyclerView().scrollToPosition(0);
+                mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
             }
-        }.start();
+
+            @Override
+            public void onError() {
+                Toast.makeText(MainActivity.this, "Failed to search for " + search, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
     public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox) {
         final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
 
-        new Thread(){
-            public void run(){
-                WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getNextPageToken());
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Fragment f = getFragmentManager().findFragmentByTag("Video");
-                        VideoListFragment vlf = (VideoListFragment) f;
-                        vlf.getVideoItemAdapter().notifyDataSetChanged();
-                        vlf.getRecyclerView().scrollToPosition(0);
-                        mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
-                    }
-                });
+        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getNextPageToken(), new DataSource.VideoResponseListener() {
+            @Override
+            public void onSuccess() {
+                Fragment f = getFragmentManager().findFragmentByTag("Video");
+                VideoListFragment vlf = (VideoListFragment) f;
+                vlf.getVideoItemAdapter().notifyDataSetChanged();
+                vlf.getRecyclerView().scrollToPosition(0);
+                mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
             }
-        }.start();
+
+            @Override
+            public void onError() {
+                Toast.makeText(MainActivity.this, "Failed to search for " + search, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

@@ -33,7 +33,6 @@ public class DataSource {
         public void onError();
     }
 
-
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
     private final int NUMBER_OF_VIDEOS_RETURNED = 50;
     private final int MAX_FRIENDS = 100;
@@ -122,7 +121,7 @@ public class DataSource {
 
     public String getAPI_KEY() { return API_KEY; }
 
-    public void searchForVideos(String searchTerms){
+    public void searchForVideos(String searchTerms, final VideoResponseListener listener){
         setCurrentSearch(searchTerms);
 
         mVideos.clear();
@@ -150,6 +149,7 @@ public class DataSource {
                         item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
                         mVideos.add(item);
                     }
+                    listener.onSuccess();
                 }
 
                 @Override
@@ -159,7 +159,7 @@ public class DataSource {
             });
     }
 
-    public void searchForVideos(String searchTerms, String pageToken){
+    public void searchForVideos(String searchTerms, String pageToken, final VideoResponseListener listener){
         if(pageToken == null){
             return;
         }else if(pageToken.equals(mPrevPageToken)){
@@ -192,6 +192,7 @@ public class DataSource {
                         item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
                         mVideos.add(item);
                     }
+                    listener.onSuccess();
                 }
 
                 @Override

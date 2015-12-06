@@ -2,18 +2,13 @@ package com.gmail.markdevw.wetube.api;
 
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 
 import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.model.SearchResult;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -29,7 +24,6 @@ public class DataSource {
     private List<VideoItem> mVideos;
     private List<UserItem> mUsers;
     private List<UserItem> mFriends;
-    private YouTube.Search.List mQuery;
     private int mCurrentPage;
     private String mPrevPageToken;
     private String mNextPageToken;
@@ -56,8 +50,6 @@ public class DataSource {
         mCommonTags = new ArrayList<>();
         mUncommonTags = new ArrayList<>();
         mPlaylist = new ArrayList<>();
-
-        
     }
 
     public void setMainActivity(ActionBarActivity activity) {this.mainActivity = activity;}
@@ -107,28 +99,6 @@ public class DataSource {
 
     public void searchForVideos(String searchTerms){
         setCurrentSearch(searchTerms);
-        mQuery.setQ(searchTerms);
-        try{
-            SearchListResponse response = mQuery.execute();
-            List<SearchResult> results = response.getItems();
-
-            setPrevPageToken(response.getPrevPageToken());
-            setNextPageToken(response.getNextPageToken());
-
-            mVideos.clear();
-            mCurrentPage = 1;
-
-            for(SearchResult result : results){
-                VideoItem item = new VideoItem();
-                item.setTitle(result.getSnippet().getTitle());
-                item.setDescription(result.getSnippet().getDescription());
-                item.setThumbnailURL(result.getSnippet().getThumbnails().getDefault().getUrl());
-                item.setId(result.getId().getVideoId());
-                mVideos.add(item);
-            }
-        }catch(IOException e){
-            Log.d("YC", "Could not search: "+e);
-        }
     }
 
     public void searchForVideos(String searchTerms, String pageToken){
@@ -138,29 +108,6 @@ public class DataSource {
             mCurrentPage--;
         }else{
             mCurrentPage++;
-        }
-
-        mQuery.setPageToken(pageToken);
-        mQuery.setQ(searchTerms);
-        try{
-            SearchListResponse response = mQuery.execute();
-            List<SearchResult> results = response.getItems();
-
-            setPrevPageToken(response.getPrevPageToken());
-            setNextPageToken(response.getNextPageToken());
-
-            mVideos.clear();
-
-            for(SearchResult result:results){
-                VideoItem item = new VideoItem();
-                item.setTitle(result.getSnippet().getTitle());
-                item.setDescription(result.getSnippet().getDescription());
-                item.setThumbnailURL(result.getSnippet().getThumbnails().getDefault().getUrl());
-                item.setId(result.getId().getVideoId());
-                mVideos.add(item);
-            }
-        }catch(IOException e){
-            Log.d("YC", "Could not search: "+e);
         }
     }
 }

@@ -18,7 +18,7 @@ import java.util.Vector;
  */
 public class DataSource {
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
-    private final int NUMBER_OF_VIDEOS_RETURNED = 20;
+    private final int NUMBER_OF_VIDEOS_RETURNED = 50;
     private final int MAX_FRIENDS = 100;
 
     private List<VideoItem> mVideos;

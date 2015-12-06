@@ -9,6 +9,7 @@ public class VideoItem {
     private String mDescription;
     private String mThumbnailURL;
     private String mId;
+    private String mDuration;
 
     public String getId() {
         return mId;
@@ -33,5 +34,13 @@ public class VideoItem {
         return mThumbnailURL;
     }
     public void setThumbnailURL(String thumbnail) { this.mThumbnailURL = thumbnail; }
+
+    public String getmDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(String mDuration) {
+        this.mDuration = mDuration;
+    }
 }
 

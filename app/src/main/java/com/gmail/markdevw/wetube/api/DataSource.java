@@ -11,6 +11,7 @@ import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
+import com.gmail.markdevw.wetube.api.model.video.duration_response.DurationContainer;
 import com.gmail.markdevw.wetube.api.model.video.video_response.Item;
 import com.gmail.markdevw.wetube.api.model.video.video_response.VideoItemContainer;
 
@@ -185,6 +186,9 @@ public class DataSource {
                     List<Item> items = response.body().getItems();
                     int size = items.size();
 
+                    StringBuilder videoIdBuilder = new StringBuilder(500);
+
+
                     for (int i = 0; i < size; i++) {
                         VideoItem item = new VideoItem();
                         item.setId(items.get(i).getId().getVideoId());
@@ -192,8 +196,28 @@ public class DataSource {
                         item.setDescription(items.get(i).getSnippet().getDescription());
                         item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
                         mVideos.add(item);
+
+                        videoIdBuilder.append(items.get(i).getId().getVideoId());
+                        videoIdBuilder.append(",");
                     }
-                    listener.onSuccess();
+
+                    youTubeAPI.getVideoDuration(videoIdBuilder.toString())
+                        .enqueue(new Callback<DurationContainer>() {
+                            @Override
+                            public void onResponse(Response<DurationContainer> response, Retrofit retrofit) {
+                                List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = response.body().getItems();
+                                int size = items.size();
+                                for(int i = 0; i < size; i++){
+                                    mVideos.get(i).setDuration(items.get(i).getContentDetails().getDuration());
+                                }
+                                listener.onSuccess();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+
+                            }
+                        });
                 }
 
                 @Override

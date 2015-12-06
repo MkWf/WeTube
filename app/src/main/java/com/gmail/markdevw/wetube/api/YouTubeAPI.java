@@ -1,6 +1,6 @@
 package com.gmail.markdevw.wetube.api;
 
-import com.gmail.markdevw.wetube.api.model.video.response.VideoItemContainer;
+import com.gmail.markdevw.wetube.api.model.video.video_response.VideoItemContainer;
 
 import retrofit.Call;
 import retrofit.http.GET;
@@ -19,5 +19,5 @@ public interface YouTubeAPI {
     Call<VideoItemContainer> getVideos(@Query("q") String search, @Query("pageToken") String pageToken);
 
     @GET("/youtube/v3/videos?&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk&part=contentDetails&fields=items(contentDetails/duration)")
-    Call<VideoItemContainer> getDurations(@Query("id") String ids);
+    Call<VideoItemContainer> getVideoDuration(@Query("id") String ids);
 }

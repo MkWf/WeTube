@@ -1,4 +1,4 @@
-package com.gmail.markdevw.wetube.api.model.video.response;
+package com.gmail.markdevw.wetube.api.model.video.video_response;
 
 import java.util.List;
 

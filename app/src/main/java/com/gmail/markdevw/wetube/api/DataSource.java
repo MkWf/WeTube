@@ -11,8 +11,8 @@ import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
-import com.gmail.markdevw.wetube.api.model.video.response.Item;
-import com.gmail.markdevw.wetube.api.model.video.response.VideoItemContainer;
+import com.gmail.markdevw.wetube.api.model.video.video_response.Item;
+import com.gmail.markdevw.wetube.api.model.video.video_response.VideoItemContainer;
 
 import java.util.ArrayList;
 import java.util.List;

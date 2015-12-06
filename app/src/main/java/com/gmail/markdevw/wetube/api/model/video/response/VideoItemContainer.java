@@ -6,7 +6,7 @@ package com.gmail.markdevw.wetube.api.model.video.response;
 public class VideoItemContainer {
     private String nextPageToken;
     private String prevPageToken;
-    
+
     private List<Item> items;
 
     public VideoItemContainer(List<Item> items) {

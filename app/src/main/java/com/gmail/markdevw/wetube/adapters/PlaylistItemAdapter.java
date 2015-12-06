@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.api.DataSource;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
-import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 
@@ -85,7 +85,9 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
 
             mTitle.setText(playlistItem.getTitle());
             mCount.setText(String.valueOf(playlistItem.getIndex()));
-            Picasso.with(WeTubeApplication.getSharedInstance()).load(playlistItem.getThumbnailURL()).into(mThumbnail);
+            Glide.with(WeTubeApplication.getSharedInstance())
+                    .load(playlistItem.getThumbnailURL())
+                    .into(mThumbnail);
 
             if(WeTubeApplication.getSharedDataSource().isSessionController() && !WeTubeApplication.getSharedDataSource().isPlayerVisible()){
                 mDelete.setVisibility(View.VISIBLE);

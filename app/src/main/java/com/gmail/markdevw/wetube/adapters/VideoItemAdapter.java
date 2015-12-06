@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.api.DataSource;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
-import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 
@@ -76,7 +76,9 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
 
             mTitle.setText(videoItem.getTitle());
             mDescription.setText(videoItem.getDescription());
-            Picasso.with(WeTubeApplication.getSharedInstance()).load(videoItem.getThumbnailURL()).into(mThumbnail);
+            Glide.with(WeTubeApplication.getSharedInstance())
+                    .load(videoItem.getThumbnailURL())
+                    .into(mThumbnail);
         }
 
         @Override

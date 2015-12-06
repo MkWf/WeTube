@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.api.DataSource;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
-import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                 thumbnailOut.setVisibility(View.VISIBLE);
                 mMessageOut.setVisibility(View.VISIBLE);
                 mMessageOut.setText(mTitle);
-                Picasso.with(WeTubeApplication.getSharedInstance())
+                Glide.with(WeTubeApplication.getSharedInstance())
                         .load(mThumbnail)
                         .into(thumbnailOut);
             }else{
@@ -134,9 +134,10 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                 thumbnailIn.setVisibility(View.VISIBLE);
                 mMessageIn.setVisibility(View.VISIBLE);
                 mMessageIn.setText(mTitle);
-                Picasso.with(WeTubeApplication.getSharedInstance())
+                Glide.with(WeTubeApplication.getSharedInstance())
                         .load(mThumbnail)
                         .into(thumbnailIn);
+
             }
         }
 

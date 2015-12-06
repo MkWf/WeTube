@@ -1,4 +1,4 @@
-package com.gmail.markdevw.wetube.api.model;
+package com.gmail.markdevw.wetube.api.model.video;
 
 /**
  * Created by Mark on 3/26/2015.

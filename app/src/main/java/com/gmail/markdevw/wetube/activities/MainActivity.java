@@ -38,7 +38,7 @@ import com.gmail.markdevw.wetube.adapters.PlaylistItemAdapter;
 import com.gmail.markdevw.wetube.adapters.VideoItemAdapter;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
-import com.gmail.markdevw.wetube.api.model.VideoItem;
+import com.gmail.markdevw.wetube.api.model.video.VideoItem;
 import com.gmail.markdevw.wetube.fragments.VideoListFragment;
 import com.gmail.markdevw.wetube.services.MessageService;
 import com.google.android.youtube.player.YouTubeInitializationResult;

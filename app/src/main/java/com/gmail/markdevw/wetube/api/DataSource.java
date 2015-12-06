@@ -9,7 +9,7 @@ import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
-import com.gmail.markdevw.wetube.api.model.VideoItem;
+import com.gmail.markdevw.wetube.api.model.video.VideoItem;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;

@@ -17,7 +17,7 @@ import android.widget.ImageButton;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.adapters.VideoItemAdapter;
-import com.gmail.markdevw.wetube.api.model.VideoItem;
+import com.gmail.markdevw.wetube.api.model.video.VideoItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

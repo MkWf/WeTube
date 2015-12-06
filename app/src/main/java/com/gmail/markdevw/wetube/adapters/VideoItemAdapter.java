@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.api.DataSource;
-import com.gmail.markdevw.wetube.api.model.VideoItem;
+import com.gmail.markdevw.wetube.api.model.video.VideoItem;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;

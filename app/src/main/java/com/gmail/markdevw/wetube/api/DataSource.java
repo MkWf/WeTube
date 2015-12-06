@@ -2,19 +2,25 @@ package com.gmail.markdevw.wetube.api;
 
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
+import android.widget.Toast;
 
 import com.gmail.markdevw.wetube.R;
+import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.api.model.MessageItem;
 import com.gmail.markdevw.wetube.api.model.PlaylistItem;
 import com.gmail.markdevw.wetube.api.model.TagItem;
 import com.gmail.markdevw.wetube.api.model.UserItem;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
+import com.gmail.markdevw.wetube.api.model.video.response.Item;
+import com.gmail.markdevw.wetube.api.model.video.response.VideoItemContainer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import retrofit.Callback;
 import retrofit.GsonConverterFactory;
+import retrofit.Response;
 import retrofit.Retrofit;
 
 /**
@@ -111,6 +117,39 @@ public class DataSource {
 
     public void searchForVideos(String searchTerms){
         setCurrentSearch(searchTerms);
+
+        mVideos.clear();
+        mCurrentPage = 1;
+
+        youTubeAPI.getVideos(searchTerms)
+            .enqueue(new Callback<VideoItemContainer>() {
+                @Override
+                public void onResponse(Response<VideoItemContainer> response, Retrofit retrofit) {
+                    if (response.body().getPrevPageToken() != null) {
+                        setPrevPageToken(response.body().getPrevPageToken());
+                    }
+                    if (response.body().getNextPageToken() != null) {
+                        setNextPageToken(response.body().getNextPageToken());
+                    }
+
+                    List<Item> items = response.body().getItems();
+                    int size = items.size();
+
+                    for (int i = 0; i < size; i++) {
+                        VideoItem item = new VideoItem();
+                        item.setId(items.get(i).getId().getVideoId());
+                        item.setTitle(items.get(i).getSnippet().getTitle());
+                        item.setDescription(items.get(i).getSnippet().getDescription());
+                        item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
+                        mVideos.add(item);
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
     }
 
     public void searchForVideos(String searchTerms, String pageToken){
@@ -121,5 +160,37 @@ public class DataSource {
         }else{
             mCurrentPage++;
         }
+
+        mVideos.clear();
+
+        youTubeAPI.getVideos(searchTerms, pageToken)
+            .enqueue(new Callback<VideoItemContainer>() {
+                @Override
+                public void onResponse(Response<VideoItemContainer> response, Retrofit retrofit) {
+                    if(response.body().getPrevPageToken() != null){
+                        setPrevPageToken(response.body().getPrevPageToken());
+                    }
+                    if(response.body().getNextPageToken() != null){
+                        setNextPageToken(response.body().getNextPageToken());
+                    }
+
+                    List<Item> items = response.body().getItems();
+                    int size = items.size();
+
+                    for (int i = 0; i < size; i++) {
+                        VideoItem item = new VideoItem();
+                        item.setId(items.get(i).getId().getVideoId());
+                        item.setTitle(items.get(i).getSnippet().getTitle());
+                        item.setDescription(items.get(i).getSnippet().getDescription());
+                        item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
+                        mVideos.add(item);
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
     }
 }

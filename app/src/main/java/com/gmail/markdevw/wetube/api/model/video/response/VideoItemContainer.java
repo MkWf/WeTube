@@ -1,5 +1,7 @@
 package com.gmail.markdevw.wetube.api.model.video.response;
 
+import java.util.List;
+
 /**
  * Created by Mark on 12/6/2015.
  */

@@ -9,5 +9,5 @@ public interface YouTubeAPI {
     @GET("/youtube/v3/search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=50")
 
     @GET("/youtube/v3/search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=50")
-    
+
 }

@@ -18,18 +18,21 @@
         android:textSize="14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="4dp"
+        android:layout_alignTop="@+id/video_thumbnail"
         android:layout_toRightOf="@id/video_thumbnail"/>
 
     <TextView
         android:id="@+id/video_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:layout_marginTop="4dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="4dp"
         android:layout_toRightOf="@id/video_thumbnail"
-        android:lines="2"
+        android:lines="3"
         android:layout_below="@id/video_title"/>
 
     <View

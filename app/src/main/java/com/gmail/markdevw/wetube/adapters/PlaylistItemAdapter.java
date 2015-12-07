@@ -64,6 +64,7 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         @Bind(R.id.playlist_delete) ImageView mDelete;
         @Bind(R.id.playlist_title) TextView mTitle;
         @Bind(R.id.playlist_index) TextView mCount;
+        @Bind(R.id.playlist_video_duration) TextView mDuration;
 
         private View mItemView;
         private PlaylistItem mPlaylistItem;
@@ -88,6 +89,8 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
             Glide.with(WeTubeApplication.getSharedInstance())
                     .load(playlistItem.getThumbnailURL())
                     .into(mThumbnail);
+            mDuration.setText(mPlaylistItem.getDuration());
+
 
             if(WeTubeApplication.getSharedDataSource().isSessionController() && !WeTubeApplication.getSharedDataSource().isPlayerVisible()){
                 mDelete.setVisibility(View.VISIBLE);

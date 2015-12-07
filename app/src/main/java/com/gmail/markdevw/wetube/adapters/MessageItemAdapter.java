@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.ItemAdapterViewHolder> {
 
     public static interface Delegate {
-        public void onMessageVideoItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id);
+        public void onMessageVideoItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id, String duration);
     }
 
     private WeakReference<Delegate> mDelegate;
@@ -67,6 +67,8 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         @Bind(R.id.message_item_message_outgoing) TextView mMessageOut;
         @Bind(R.id.message_item_thumbnail_incoming) ImageView thumbnailIn;
         @Bind(R.id.message_item_thumbnail_outgoing) ImageView thumbnailOut;
+        @Bind(R.id.message_item_duration_incoming) TextView mDurationIn;
+        @Bind(R.id.message_item_duration_outgoing) TextView mDurationOut;
         @Bind(R.id.message_item_incoming)
         LinearLayout msgIn;
         @Bind(R.id.message_item_outgoing)
@@ -78,6 +80,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         private String mTitle;
         private String mThumbnail;
         private String mId;
+        private String mDuration;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
@@ -127,6 +130,8 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
             mTitle = msgSplit.get(2);
             mThumbnail = msgSplit.get(3);
             mId = msgSplit.get(4);
+            mDuration = msgSplit.get(5);
+
 
             if(messageItem.getType() == MessageItem.OUTGOING_MSG){
                 msgOut.setVisibility(View.VISIBLE);
@@ -141,6 +146,9 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                 Glide.with(WeTubeApplication.getSharedInstance())
                         .load(mThumbnail)
                         .into(thumbnailOut);
+                mDurationOut.setVisibility(View.VISIBLE);
+                mDurationIn.setVisibility(View.GONE);
+                mDurationOut.setText(mDuration);
             }else{
                 msgIn.setVisibility(View.VISIBLE);
                 msgOut.setVisibility(View.GONE);
@@ -154,6 +162,9 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                 Glide.with(WeTubeApplication.getSharedInstance())
                         .load(mThumbnail)
                         .into(thumbnailIn);
+                mDurationOut.setVisibility(View.GONE);
+                mDurationIn.setVisibility(View.VISIBLE);
+                mDurationIn.setText(mDuration);
 
             }
         }
@@ -162,7 +173,7 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         public void onClick(View view) {
             String message = mMessageItem.getMessage();
             if(message.startsWith(mMsgSplitter + mResources.getString(R.string.activities_mainactivity_chat_linked_video))){
-                getDelegate().onMessageVideoItemClicked(MessageItemAdapter.this, mTitle, mThumbnail, mId);
+                getDelegate().onMessageVideoItemClicked(MessageItemAdapter.this, mTitle, mThumbnail, mId, mDuration);
             }
         }
     }

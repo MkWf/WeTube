@@ -11,14 +11,16 @@ public class PlaylistItem {
     private boolean mIsToBeDeleted;
     private boolean mIsSelected;
     private int mItemIndex;
+    private String mDuration;
 
     public PlaylistItem(){ /* Do Noting */ }
 
-    public PlaylistItem(String title, String thumbnailURL, String id, int index){
+    public PlaylistItem(String title, String thumbnailURL, String id, int index, String duration){
         setTitle(title);
         setThumbnailURL(thumbnailURL);
         setId(id);
         setIndex(index);
+        setDuration(duration);
     }
 
     public String getId() { return mId; }
@@ -38,6 +40,14 @@ public class PlaylistItem {
 
     public int getIndex() { return mItemIndex;}
     public void setIndex(int index) { this.mItemIndex = index;}
+
+    public String getDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(String mDuration) {
+        this.mDuration = mDuration;
+    }
 }
 
 

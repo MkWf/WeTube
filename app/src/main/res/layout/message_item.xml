@@ -12,12 +12,28 @@
         android:layout_alignParentLeft="true"
         android:background="@drawable/grey_bubble">
 
-        <ImageView
-            android:id="@+id/message_item_thumbnail_incoming"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="6dp"/>
+        <FrameLayout
+            android:id="@+id/message_item_incoming_thumbnail_container"
+            android:layout_marginRight="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/message_item_thumbnail_incoming"
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
+
+            <TextView
+                android:id="@+id/message_item_duration_incoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="14dp"
+                android:background="@color/black"
+                android:textSize="12sp"/>
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/message_item_message_incoming"
@@ -37,12 +53,29 @@
         android:layout_alignParentRight="true"
         android:background="@drawable/purple_bubble">
 
-        <ImageView
-            android:id="@+id/message_item_thumbnail_outgoing"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="6dp"/>
+        <FrameLayout
+            android:id="@+id/message_item_outgoing_thumbnail_container"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/message_item_thumbnail_outgoing"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <TextView
+                android:id="@+id/message_item_duration_outgoing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="14dp"
+                android:background="@color/black"
+                android:textSize="12sp"/>
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/message_item_message_outgoing"

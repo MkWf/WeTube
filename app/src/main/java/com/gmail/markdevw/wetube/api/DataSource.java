@@ -170,7 +170,7 @@ public class DataSource {
                                     List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = response.body().getItems();
                                     int size = items.size();
                                     for (int i = 0; i < size; i++) {
-                                        mVideos.get(i).setDuration(items.get(i).getContentDetails().getDuration());
+                                        mVideos.get(i).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
                                     }
                                     listener.onSuccess();
                                 }
@@ -243,7 +243,7 @@ public class DataSource {
                                     List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = response.body().getItems();
                                     int size = items.size();
                                     for (int i = 0; i < size; i++) {
-                                        mVideos.get(i).setDuration(items.get(i).getContentDetails().getDuration());
+                                        mVideos.get(i).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
                                     }
                                     listener.onSuccess();
                                 }
@@ -260,5 +260,35 @@ public class DataSource {
                     Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
             });
+    }
+
+    public String durationStringConverter(String duration){
+        StringBuilder sb = new StringBuilder(10);
+        int size = duration.length();
+        boolean isLastCharDigit = true;
+
+        sb.append(duration.charAt(2));
+        for(int i = 3; i < size; i++){
+            char c = duration.charAt(i);
+            if(Character.isDigit(duration.charAt(i))){
+                int j = i;
+                ++j;
+                if(!Character.isDigit(duration.charAt(j)) && !isLastCharDigit){
+                    sb.append("0");
+                }
+                sb.append(c);
+                isLastCharDigit = true;
+            }else{
+                if(String.valueOf(c).equals("S")){
+                    break;
+                }else{
+                    if(isLastCharDigit){
+                        sb.append(":");
+                        isLastCharDigit = false;
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 }

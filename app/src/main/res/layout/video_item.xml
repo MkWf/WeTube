@@ -21,9 +21,11 @@
             android:id="@+id/video_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="hhhhh"
-            android:background="@color/material_blue_grey_800"
-            android:textSize="30sp"/>
+            android:textColor="@color/white"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="8dp"
+            android:background="@color/black_26"
+            android:textSize="12sp"/>
 
     </FrameLayout>
 

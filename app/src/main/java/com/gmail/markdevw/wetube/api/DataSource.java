@@ -125,7 +125,6 @@ public class DataSource {
     public void searchForVideos(String searchTerms, final VideoResponseListener listener){
         setCurrentSearch(searchTerms);
 
-        mVideos.clear();
         mCurrentPage = 1;
 
         youTubeAPI.getVideos(searchTerms)
@@ -143,6 +142,7 @@ public class DataSource {
                     int size = items.size();
                     StringBuilder videoIdBuilder = new StringBuilder(500);
 
+                    List<VideoItem> list = new ArrayList<>(size);
                     for (int i = 0; i < size; i++) {
                         VideoItem item = new VideoItem();
                         String id = items.get(i).getId().getVideoId();
@@ -154,14 +154,19 @@ public class DataSource {
                         item.setTitle(items.get(i).getSnippet().getTitle());
                         item.setDescription(items.get(i).getSnippet().getDescription());
                         item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
-                        mVideos.add(item);
+                        list.add(item);
                     }
+                    mVideos.clear();
+                    mVideos.addAll(list);
                     //listener.onSuccess();
 
                     youTubeAPI.getVideoDuration(videoIdBuilder.toString())
                             .enqueue(new Callback<DurationContainer>() {
                                 @Override
                                 public void onResponse(Response<DurationContainer> response, Retrofit retrofit) {
+                                    if(mVideos.size() == 0){
+                                        return;
+                                    }
                                     List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = response.body().getItems();
                                     int size = items.size();
                                     for (int i = 0; i < size; i++) {
@@ -190,11 +195,9 @@ public class DataSource {
             return;
         }else if(pageToken.equals(mPrevPageToken)){
             mCurrentPage--;
-        }else{
+        } else {
             mCurrentPage++;
         }
-
-        mVideos.clear();
 
         youTubeAPI.getVideos(searchTerms, pageToken)
             .enqueue(new Callback<VideoItemContainer>() {
@@ -209,6 +212,7 @@ public class DataSource {
 
                     List<Item> items = response.body().getItems();
                     int size = items.size();
+                    List<VideoItem> list = new ArrayList<>(size);
 
                     StringBuilder videoIdBuilder = new StringBuilder(500);
 
@@ -223,8 +227,11 @@ public class DataSource {
                         item.setTitle(items.get(i).getSnippet().getTitle());
                         item.setDescription(items.get(i).getSnippet().getDescription());
                         item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
-                        mVideos.add(item);
+                        list.add(item);
                     }
+
+                    mVideos.clear();
+                    mVideos.addAll(list);
 
                     youTubeAPI.getVideoDuration(videoIdBuilder.toString())
                             .enqueue(new Callback<DurationContainer>() {

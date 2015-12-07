@@ -264,31 +264,86 @@ public class DataSource {
 
     public String durationStringConverter(String duration){
         StringBuilder sb = new StringBuilder(10);
-        int size = duration.length();
-        boolean isLastCharDigit = true;
 
-        sb.append(duration.charAt(2));
-        for(int i = 3; i < size; i++){
-            char c = duration.charAt(i);
-            if(Character.isDigit(duration.charAt(i))){
-                int j = i;
-                ++j;
-                if(!Character.isDigit(duration.charAt(j)) && !isLastCharDigit){
-                    sb.append("0");
-                }
-                sb.append(c);
-                isLastCharDigit = true;
-            }else{
-                if(String.valueOf(c).equals("S")){
-                    break;
+        int hIndex, mIndex, sIndex, ptIndex;
+        ptIndex = 1;
+        hIndex = duration.indexOf("H");
+        mIndex = duration.indexOf("M");
+        sIndex = duration.indexOf("S");
+
+        if(hIndex != -1){
+            sb.append(duration.substring(ptIndex+1, hIndex))
+                .append(":");
+            if(mIndex != -1) {
+                if(mIndex-hIndex == 3){
+                    sb.append(duration.substring(hIndex+1, mIndex));
                 }else{
-                    if(isLastCharDigit){
-                        sb.append(":");
-                        isLastCharDigit = false;
-                    }
+                    sb.append("0")
+                            .append(duration.substring(hIndex + 1, mIndex));
                 }
+                sb.append(":");
+                if(sIndex != 1){
+                    if(sIndex-mIndex == 3) {
+                        sb.append(duration.substring(mIndex + 1, sIndex));
+                    }else{
+                        sb.append("0")
+                                .append(duration.substring(mIndex+1, sIndex));
+                    }
+                }else{
+                    sb.append("00");
+                }
+            }else if(sIndex != -1){
+                sb.append("00:")
+                    .append(duration.substring(hIndex+1, sIndex));
+            }else{
+                sb.append("00:00");
+            }
+        }else if(mIndex != -1){
+            sb.append(duration.substring(ptIndex+1, mIndex))
+                .append(":");
+            if(sIndex != -1){
+                if(sIndex-mIndex == 3) {
+                    sb.append(duration.substring(mIndex + 1, sIndex));
+                }else{
+                    sb.append("0")
+                            .append(duration.substring(mIndex+1, sIndex));
+                }
+            }else{
+                sb.append("00");
+            }
+        }else{
+            sb.append("00:");
+            if(sIndex-ptIndex == 3) {
+                sb.append(duration.substring(ptIndex + 1, sIndex));
+            }else{
+                sb.append("0")
+                        .append(duration.substring(ptIndex+1, sIndex));
             }
         }
+
+
+//        sb.append(duration.charAt(2));
+//        for(int i = 3; i < size; i++){
+//            char c = duration.charAt(i);
+//            if(Character.isDigit(duration.charAt(i))){
+//                int j = i;
+//                ++j;
+//                if(!Character.isDigit(duration.charAt(j)) && !isLastCharDigit){
+//                    sb.append("0");
+//                }
+//                sb.append(c);
+//                isLastCharDigit = true;
+//            }else{
+//                if(String.valueOf(c).equals("S")){
+//                    break;
+//                }else{
+//                    if(isLastCharDigit){
+//                        sb.append(":");
+//                        isLastCharDigit = false;
+//                    }
+//                }
+//            }
+//        }
         return sb.toString();
     }
 }

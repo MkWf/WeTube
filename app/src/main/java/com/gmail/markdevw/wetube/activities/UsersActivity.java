@@ -742,7 +742,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                         .setUser(userItem)
                                         .setResultType(UNBLOCK)
                                         .create();
-                            mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+                            showDialog();
 
                         } else {
                             ParseQuery<Blocked> query = ParseQuery.getQuery(getString(R.string.parse_blocked));
@@ -823,6 +823,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }catch(NullPointerException e ){
             //causes crash if user loses connection and tries to click on users
         }
+    }
+
+    public void showDialog() {
+        mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+        mDialogFragment.setCancelable(false);
     }
 
     public void createOkDialog(String title) {
@@ -968,7 +973,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             .setUser(friend)
                             .setResultType(REMOVE_FRIEND)
                             .create();
-                mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+                showDialog();
         }
         return false;
     }
@@ -1321,7 +1326,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 .setOk(getString(R.string.activities_usersactivity_dialog_logout_ok))
                 .setResultType(LOGOUT)
                 .create();
-        mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+        showDialog();
     }
 
     public void sessionEndedDialog(){
@@ -1490,7 +1495,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             .setUser(new UserItem(name, id))
                             .setResultType(BLOCK)
                             .create();
-                    mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+                    showDialog();
                 }
                 break;
             case FRIEND_ADD:
@@ -1515,7 +1520,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 .setUser(new UserItem(name, id))
                                 .setResultType(BLOCK)
                                 .create();
-                    mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+                    showDialog();
                 }
                 break;
             case LOGOUT:
@@ -1701,7 +1706,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 .setOk(getString(R.string.activities_usersactivity_dialog_request_block))
                                 .setResultType(SESSION)
                         .create();
-                mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+                showDialog();
 
             } else if (msg.get(1).equals(getString(R.string.sinch_sessionaccept))) {
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
@@ -1727,7 +1732,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 .setNo(getString(R.string.activities_usersactivity_dialog_request_block))
                                 .setResultType(FRIEND_ADD)
                                 .create();
-                    mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+                    showDialog();
                 }else{
                     mDialogFragment = new YesNoOkDialog.Builder(getString(R.string.activities_usersactivity_dialog_friend_request_partial) + name)
                             .setName(name)
@@ -1737,7 +1742,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             .setOk(getString(R.string.activities_usersactivity_dialog_request_block))
                             .setResultType(FRIEND_ADD)
                             .create();
-                    mDialogFragment.show(getSupportFragmentManager(), getString(R.string.activities_usersactivity_dialog_default_tag));
+                    showDialog();
                 }
             } else if (msg.get(1).equals(getString(R.string.sinch_frienddecline))) {
                 String name = msg.get(2);

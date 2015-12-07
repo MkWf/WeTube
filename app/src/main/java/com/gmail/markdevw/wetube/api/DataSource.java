@@ -37,6 +37,7 @@ public class DataSource {
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
     private final int NUMBER_OF_VIDEOS_RETURNED = 50;
     private final int MAX_FRIENDS = 100;
+    private static final int TWO_DIGIT_TIME_CHECK = 3;
 
     private List<VideoItem> mVideos;
     private List<UserItem> mUsers;
@@ -275,20 +276,10 @@ public class DataSource {
             sb.append(duration.substring(ptIndex+1, hIndex))
                 .append(":");
             if(mIndex != -1) {
-                if(mIndex-hIndex == 3){
-                    sb.append(duration.substring(hIndex+1, mIndex));
-                }else{
-                    sb.append("0")
-                            .append(duration.substring(hIndex + 1, mIndex));
-                }
+                convertTimeIndex(duration, sb, hIndex, mIndex);
                 sb.append(":");
                 if(sIndex != 1){
-                    if(sIndex-mIndex == 3) {
-                        sb.append(duration.substring(mIndex + 1, sIndex));
-                    }else{
-                        sb.append("0")
-                                .append(duration.substring(mIndex+1, sIndex));
-                    }
+                    convertTimeIndex(duration, sb, mIndex, sIndex);
                 }else{
                     sb.append("00");
                 }
@@ -302,48 +293,23 @@ public class DataSource {
             sb.append(duration.substring(ptIndex+1, mIndex))
                 .append(":");
             if(sIndex != -1){
-                if(sIndex-mIndex == 3) {
-                    sb.append(duration.substring(mIndex + 1, sIndex));
-                }else{
-                    sb.append("0")
-                            .append(duration.substring(mIndex+1, sIndex));
-                }
+                convertTimeIndex(duration, sb, mIndex, sIndex);
             }else{
                 sb.append("00");
             }
         }else{
             sb.append("00:");
-            if(sIndex-ptIndex == 3) {
-                sb.append(duration.substring(ptIndex + 1, sIndex));
-            }else{
-                sb.append("0")
-                        .append(duration.substring(ptIndex+1, sIndex));
-            }
+            convertTimeIndex(duration, sb, ptIndex, sIndex);
         }
-
-
-//        sb.append(duration.charAt(2));
-//        for(int i = 3; i < size; i++){
-//            char c = duration.charAt(i);
-//            if(Character.isDigit(duration.charAt(i))){
-//                int j = i;
-//                ++j;
-//                if(!Character.isDigit(duration.charAt(j)) && !isLastCharDigit){
-//                    sb.append("0");
-//                }
-//                sb.append(c);
-//                isLastCharDigit = true;
-//            }else{
-//                if(String.valueOf(c).equals("S")){
-//                    break;
-//                }else{
-//                    if(isLastCharDigit){
-//                        sb.append(":");
-//                        isLastCharDigit = false;
-//                    }
-//                }
-//            }
-//        }
         return sb.toString();
+    }
+
+    public void convertTimeIndex(String duration, StringBuilder builder, int index1, int index2) {
+        if(index2-index1 == TWO_DIGIT_TIME_CHECK){
+            builder.append(duration.substring(index1 + 1, index2));
+        }else{
+            builder.append("0")
+                    .append(duration.substring(index1 + 1, index2));
+        }
     }
 }

@@ -61,6 +61,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
         @Bind(R.id.video_thumbnail) ImageView mThumbnail;
         @Bind(R.id.video_title) TextView mTitle;
         @Bind(R.id.video_description) TextView mDescription;
+        @Bind(R.id.video_duration) TextView mDuration;
 
         private VideoItem mVideoItem;
 
@@ -79,6 +80,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
             Glide.with(WeTubeApplication.getSharedInstance())
                     .load(videoItem.getThumbnailURL())
                     .into(mThumbnail);
+            mDuration.setText(videoItem.getDuration());
         }
 
         @Override

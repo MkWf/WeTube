@@ -35,7 +35,7 @@ public class VideoItem {
     }
     public void setThumbnailURL(String thumbnail) { this.mThumbnailURL = thumbnail; }
 
-    public String getmDuration() {
+    public String getDuration() {
         return mDuration;
     }
 

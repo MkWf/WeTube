@@ -284,8 +284,8 @@ public class DataSource {
                     sb.append("00");
                 }
             }else if(sIndex != -1){
-                sb.append("00:")
-                    .append(duration.substring(hIndex+1, sIndex));
+                sb.append("00:");
+                convertTimeIndex(duration, sb, hIndex, sIndex);
             }else{
                 sb.append("00:00");
             }

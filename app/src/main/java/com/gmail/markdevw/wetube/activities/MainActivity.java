@@ -970,6 +970,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         mCurrentPlaylistIndex = 0;
                         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
                         mPlaylistItemAdapter.notifyDataSetChanged();
+                        String index = String.valueOf(mCurrentPlaylistIndex + 1);
+                        mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     }else{
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
@@ -1193,6 +1195,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         mCurrentPlaylistIndex = 0;
                         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
                         mPlaylistItemAdapter.notifyDataSetChanged();
+                        String index = String.valueOf(mCurrentPlaylistIndex + 1);
+                        mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     }else{
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);

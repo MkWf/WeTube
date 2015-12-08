@@ -1287,7 +1287,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     MainActivity.super.onBackPressed();
                 }else if(msg.startsWith(mMsgSplitter + "play") || msg.startsWith(mMsgSplitter + "friendaccept") || msg.startsWith(mMsgSplitter + "frienddecline")
                         || msg.startsWith(mMsgSplitter + "sessionaccept") || msg.startsWith(mMsgSplitter +  "friendfull") || msg.startsWith(mMsgSplitter + "blockuser")
-                        || msg.startsWith(mMsgSplitter + "seek") || msg.startsWith(mMsgSplitter + "videostart")){
+                        || msg.startsWith(mMsgSplitter + "seek") || msg.startsWith(mMsgSplitter + "videostart") || msg.startsWith(mMsgSplitter + "watchingad")){
                     //Do Nothing
                 }else{
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));

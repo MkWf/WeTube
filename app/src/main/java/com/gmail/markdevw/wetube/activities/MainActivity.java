@@ -266,6 +266,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             @Override
             public void onError() {
                 Toast.makeText(MainActivity.this, "Failed to search for " + search, Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Failed to search for " + search, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -460,6 +461,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         WeTubeApplication.getSharedDataSource().setMainActivity(null);
         WeTubeApplication.getSharedDataSource().getPlaylist().clear();
         WeTubeApplication.getSharedDataSource().getMessages().clear();
+        WeTubeApplication.getSharedDataSource().getVideos().clear();
     }
 
     private void sendMessage() {

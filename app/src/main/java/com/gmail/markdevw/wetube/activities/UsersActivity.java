@@ -1619,7 +1619,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     mMessageQueue.add(message);
 
                     if(!mIsFirstMessage){
-                        if(mDialogFragment != null && !mDialogFragment.isVisible() && !mMessageQueue.isEmpty()){
+                        if(mDialogFragment != null && !mDialogFragment.isAdded() && !mMessageQueue.isEmpty()){
                             showNextMessage();
                         }
                     }else{

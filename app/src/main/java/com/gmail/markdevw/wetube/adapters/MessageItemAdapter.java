@@ -104,12 +104,14 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         }
 
         public void handleNonVideoMessages(MessageItem messageItem) {
+            thumbnailIn.setVisibility(View.GONE);
+            thumbnailOut.setVisibility(View.GONE);
+            mDurationIn.setVisibility(View.GONE);
+            mDurationOut.setVisibility(View.GONE);
             if(messageItem.getType() == MessageItem.OUTGOING_MSG){
                 msgOut.setVisibility(View.VISIBLE);
                 msgIn.setVisibility(View.GONE);
 
-                thumbnailIn.setVisibility(View.GONE);
-                thumbnailOut.setVisibility(View.GONE);
                 mMessageIn.setVisibility(View.INVISIBLE);
                 mMessageOut.setVisibility(View.VISIBLE);
                 mMessageOut.setText(messageItem.getMessage());
@@ -117,8 +119,6 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
                 msgIn.setVisibility(View.VISIBLE);
                 msgOut.setVisibility(View.GONE);
 
-                thumbnailIn.setVisibility(View.GONE);
-                thumbnailOut.setVisibility(View.GONE);
                 mMessageOut.setVisibility(View.INVISIBLE);
                 mMessageIn.setVisibility(View.VISIBLE);
                 mMessageIn.setText(messageItem.getMessage());

@@ -1048,7 +1048,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         mVideoChatDivider.setVisibility(View.VISIBLE);
                         MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
+                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 1);
                     }
                 }else if(msg.startsWith(mMsgSplitter + "playlistexit")){
                     getFragmentManager().popBackStack();

@@ -1010,8 +1010,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
                     String index = String.valueOf(mCurrentPlaylistIndex + 1);
                     mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    //mYouTubePlayer.next();
-                    mYouTubePlayer.loadVideos(mPlaylistIDs, mCurrentPlaylistIndex, 100);
+                    mYouTubePlayer.next();
                 }else if(msg.startsWith(mMsgSplitter + "playlistprev")) {
                     WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
                     mCurrentPlaylistIndex--;
@@ -1021,8 +1020,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     String index = String.valueOf(mCurrentPlaylistIndex + 1);
                     mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
 
-                    //mYouTubePlayer.previous();
-                    mYouTubePlayer.loadVideos(mPlaylistIDs, mCurrentPlaylistIndex, 100);
+                    mYouTubePlayer.previous();
                 }else if(msg.startsWith(mMsgSplitter + "playlistindex")) {
                     ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);

@@ -1111,7 +1111,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     builder.setCancelable(false);
                     builder.show();
                 }else if(msg.startsWith(mMsgSplitter + "watchingad")){
-                    mYouTubePlayer.pause();
+                    //mYouTubePlayer.pause();
                     Toast.makeText(WeTubeApplication.getSharedInstance(), "Your video is paused while "
                             + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName()
                             + " is viewing an advertisement", Toast.LENGTH_LONG).show();

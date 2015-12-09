@@ -6,6 +6,7 @@ import com.gmail.markdevw.wetube.api.model.video.video_response.VideoItemContain
 import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Query;
+import rx.Observable;
 
 /**
  * Created by Mark on 12/6/2015.
@@ -13,7 +14,7 @@ import retrofit.http.Query;
 public interface YouTubeAPI {
     @GET("search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk" +
             "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=50")
-    Call<VideoItemContainer> getVideos(@Query("q") String search);
+    Observable<VideoItemContainer> getVideos(@Query("q") String search);
 
     @GET("search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk" +
             "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=50")

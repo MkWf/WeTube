@@ -31,7 +31,7 @@ public class DataSource {
 
     public interface VideoResponseListener{
         public void onSuccess();
-        public void onError();
+        public void onError(String search);
     }
 
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
@@ -123,7 +123,7 @@ public class DataSource {
 
     public String getAPI_KEY() { return API_KEY; }
 
-    public void searchForVideos(String searchTerms, final VideoResponseListener listener){
+    public void searchForVideos(final String searchTerms, final VideoResponseListener listener){
         setCurrentSearch(searchTerms);
 
         mCurrentPage = 1;
@@ -133,12 +133,8 @@ public class DataSource {
                 @Override
                 public void onResponse(Response<VideoItemContainer> response, Retrofit retrofit) {
                     if(response.code() == 200){
-                        if (response.body().getPrevPageToken() != null) {
-                            setPrevPageToken(response.body().getPrevPageToken());
-                        }
-                        if (response.body().getNextPageToken() != null) {
-                            setNextPageToken(response.body().getNextPageToken());
-                        }
+                        setPrevPageToken(response.body().getPrevPageToken());
+                        setNextPageToken(response.body().getNextPageToken());
 
                         List<Item> items = response.body().getItems();
                         int size = items.size();
@@ -158,6 +154,7 @@ public class DataSource {
                             item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
                             list.add(item);
                         }
+
                         mVideos.clear();
                         mVideos.addAll(list);
 
@@ -207,13 +204,9 @@ public class DataSource {
             .enqueue(new Callback<VideoItemContainer>() {
                 @Override
                 public void onResponse(Response<VideoItemContainer> response, Retrofit retrofit) {
-                    if(response.code() == 200){
-                        if(response.body().getPrevPageToken() != null){
-                            setPrevPageToken(response.body().getPrevPageToken());
-                        }
-                        if(response.body().getNextPageToken() != null){
-                            setNextPageToken(response.body().getNextPageToken());
-                        }
+                    if (response.code() == 200) {
+                        setPrevPageToken(response.body().getPrevPageToken());
+                        setNextPageToken(response.body().getNextPageToken());
 
                         List<Item> items = response.body().getItems();
                         int size = items.size();
@@ -225,7 +218,7 @@ public class DataSource {
                             VideoItem item = new VideoItem();
                             String id = items.get(i).getId().getVideoId();
                             videoIdBuilder.append(id);
-                            if(i < size - 1){
+                            if (i < size - 1) {
                                 videoIdBuilder.append(",");
                             }
                             item.setId(id);
@@ -242,10 +235,10 @@ public class DataSource {
                                 .enqueue(new Callback<DurationContainer>() {
                                     @Override
                                     public void onResponse(Response<DurationContainer> response, Retrofit retrofit) {
-                                        if(mVideos.size() == 0){
+                                        if (mVideos.size() == 0) {
                                             return;
                                         }
-                                        if(response.code() == 200){
+                                        if (response.code() == 200) {
                                             List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = response.body().getItems();
                                             int size = items.size();
                                             for (int i = 0; i < size; i++) {
@@ -260,17 +253,16 @@ public class DataSource {
                                         Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                                     }
                                 });
+                        }
                     }
-                }
+                    @Override
+                    public void onFailure (Throwable t){
+                        Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
 
-                @Override
-                public void onFailure(Throwable t) {
-                    Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
-    }
-
-    public String durationStringConverter(String duration){
+    public String durationStringConverter(String duration) {
         StringBuilder sb = new StringBuilder(10);
 
         int hIndex, mIndex, sIndex, ptIndex;
@@ -279,32 +271,34 @@ public class DataSource {
         mIndex = duration.indexOf("M");
         sIndex = duration.indexOf("S");
 
-        if(hIndex != -1){
-            sb.append(duration.substring(ptIndex+1, hIndex))
-                .append(":");
-            if(mIndex != -1) {
+        final int noValue = -1;
+
+        if (hIndex != noValue) {
+            sb.append(duration.substring(ptIndex + 1, hIndex))
+                    .append(":");
+            if (mIndex != noValue) {
                 convertTimeIndex(duration, sb, hIndex, mIndex);
                 sb.append(":");
-                if(sIndex != 1){
+                if (sIndex != noValue) {
                     convertTimeIndex(duration, sb, mIndex, sIndex);
-                }else{
+                } else {
                     sb.append("00");
                 }
-            }else if(sIndex != -1){
+            } else if (sIndex != noValue) {
                 sb.append("00:");
                 convertTimeIndex(duration, sb, hIndex, sIndex);
-            }else{
+            } else {
                 sb.append("00:00");
             }
-        }else if(mIndex != -1){
-            sb.append(duration.substring(ptIndex+1, mIndex))
-                .append(":");
-            if(sIndex != -1){
+        } else if (mIndex != noValue) {
+            sb.append(duration.substring(ptIndex + 1, mIndex))
+                    .append(":");
+            if (sIndex != noValue) {
                 convertTimeIndex(duration, sb, mIndex, sIndex);
-            }else{
+            } else {
                 sb.append("00");
             }
-        }else{
+        } else {
             sb.append("00:");
             convertTimeIndex(duration, sb, ptIndex, sIndex);
         }
@@ -312,9 +306,9 @@ public class DataSource {
     }
 
     public void convertTimeIndex(String duration, StringBuilder builder, int index1, int index2) {
-        if(index2-index1 == TWO_DIGIT_TIME_CHECK){
+        if (index2 - index1 == TWO_DIGIT_TIME_CHECK) {
             builder.append(duration.substring(index1 + 1, index2));
-        }else{
+        } else {
             builder.append("0")
                     .append(duration.substring(index1 + 1, index2));
         }

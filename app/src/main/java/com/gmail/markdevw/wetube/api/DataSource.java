@@ -132,12 +132,8 @@ public class DataSource {
             .enqueue(new Callback<VideoItemContainer>() {
                 @Override
                 public void onResponse(Response<VideoItemContainer> response, Retrofit retrofit) {
-                    if (response.body().getPrevPageToken() != null) {
-                        setPrevPageToken(response.body().getPrevPageToken());
-                    }
-                    if (response.body().getNextPageToken() != null) {
-                        setNextPageToken(response.body().getNextPageToken());
-                    }
+                    setPrevPageToken(response.body().getPrevPageToken());
+                    setNextPageToken(response.body().getNextPageToken());
 
                     List<Item> items = response.body().getItems();
                     int size = items.size();
@@ -159,7 +155,6 @@ public class DataSource {
                     }
                     mVideos.clear();
                     mVideos.addAll(list);
-                    //listener.onSuccess();
 
                     youTubeAPI.getVideoDuration(videoIdBuilder.toString())
                             .enqueue(new Callback<DurationContainer>() {
@@ -204,12 +199,8 @@ public class DataSource {
             .enqueue(new Callback<VideoItemContainer>() {
                 @Override
                 public void onResponse(Response<VideoItemContainer> response, Retrofit retrofit) {
-                    if(response.body().getPrevPageToken() != null){
-                        setPrevPageToken(response.body().getPrevPageToken());
-                    }
-                    if(response.body().getNextPageToken() != null){
-                        setNextPageToken(response.body().getNextPageToken());
-                    }
+                    setPrevPageToken(response.body().getPrevPageToken());
+                    setNextPageToken(response.body().getNextPageToken());
 
                     List<Item> items = response.body().getItems();
                     int size = items.size();

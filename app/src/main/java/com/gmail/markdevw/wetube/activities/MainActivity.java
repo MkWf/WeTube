@@ -273,18 +273,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem) {
-        boolean isMatchFound = false;
         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
         int size = videos.size();
         for(int i = 0; i < size; i++){
             if(videos.get(i).getId().equals(videoItem.getId())){
                 Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
-                isMatchFound = true;
-                break;
+                return;
             }
         }
 
-        if(!isMatchFound && WeTubeApplication.getSharedDataSource().getPlaylist().size() < MAX_PLAYLIST_SIZE){
+        if(WeTubeApplication.getSharedDataSource().getPlaylist().size() < MAX_PLAYLIST_SIZE){
             if(WeTubeApplication.getSharedDataSource().isSessionController()){
                 mMessageService.sendMessage(mId,
                         mMsgSplitter + "addtoplaylist" +
@@ -307,18 +305,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onMessageVideoItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id, String duration) {
-        boolean isMatchFound = false;
         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
         int size = videos.size();
         for(int i = 0; i < size; i++){
             if(videos.get(i).getId().equals(id)){
                 Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
-                isMatchFound = true;
-                break;
+                return;
             }
         }
 
-        if(!isMatchFound){
+        if(WeTubeApplication.getSharedDataSource().getPlaylist().size() < MAX_PLAYLIST_SIZE){
             if(WeTubeApplication.getSharedDataSource().isSessionController()){
                 mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
                         mMsgSplitter + "addtoplaylist" +
@@ -329,6 +325,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             }else{
                 Toast.makeText(this, "Only the controller can add videos to the playlist from chat", Toast.LENGTH_SHORT).show();
             }
+        }else{
+            Toast.makeText(this, "Max playlist size reached (50)", Toast.LENGTH_SHORT).show();
         }
     }
 

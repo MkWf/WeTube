@@ -32,6 +32,8 @@ public class DataSource {
     public interface VideoResponseListener{
         public void onSuccess();
         public void onError();
+        public void onFirstPage();
+        public void onLastPage();
     }
 
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";

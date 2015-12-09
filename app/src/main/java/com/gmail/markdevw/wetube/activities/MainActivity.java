@@ -117,6 +117,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             mHasVideoStarted, mIsAdPlaying, mIsRecoveringFromAd;
     private int mCurrentPlaylistIndex;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -251,6 +252,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox) {
+
         final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
 
         WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getNextPageToken(), new DataSource.VideoResponseListener() {
@@ -265,7 +267,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
             @Override
             public void onError() {
-                Toast.makeText(MainActivity.this, "Failed to search for " + search, Toast.LENGTH_LONG).show();
                 Toast.makeText(MainActivity.this, "Failed to search for " + search, Toast.LENGTH_LONG).show();
             }
         });

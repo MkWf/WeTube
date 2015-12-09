@@ -23,6 +23,7 @@ import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
 
 /**
  * Created by Mark on 3/26/2015.
@@ -73,6 +74,7 @@ public class DataSource {
         youTubeAPI = new Retrofit.Builder()
                 .baseUrl(context.getString(R.string.youtube_baseUrl))
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
                 .create(YouTubeAPI.class);
 

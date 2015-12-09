@@ -220,14 +220,14 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onPrevPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox, ImageButton prevPage) {
         final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
 
-        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getPrevPageToken(), this);
+        //WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getPrevPageToken(), this);
 
     }
 
     @Override
     public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox, ImageButton nextPage) {
         final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
-        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getNextPageToken(), this);
+        //WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getNextPageToken(), this);
     }
 
     @Override

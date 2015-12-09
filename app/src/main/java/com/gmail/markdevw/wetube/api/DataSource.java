@@ -31,9 +31,7 @@ public class DataSource {
 
     public interface VideoResponseListener{
         public void onSuccess();
-        public void onError();
-        public void onFirstPage();
-        public void onLastPage();
+        public void onError(String search);
     }
 
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
@@ -125,7 +123,7 @@ public class DataSource {
 
     public String getAPI_KEY() { return API_KEY; }
 
-    public void searchForVideos(String searchTerms, final VideoResponseListener listener){
+    public void searchForVideos(final String searchTerms, final VideoResponseListener listener){
         setCurrentSearch(searchTerms);
 
         mCurrentPage = 1;

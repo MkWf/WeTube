@@ -40,8 +40,8 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
     public static interface Delegate {
         public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem);
         public void onSearchButtonClicked(VideoListFragment videoListFragment, EditText search);
-        public void onPrevPageButtonClicked(VideoListFragment videoListFragment, EditText search);
-        public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText search);
+        public void onPrevPageButtonClicked(VideoListFragment videoListFragment, EditText search, ImageButton prevPage);
+        public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText search, ImageButton nextPage);
     }
 
     @Override
@@ -80,18 +80,14 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
     public void searchBarNavigation(View view){
         switch(view.getId()){
             case R.id.fragment_search_next_page:
-                mListener.onNextPageButtonClicked(VideoListFragment.this, mSearchBox);
+                mListener.onNextPageButtonClicked(VideoListFragment.this, mSearchBox, mNextPage);
                 break;
             case R.id.fragment_search_prev_page:
-                mListener.onPrevPageButtonClicked(VideoListFragment.this, mSearchBox);
+                mListener.onPrevPageButtonClicked(VideoListFragment.this, mSearchBox, mPrevPage);
                 break;
             case R.id.fragment_search_search_button:
                 WeTubeApplication.getSharedDataSource().setCurrentSearch(mSearchBox.getText().toString());
                 mListener.onSearchButtonClicked(VideoListFragment.this, mSearchBox);
-                if(!mSearchBox.getText().toString().isEmpty()){
-                    mPrevPage.setVisibility(View.VISIBLE);
-                    mNextPage.setVisibility(View.VISIBLE);
-                }
                 break;
         }
     }
@@ -99,5 +95,27 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
     @Override
     public void onItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem) {
         mListener.onVideoItemClicked(itemAdapter, videoItem);
+    }
+
+    public void firstPage(){
+        mPrevPage.setVisibility(View.VISIBLE);
+        mPrevPage.setEnabled(false);
+        mPrevPage.setAlpha(0.5f);
+
+        mNextPage.setVisibility(View.VISIBLE);
+    }
+
+    public void lastPage(){
+        mNextPage.setVisibility(View.VISIBLE);
+        mNextPage.setEnabled(false);
+        mNextPage.setAlpha(0.5f);
+    }
+
+    public void defaultPage() {
+        mPrevPage.setEnabled(true);
+        mPrevPage.setAlpha(1f);
+
+        mNextPage.setEnabled(true);
+        mNextPage.setAlpha(1f);
     }
 }

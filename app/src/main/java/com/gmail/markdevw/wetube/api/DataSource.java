@@ -200,76 +200,83 @@ public class DataSource {
                 });
     }
 
-//    public void searchForVideos(String searchTerms, String pageToken, final VideoResponseListener listener){
-//        if(pageToken == null){
-//            return;
-//        }else if(pageToken.equals(mPrevPageToken)){
-//            mCurrentPage--;
-//        } else {
-//            mCurrentPage++;
-//        }
-//
-//        youTubeAPI.getVideos(searchTerms, pageToken)
-//            .enqueue(new Callback<VideoItemContainer>() {
-//                @Override
-//                public void onResponse(Response<VideoItemContainer> response, Retrofit retrofit) {
-//                    if (response.code() == 200) {
-//                        setPrevPageToken(response.body().getPrevPageToken());
-//                        setNextPageToken(response.body().getNextPageToken());
-//
-//                        List<Item> items = response.body().getItems();
-//                        int size = items.size();
-//                        List<VideoItem> list = new ArrayList<>(size);
-//
-//                        StringBuilder videoIdBuilder = new StringBuilder(500);
-//
-//                        for (int i = 0; i < size; i++) {
-//                            VideoItem item = new VideoItem();
-//                            String id = items.get(i).getId().getVideoId();
-//                            videoIdBuilder.append(id);
-//                            if (i < size - 1) {
-//                                videoIdBuilder.append(",");
-//                            }
-//                            item.setId(id);
-//                            item.setTitle(items.get(i).getSnippet().getTitle());
-//                            item.setDescription(items.get(i).getSnippet().getDescription());
-//                            item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
-//                            list.add(item);
-//                        }
-//
-//                        mVideos.clear();
-//                        mVideos.addAll(list);
-//
-//                        youTubeAPI.getVideoDuration(videoIdBuilder.toString())
-//                                .enqueue(new Callback<DurationContainer>() {
-//                                    @Override
-//                                    public void onResponse(Response<DurationContainer> response, Retrofit retrofit) {
-//                                        if (mVideos.size() == 0) {
-//                                            return;
-//                                        }
-//                                        if (response.code() == 200) {
-//                                            List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = response.body().getItems();
-//                                            int size = items.size();
-//                                            for (int i = 0; i < size; i++) {
-//                                                mVideos.get(i).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
-//                                            }
-//                                            listener.onSuccess();
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onFailure(Throwable t) {
-//                                        Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-//                                    }
-//                                });
-//                        }
-//                    }
-//                    @Override
-//                    public void onFailure (Throwable t){
-//                        Toast.makeText(WeTubeApplication.getSharedInstance(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//            }
+    public void searchForVideos(final String searchTerms, final String pageToken, final VideoResponseListener listener) {
+        if (pageToken == null) {
+            return;
+        } else if (pageToken.equals(mPrevPageToken)) {
+            mCurrentPage--;
+        } else {
+            mCurrentPage++;
+        }
+
+        final StringBuilder videoIdBuilder = new StringBuilder(700);
+        Observable<VideoItemContainer> call = youTubeAPI.getVideos(searchTerms, pageToken);
+        call.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<VideoItemContainer>() {
+                    @Override
+                    public void onCompleted() {
+                        Observable<DurationContainer> call = youTubeAPI.getVideoDuration(videoIdBuilder.toString());
+                        call.subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Subscriber<DurationContainer>() {
+                                    @Override
+                                    public void onCompleted() {
+                                        listener.onSuccess();
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+                                    }
+
+                                    @Override
+                                    public void onNext(DurationContainer durationContainer) {
+                                        if (mVideos.size() == 0) {
+                                            return;
+                                        }
+                                        List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = durationContainer.getItems();
+                                        int size = items.size();
+                                        for (int i = 0; i < size; i++) {
+                                            mVideos.get(i).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
+                                        }
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onError(searchTerms);
+                    }
+
+                    @Override
+                    public void onNext(VideoItemContainer videoItemContainer) {
+                        setPrevPageToken(videoItemContainer.getPrevPageToken());
+                        setNextPageToken(videoItemContainer.getNextPageToken());
+
+                        List<Item> items = videoItemContainer.getItems();
+                        int size = items.size();
+
+                        List<VideoItem> list = new ArrayList<>(size);
+                        for (int i = 0; i < size; i++) {
+                            VideoItem item = new VideoItem();
+                            String id = items.get(i).getId().getVideoId();
+                            videoIdBuilder.append(id);
+                            if (i < size - 1) {
+                                videoIdBuilder.append(",");
+                            }
+                            item.setId(id);
+                            item.setTitle(items.get(i).getSnippet().getTitle());
+                            item.setDescription(items.get(i).getSnippet().getDescription());
+                            item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
+                            list.add(item);
+                        }
+
+                        mVideos.clear();
+                        mVideos.addAll(list);
+                    }
+                });
+    }
 
     public String durationStringConverter(String duration) {
         StringBuilder sb = new StringBuilder(10);

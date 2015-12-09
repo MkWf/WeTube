@@ -272,27 +272,29 @@ public class DataSource {
         mIndex = duration.indexOf("M");
         sIndex = duration.indexOf("S");
 
-        if(hIndex != -1){
+        final int noValue = -1;
+
+        if(hIndex != noValue){
             sb.append(duration.substring(ptIndex+1, hIndex))
                 .append(":");
-            if(mIndex != -1) {
+            if(mIndex != noValue) {
                 convertTimeIndex(duration, sb, hIndex, mIndex);
                 sb.append(":");
-                if(sIndex != 1){
+                if(sIndex != noValue){
                     convertTimeIndex(duration, sb, mIndex, sIndex);
                 }else{
                     sb.append("00");
                 }
-            }else if(sIndex != -1){
+            }else if(sIndex != noValue){
                 sb.append("00:");
                 convertTimeIndex(duration, sb, hIndex, sIndex);
             }else{
                 sb.append("00:00");
             }
-        }else if(mIndex != -1){
+        }else if(mIndex != noValue){
             sb.append(duration.substring(ptIndex+1, mIndex))
                 .append(":");
-            if(sIndex != -1){
+            if(sIndex != noValue){
                 convertTimeIndex(duration, sb, mIndex, sIndex);
             }else{
                 sb.append("00");

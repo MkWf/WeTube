@@ -138,6 +138,7 @@ public class DataSource {
                 .subscribe(new Subscriber<VideoItemContainer>() {
                     @Override
                     public void onCompleted() {
+                        unsubscribe();
                         Observable<DurationContainer> call = youTubeAPI.getVideoDuration(videoIdBuilder.toString());
                         call.subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -145,6 +146,7 @@ public class DataSource {
                                     @Override
                                     public void onCompleted() {
                                         listener.onSuccess();
+                                        unsubscribe();
                                     }
 
                                     @Override
@@ -216,6 +218,7 @@ public class DataSource {
                 .subscribe(new Subscriber<VideoItemContainer>() {
                     @Override
                     public void onCompleted() {
+                        unsubscribe();
                         Observable<DurationContainer> call = youTubeAPI.getVideoDuration(videoIdBuilder.toString());
                         call.subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -223,6 +226,7 @@ public class DataSource {
                                     @Override
                                     public void onCompleted() {
                                         listener.onSuccess();
+                                        unsubscribe();
                                     }
 
                                     @Override

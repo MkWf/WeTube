@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,6 +93,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     @Bind(R.id.dl_activity_main) DrawerLayout mDrawerLayout;
     @Bind(R.id.playlist_size) TextView mPlaylistSize;
     @Bind(R.id.rv_nav_activity_main) RecyclerView mPlaylistRecyclerView;
+    @Bind(R.id.fragment_search_next_page)
+    ImageButton nextPageButton;
+    @Bind(R.id.fragment_search_prev_page)
+    ImageButton prevPageButton;
 
     private final int MAX_PLAYLIST_SIZE = 50;
 

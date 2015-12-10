@@ -448,6 +448,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         Fragment f = getFragmentManager().findFragmentByTag("Video");
                         VideoListFragment vlf = (VideoListFragment) f;
                         vlf.getVideoItemAdapter().notifyDataSetChanged();
+                        vlf.getRecyclerView().scrollToPosition(0);
                     }
 
                     @Override

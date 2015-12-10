@@ -267,11 +267,19 @@ public class DataSource {
                             if (i < size - 1) {
                                 videoIdBuilder.append(",");
                             }
-                            item.setId(id);
-                            item.setTitle(items.get(i).getSnippet().getTitle());
-                            item.setDescription(items.get(i).getSnippet().getDescription());
-                            item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
-                            list.add(item);
+
+                            if(i == 0){
+                                mVideos.get(mVideos.size()-1).setId(id);
+                                mVideos.get(mVideos.size()-1).setTitle(items.get(i).getSnippet().getTitle());
+                                mVideos.get(mVideos.size()-1).setDescription(items.get(i).getSnippet().getDescription());
+                                mVideos.get(mVideos.size()-1).setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
+                            }else{
+                                item.setId(id);
+                                item.setTitle(items.get(i).getSnippet().getTitle());
+                                item.setDescription(items.get(i).getSnippet().getDescription());
+                                item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
+                                list.add(item);
+                            }
                         }
                         mVideos.addAll(list);
                     }

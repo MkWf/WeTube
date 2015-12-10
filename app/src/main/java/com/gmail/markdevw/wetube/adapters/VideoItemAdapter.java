@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -62,6 +63,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
         @Bind(R.id.video_title) TextView mTitle;
         @Bind(R.id.video_description) TextView mDescription;
         @Bind(R.id.video_duration) TextView mDuration;
+        @Bind(R.id.video_load_progress) ProgressBar progress;
 
         private VideoItem mVideoItem;
 
@@ -73,6 +75,12 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
         }
 
         void update(VideoItem videoItem) {
+            if(videoItem.getTitle() == null){
+                progress.setVisibility(View.VISIBLE);
+            }else{
+                progress.setVisibility(View.GONE);
+            }
+
             this.mVideoItem = videoItem;
 
             mTitle.setText(videoItem.getTitle());

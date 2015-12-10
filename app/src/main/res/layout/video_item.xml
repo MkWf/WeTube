@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:background="@drawable/list_selector">
 
+    <ProgressBar
+        android:id="@+id/video_load_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
     <FrameLayout
         android:id="@+id/video_image_container"
         android:layout_alignParentLeft="true"

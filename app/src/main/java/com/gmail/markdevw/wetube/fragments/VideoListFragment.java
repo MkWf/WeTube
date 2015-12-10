@@ -72,8 +72,11 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
                 totalItemCount = mLayoutManager.getItemCount();
                 lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
 
-                if (totalItemCount == lastVisibleItem) {
+                if (totalItemCount % 2 == 0 && totalItemCount == lastVisibleItem ) {
                     DataSource data = WeTubeApplication.getSharedDataSource();
+                    data.getVideos().add(new VideoItem());
+                    mVideoItemAdapter.notifyItemInserted(data.getVideos().size()-1);
+                    mRecyclerView.scrollToPosition(data.getVideos().size()-1);
                     data.searchForVideos(data.getCurrentSearch(), data.getNextPageToken(), new DataSource.VideoResponseListener() {
                         @Override
                         public void onSuccess() {

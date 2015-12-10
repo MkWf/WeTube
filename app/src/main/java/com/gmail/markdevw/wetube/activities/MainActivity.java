@@ -10,12 +10,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
@@ -116,7 +118,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private Queue<Message> mMessageQueue;
     private boolean mIsPaused, mHasYourVideoEnded, mHasTheirVideoEnded,
             mHasVideoStarted, mIsAdPlaying, mIsRecoveringFromAd;
-    private int mCurrentPlaylistIndex;
+    private int mCurrentPlaylistIndex
 
 
     @Override
@@ -433,6 +435,34 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_main, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                WeTubeApplication.getSharedDataSource().searchForVideos(query, new DataSource.VideoResponseListener() {
+                    @Override
+                    public void onSuccess() {
+                        Fragment f = getFragmentManager().findFragmentByTag("Video");
+                        VideoListFragment vlf = (VideoListFragment) f;
+                        vlf.getVideoItemAdapter().notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(String search) {
+
+                    }
+                });
+                return true;
+            }
+
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         MenuItem controller = menu.findItem(R.id.action_pass_control);
         MenuItem play = menu.findItem(R.id.action_play);

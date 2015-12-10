@@ -1129,7 +1129,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
 
                     if(mIsFullscreen){
-                        Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.TOP, 0, 0);
+                        toast.show();
                     }
                 }
             }

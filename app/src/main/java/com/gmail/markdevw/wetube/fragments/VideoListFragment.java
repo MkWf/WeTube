@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.adapters.VideoItemAdapter;
+import com.gmail.markdevw.wetube.api.DataSource;
 import com.gmail.markdevw.wetube.api.model.video.VideoItem;
 
 import butterknife.Bind;
@@ -36,6 +37,8 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
 
     private VideoItemAdapter mVideoItemAdapter;
     private Delegate mListener;
+    private LinearLayoutManager mLayoutManager;
+    private int lastVisibleItem, totalItemCount;
 
     public static interface Delegate {
         public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem);
@@ -63,9 +66,34 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
         mVideoItemAdapter = new VideoItemAdapter();
         mVideoItemAdapter.setDelegate(this);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(WeTubeApplication.getSharedInstance()));
+        mLayoutManager = new LinearLayoutManager(WeTubeApplication.getSharedInstance());
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mVideoItemAdapter);
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                totalItemCount = mLayoutManager.getItemCount();
+                lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition() + 1;
+
+                if (totalItemCount == lastVisibleItem) {
+                    DataSource data = WeTubeApplication.getSharedDataSource();
+                    data.searchForVideos(data.getCurrentSearch(), data.getNextPageToken(), new DataSource.VideoResponseListener() {
+                        @Override
+                        public void onSuccess() {
+                            mVideoItemAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onError(String search) {
+
+                        }
+                    });
+                }
+            }
+        });
 
         return view;
     }

@@ -36,7 +36,7 @@ public class DataSource {
     }
 
     private final String API_KEY = "AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
-    private final int NUMBER_OF_VIDEOS_RETURNED = 50;
+    private final int NUMBER_OF_VIDEOS_RETURNED = 20;
     private final int MAX_FRIENDS = 100;
     private static final int TWO_DIGIT_TIME_CHECK = 3;
 
@@ -236,13 +236,11 @@ public class DataSource {
 
                                     @Override
                                     public void onNext(DurationContainer durationContainer) {
-                                        if (mVideos.size() == 0) {
-                                            return;
-                                        }
                                         List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = durationContainer.getItems();
                                         int size = items.size();
+                                        int videosSize = mVideos.size() - NUMBER_OF_VIDEOS_RETURNED;
                                         for (int i = 0; i < size; i++) {
-                                            mVideos.get(i).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
+                                            mVideos.get(i+videosSize).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
                                         }
                                     }
                                 });
@@ -275,8 +273,6 @@ public class DataSource {
                             item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
                             list.add(item);
                         }
-
-                        mVideos.clear();
                         mVideos.addAll(list);
                     }
                 });

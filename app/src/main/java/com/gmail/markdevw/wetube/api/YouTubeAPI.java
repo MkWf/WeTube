@@ -12,11 +12,11 @@ import rx.Observable;
  */
 public interface YouTubeAPI {
     @GET("search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk" +
-            "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=50")
+            "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=20")
     Observable<VideoItemContainer> getVideos(@Query("q") String search);
 
     @GET("search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk" +
-            "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=50")
+            "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=20")
     Observable<VideoItemContainer> getVideos(@Query("q") String search, @Query("pageToken") String pageToken);
 
     @GET("videos?&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk&part=contentDetails&fields=items(contentDetails/duration)")

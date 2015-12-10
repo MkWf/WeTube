@@ -3,40 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:id="@+id/fragment_search_prev_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/activity_main_prev_page"
-            android:visibility="gone"/>
-
-        <EditText
-            android:id="@+id/fragment_search_search_video"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:hint="@string/activities_mainactivity_search_default_text"
-            android:layout_weight="1"
-            />
-
-        <Button
-            android:id="@+id/fragment_search_search_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/activities_mainactivity_search_button"/>
-
-        <ImageButton
-            android:id="@+id/fragment_search_next_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/activity_main_next_page"
-            android:visibility="gone"/>
-
-        </LinearLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_fragment_video_list"
         android:layout_width="match_parent"

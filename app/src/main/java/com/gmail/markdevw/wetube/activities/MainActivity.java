@@ -791,16 +791,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         VideoListFragment vlf = (VideoListFragment) f;
         vlf.getVideoItemAdapter().notifyDataSetChanged();
         vlf.getRecyclerView().scrollToPosition(0);
-
-        DataSource ds = WeTubeApplication.getSharedDataSource();
-        if(ds.getNextPageToken() == null){
-            vlf.lastPage();
-        }else if(ds.getPrevPageToken() == null){
-            vlf.firstPage();
-        }else{
-            vlf.defaultPage();
-        }
-
         mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
     }
 

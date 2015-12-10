@@ -118,7 +118,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     private Queue<Message> mMessageQueue;
     private boolean mIsPaused, mHasYourVideoEnded, mHasTheirVideoEnded,
             mHasVideoStarted, mIsAdPlaying, mIsRecoveringFromAd;
-    private int mCurrentPlaylistIndex
+    private int mCurrentPlaylistIndex;
+    private MenuItem searchViewItem;
 
 
     @Override
@@ -436,8 +437,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_main, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchViewItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -973,6 +974,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         String index = String.valueOf(mCurrentPlaylistIndex + 1);
                         mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     }else{
+                        disableSearch();
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
                         mCurrentPlaylistIndex = 0;
@@ -1038,6 +1040,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     if (mPlayerFragment.isVisible()) {
                         mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
                     } else {
+                        disableSearch();
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         mPlaylistIDs.clear();
                         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
@@ -1065,6 +1068,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mVideoList.setVisibility(View.VISIBLE);
                     mToolbar.setVisibility(View.VISIBLE);
                     mVideoChatDivider.setVisibility(View.GONE);
+                    enableSearch();
                     MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
                     mCurrentPlaylistIndex = 0;
@@ -1196,6 +1200,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         String index = String.valueOf(mCurrentPlaylistIndex + 1);
                         mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     }else{
+                        disableSearch();
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
                         mCurrentPlaylistIndex = 0;
@@ -1241,6 +1246,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     if(mPlayerFragment.isVisible()){
                         mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
                     }else{
+                        disableSearch();
                         WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
                         mPlaylistIDs.clear();
                         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
@@ -1287,6 +1293,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mVideoList.setVisibility(View.VISIBLE);
                     mToolbar.setVisibility(View.VISIBLE);
                     mVideoChatDivider.setVisibility(View.GONE);
+                    enableSearch();
                     MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
                     mCurrentPlaylistIndex = 0;
@@ -1319,5 +1326,15 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+    public void enableSearch() {
+        searchViewItem.setVisible(true);
+        searchViewItem.setEnabled(true);
+    }
+
+    public void disableSearch() {
+        searchViewItem.setVisible(false);
+        searchViewItem.setEnabled(false);
     }
 }

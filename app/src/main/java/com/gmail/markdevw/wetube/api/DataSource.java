@@ -1,6 +1,7 @@
 package com.gmail.markdevw.wetube.api;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 
 import com.gmail.markdevw.wetube.R;
@@ -43,7 +44,6 @@ public class DataSource {
     private List<VideoItem> mVideos;
     private List<UserItem> mUsers;
     private List<UserItem> mFriends;
-    private int mCurrentPage;
     private String mPrevPageToken;
     private String mNextPageToken;
     private String mCurrentSearch;
@@ -114,7 +114,6 @@ public class DataSource {
 
     public List<UserItem> getUsers() { return mUsers; }
 
-    public int getCurrentPage(){ return mCurrentPage; }
     public void setPrevPageToken(String prevPageToken){ this.mPrevPageToken = prevPageToken; }
     public void setNextPageToken(String nextPageToken) { this.mNextPageToken = nextPageToken; }
     public String getPrevPageToken() { return mPrevPageToken; }
@@ -125,14 +124,20 @@ public class DataSource {
 
     public String getAPI_KEY() { return API_KEY; }
 
-    public void searchForVideos(final String searchTerms, final VideoResponseListener listener){
-        setCurrentSearch(searchTerms);
 
-        mCurrentPage = 1;
+    /**
+     *  Searches for YouTube videos based on the search query provided
+     *
+     *
+     * @param query   The String we pass to YouTube Data API to search for videos
+     * @param listener    Listener that gets called based on the success/error of the search
+     */
+    public void searchForVideos(final String query, final VideoResponseListener listener){
+        setCurrentSearch(query);
         final StringBuilder videoIdBuilder = new StringBuilder(700);
 
 
-        Observable<VideoItemContainer> call = youTubeAPI.getVideos(searchTerms);
+        Observable<VideoItemContainer> call = youTubeAPI.getVideos(query);
         call.subscribeOn(Schedulers.newThread())
            .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<VideoItemContainer>() {
@@ -156,21 +161,14 @@ public class DataSource {
 
                                     @Override
                                     public void onNext(DurationContainer durationContainer) {
-                                        if (mVideos.size() == 0) {
-                                            return;
-                                        }
-                                        List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = durationContainer.getItems();
-                                        int size = items.size();
-                                        for (int i = 0; i < size; i++) {
-                                            mVideos.get(i).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
-                                        }
+                                        addDurationsToItems(durationContainer);
                                     }
                                 });
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        listener.onError(searchTerms);
+                        listener.onError(query);
                     }
 
                     @Override
@@ -183,36 +181,30 @@ public class DataSource {
 
                         List<VideoItem> list = new ArrayList<>(size);
                         for (int i = 0; i < size; i++) {
-                            VideoItem item = new VideoItem();
-                            String id = items.get(i).getId().getVideoId();
-                            videoIdBuilder.append(id);
-                            if (i < size - 1) {
-                                videoIdBuilder.append(",");
-                            }
-                            item.setId(id);
-                            item.setTitle(items.get(i).getSnippet().getTitle());
-                            item.setDescription(items.get(i).getSnippet().getDescription());
-                            item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
-                            list.add(item);
+                            buildDurationSearchString(items, i, videoIdBuilder);
+                            list.add(createVideoItem(items, i));
                         }
-
                         mVideos.clear();
                         mVideos.addAll(list);
                     }
                 });
     }
 
-    public void searchForVideos(final String searchTerms, final String pageToken, final VideoResponseListener listener) {
+    /**
+     *  Searches for videos beyond the initial search result using page tokens
+     *
+     * @param query   The String we pass to YouTube Data API to search for videos
+     * @param pageToken    Used to get the next page in videos
+     * @param listener    Listener that gets called based on the success/error of the search
+     */
+
+    public void searchForVideos(final String query, final String pageToken, final VideoResponseListener listener) {
         if (pageToken == null) {
             return;
-        } else if (pageToken.equals(mPrevPageToken)) {
-            mCurrentPage--;
-        } else {
-            mCurrentPage++;
         }
 
         final StringBuilder videoIdBuilder = new StringBuilder(700);
-        Observable<VideoItemContainer> call = youTubeAPI.getVideos(searchTerms, pageToken);
+        Observable<VideoItemContainer> call = youTubeAPI.getVideos(query, pageToken);
         call.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<VideoItemContainer>() {
@@ -236,19 +228,14 @@ public class DataSource {
 
                                     @Override
                                     public void onNext(DurationContainer durationContainer) {
-                                        List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = durationContainer.getItems();
-                                        int size = items.size();
-                                        int videosSize = mVideos.size() - NUMBER_OF_VIDEOS_RETURNED;
-                                        for (int i = 0; i < size; i++) {
-                                            mVideos.get(i+videosSize).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
-                                        }
+                                        addDurationsToItems(durationContainer);
                                     }
                                 });
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        listener.onError(searchTerms);
+                        listener.onError(query);
                     }
 
                     @Override
@@ -261,23 +248,12 @@ public class DataSource {
 
                         List<VideoItem> list = new ArrayList<>(size);
                         for (int i = 0; i < size; i++) {
-                            VideoItem item = new VideoItem();
-                            String id = items.get(i).getId().getVideoId();
-                            videoIdBuilder.append(id);
-                            if (i < size - 1) {
-                                videoIdBuilder.append(",");
-                            }
+                            buildDurationSearchString(items, i, videoIdBuilder);
+
                             if(i == 0){
-                                mVideos.get(mVideos.size()-1).setId(id);
-                                mVideos.get(mVideos.size()-1).setTitle(items.get(i).getSnippet().getTitle());
-                                mVideos.get(mVideos.size()-1).setDescription(items.get(i).getSnippet().getDescription());
-                                mVideos.get(mVideos.size()-1).setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
+                                fillOutDummyItem(items, i);
                             }else{
-                                item.setId(id);
-                                item.setTitle(items.get(i).getSnippet().getTitle());
-                                item.setDescription(items.get(i).getSnippet().getDescription());
-                                item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
-                                list.add(item);
+                                list.add(createVideoItem(items, i));
                             }
                         }
                         mVideos.addAll(list);
@@ -286,7 +262,76 @@ public class DataSource {
     }
 
     /**
-     *  This method converts YouTube Data API durations for videos into a normal format
+     * Takes a DurationContainer and sets the duration for VideoItems that have been already added
+     *
+     * Each video search returns NUMBER_OF_VIDEOS_RETURNED. After we make the second call to get the
+     * duration of each video, we need to back in the list by NUMBER_OF_VIDEOS_RETURNED and work our
+     * way to the end filling out the setDuration() for each newly added VideoItem
+     *
+     * @param response  Response object
+     */
+    public void addDurationsToItems(DurationContainer response) {
+        List<com.gmail.markdevw.wetube.api.model.video.duration_response.Item> items = response.getItems();
+        int size = items.size();
+        int videosSize = mVideos.size() - NUMBER_OF_VIDEOS_RETURNED;
+        for (int i = 0; i < size; i++) {
+            mVideos.get(i+videosSize).setDuration(durationStringConverter(items.get(i).getContentDetails().getDuration()));
+        }
+    }
+
+
+    /**  Builds a String of video ids that are separated by commas that can be passed to YouTube Data API to fetch video durations.
+     *
+     *
+     * @param response    Response items returned from YouTube Data API
+     * @param index       The current index in the response
+     * @param videoIdBuilder   StringBuilder that puts together our ids separated by commas
+     */
+    public void buildDurationSearchString(List<Item> response, int index, StringBuilder videoIdBuilder) {
+        String id = response.get(index).getId().getVideoId();
+        videoIdBuilder.append(id);
+        if (index < response.size() - 1) {
+            videoIdBuilder.append(",");
+        }
+    }
+
+    /**
+     *  Creates a new VideoItem using the response data
+     *
+     * @param response   Response items returned from YouTube Data API
+     * @param index    Index in response list
+     * @return  Returns a new VideoItem to be added to a list
+     */
+    @NonNull
+    public VideoItem createVideoItem(List<Item> response, int index) {
+        VideoItem item = new VideoItem();
+        item.setId(response.get(index).getId().getVideoId());
+        item.setTitle(response.get(index).getSnippet().getTitle());
+        item.setDescription(response.get(index).getSnippet().getDescription());
+        item.setThumbnailURL(response.get(index).getSnippet().getThumbnails().getDefault().getUrl());
+        return item;
+    }
+
+    /**
+     *  Adds data to a Dummy item that was inserted at the start of a paged search
+     *
+     *  To achieve the result where the Dummy item turns into a real item with data worth displaying,
+     *  rather than creating a new VideoItem, we insert data into the Dummy item to trigger the ProgressDialog
+     *  to disappear. Its visibility is toggled off by the addition of data in its adapter.
+     *
+     *
+     * @param response   Response items returned from YouTube Data API
+     * @param index   Index in the list
+     */
+    public void fillOutDummyItem(List<Item> response, int index) {
+        mVideos.get(mVideos.size() - 1).setId(response.get(index).getId().getVideoId());
+        mVideos.get(mVideos.size() - 1).setTitle(response.get(index).getSnippet().getTitle());
+        mVideos.get(mVideos.size() - 1).setDescription(response.get(index).getSnippet().getDescription());
+        mVideos.get(mVideos.size() - 1).setThumbnailURL(response.get(index).getSnippet().getThumbnails().getDefault().getUrl());
+    }
+
+    /**
+     *  Converts YouTube Data API durations for videos into a normal format
      *
      *  All durations begin with 'PT' and then the time follows.
      *  Examples:
@@ -340,7 +385,7 @@ public class DataSource {
     }
 
     /**
-     *  A helper method for durationStringConverter(String duration) that assists in converting
+     *  Helper method for durationStringConverter(String duration) that assists in converting
      *  hours, minutes, and seconds.
      *
      *  There can only ever be a 2 or 3 index difference between H, M, S.

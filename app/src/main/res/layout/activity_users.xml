@@ -24,9 +24,8 @@
 
             <EditText
                 android:id="@+id/activity_users_search"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_weight="1"
                 android:hint="@string/activities_usersactivity_user_search_default_text"/>
 
             <Button
@@ -77,19 +76,19 @@
             android:background="@color/white">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/activities_usersactivity_nav_friends_title"
-                android:textSize="34sp"
-                android:paddingLeft="40dp"
-                android:layout_weight="1"
+                android:textSize="28sp"
+                android:paddingLeft="20dp"
+                android:layout_weight="2"
                 android:textStyle="bold"/>
 
             <Spinner
                 android:id="@+id/activity_users_nav_friends_sort"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@android:color/holo_green_light"/>
+                android:layout_weight="1" />
 
          </LinearLayout>
 

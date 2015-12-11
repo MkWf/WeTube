@@ -267,7 +267,6 @@ public class DataSource {
                             if (i < size - 1) {
                                 videoIdBuilder.append(",");
                             }
-
                             if(i == 0){
                                 mVideos.get(mVideos.size()-1).setId(id);
                                 mVideos.get(mVideos.size()-1).setTitle(items.get(i).getSnippet().getTitle());
@@ -286,6 +285,17 @@ public class DataSource {
                 });
     }
 
+    /**
+     *  This method converts YouTube Data API durations for videos into a normal format
+     *
+     *  All durations begin with 'PT' and then the time follows.
+     *  Examples:
+     *      PT1H1M -> 1:01:00
+     *      PT13M15S -> 13:15
+     *
+     * @param duration The String duration provided by YouTube Data API for a specific video
+     * @return A string that has been converted to a standard video length format
+     */
     public String durationStringConverter(String duration) {
         StringBuilder sb = new StringBuilder(10);
 
@@ -329,12 +339,27 @@ public class DataSource {
         return sb.toString();
     }
 
-    public void convertTimeIndex(String duration, StringBuilder builder, int index1, int index2) {
-        if (index2 - index1 == TWO_DIGIT_TIME_CHECK) {
-            builder.append(duration.substring(index1 + 1, index2));
+    /**
+     *  A helper method for durationStringConverter(String duration) that assists in converting
+     *  hours, minutes, and seconds.
+     *
+     *  There can only ever be a 2 or 3 index difference between H, M, S.
+     *  Example: PT1H1M15S
+     *  There's a 2 index difference between H and M, but a 3 index difference between M and S.
+     *  We use TWO_DIGIT_TIME_CHECK to determine whether we need to append a 0 in front or not, so
+     *  we don't have a converted time that looks like 1:1:15, but rather 1:01:15.
+     *
+     * @param duration  The String duration provided by YouTube Data API for a specific video
+     * @param builder  StringBuilder which creates the converted string
+     * @param startIndex   The starting index for the time we're looking for
+     * @param endIndex  The ending index for the time we're looking for
+     */
+    public void convertTimeIndex(String duration, StringBuilder builder, int startIndex, int endIndex) {
+        if (endIndex - startIndex == TWO_DIGIT_TIME_CHECK) {
+            builder.append(duration.substring(startIndex + 1, endIndex));
         } else {
             builder.append("0")
-                    .append(duration.substring(index1 + 1, index2));
+                    .append(duration.substring(startIndex + 1, endIndex));
         }
     }
 }

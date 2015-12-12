@@ -120,6 +120,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             mHasVideoStarted, mIsAdPlaying, mIsRecoveringFromAd;
     private int mCurrentPlaylistIndex;
     private MenuItem searchViewItem;
+    private List<VideoItem> pendingPlaylistAdditions = new ArrayList<>(10);
 
 
     @Override
@@ -234,6 +235,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem) {
+        if(pendingPlaylistAdditions.contains(videoItem)){
+            return;
+        }
+
         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
         int size = videos.size();
         for(int i = 0; i < size; i++){
@@ -245,6 +250,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         if(WeTubeApplication.getSharedDataSource().getPlaylist().size() < MAX_PLAYLIST_SIZE){
             if(WeTubeApplication.getSharedDataSource().isSessionController()){
+                pendingPlaylistAdditions.add(videoItem);
                 mMessageService.sendMessage(mId,
                         mMsgSplitter + "addtoplaylist" +
                         mMsgSplitter + videoItem.getTitle() +
@@ -266,8 +272,15 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onMessageVideoItemClicked(MessageItemAdapter itemAdapter, String title, String thumbnail, String id, String duration) {
+        int size = pendingPlaylistAdditions.size();
+        for(int i = 0; i < size; i++){
+            if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
+                return;
+            }
+        }
+
         List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-        int size = videos.size();
+        size = videos.size();
         for(int i = 0; i < size; i++){
             if(videos.get(i).getId().equals(id)){
                 Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
@@ -275,6 +288,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             }
         }
 
+        VideoItem item = new VideoItem();
+        item.setTitle(title);
+        pendingPlaylistAdditions.add(item);
         if(WeTubeApplication.getSharedDataSource().getPlaylist().size() < MAX_PLAYLIST_SIZE){
             if(WeTubeApplication.getSharedDataSource().isSessionController()){
                 mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
@@ -934,6 +950,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
                     mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     mPlaylistItemAdapter.notifyDataSetChanged();
+
+                    int size = pendingPlaylistAdditions.size();
+                    for(int i = 0; i < size; i++){
+                        if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
+                            pendingPlaylistAdditions.remove(i);
+                        }
+                    }
                 } else if (msg.startsWith(mMsgSplitter + "linkedvideo")) {
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                     mMessageItemAdapter.notifyDataSetChanged();
@@ -1163,6 +1186,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
                     mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
                     mPlaylistItemAdapter.notifyDataSetChanged();
+
+                    int size = pendingPlaylistAdditions.size();
+                    for(int i = 0; i < size; i++){
+                        if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
+                            pendingPlaylistAdditions.remove(i);
+                        }
+                    }
                 }else if(msg.startsWith(mMsgSplitter + "linkedvideo")){
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                     mMessageItemAdapter.notifyDataSetChanged();

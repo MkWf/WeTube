@@ -221,6 +221,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         if(resultCode == 0){
             finish();
         }else{
+            toolbar.setTitle(ParseUser.getCurrentUser().getUsername());
             drawerLayout.setVisibility(View.VISIBLE);
             mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
             mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
@@ -270,6 +271,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void loginSuccess() {
+        toolbar.setTitle(ParseUser.getCurrentUser().getUsername());
+        
         mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
         mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
         startService(mMessageServiceIntent);

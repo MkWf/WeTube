@@ -402,10 +402,12 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             mChatbar.setVisibility(View.VISIBLE);
             mToolbar.setVisibility(View.VISIBLE);
         } else {
-            mIsFullscreen = true;
-            setLayoutSize(mPlayerFragment.getView(), MATCH_PARENT, MATCH_PARENT);
-            mChatbar.setVisibility(View.GONE);
-            mToolbar.setVisibility(View.GONE);
+            if(mPlayerFragment.isVisible()){
+                mIsFullscreen = true;
+                setLayoutSize(mPlayerFragment.getView(), MATCH_PARENT, MATCH_PARENT);
+                mChatbar.setVisibility(View.GONE);
+                mToolbar.setVisibility(View.GONE);
+            }
         }
     }
 

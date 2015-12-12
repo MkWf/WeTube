@@ -93,7 +93,9 @@ public class VideoItemAdapter extends RecyclerView.Adapter<VideoItemAdapter.Item
 
         @Override
         public void onClick(View view) {
-            getDelegate().onItemClicked(VideoItemAdapter.this, mVideoItem);
+            if(mVideoItem.getTitle() != null){
+                getDelegate().onItemClicked(VideoItemAdapter.this, mVideoItem);
+            }
         }
     }
 

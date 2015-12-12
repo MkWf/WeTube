@@ -11,8 +11,8 @@
         android:textStyle="bold"
         android:text="@string/activities_usersactivity_dialog_user_profile_title"
         android:layout_marginLeft="10dp"
-        android:layout_weight="1"
         android:layout_marginTop="10dp"
+        android:layout_marginRight="26dp"
         android:layout_gravity="center"/>
 
     <ImageButton
@@ -20,7 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:src="@drawable/category_add"
+        android:src="@drawable/tag_add"
+        android:background="@color/green"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="6dp"
         android:layout_gravity="center"/>
 
     <ImageButton
@@ -29,7 +32,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="20dp"
-        android:src="@drawable/category_minus"
+        android:src="@drawable/tag_minus"
+        android:background="@color/red"
+        android:layout_marginBottom="6dp"
         android:layout_gravity="center"/>
 
 </LinearLayout>

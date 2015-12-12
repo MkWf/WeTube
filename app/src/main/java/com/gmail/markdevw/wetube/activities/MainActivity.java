@@ -442,20 +442,25 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                WeTubeApplication.getSharedDataSource().searchForVideos(query, new DataSource.VideoResponseListener() {
-                    @Override
-                    public void onSuccess() {
-                        Fragment f = getFragmentManager().findFragmentByTag("Video");
-                        VideoListFragment vlf = (VideoListFragment) f;
-                        vlf.getVideoItemAdapter().notifyDataSetChanged();
-                        vlf.getRecyclerView().scrollToPosition(0);
-                    }
+                if(query.isEmpty()){
+                    Toast.makeText(MainActivity.this, "Enter a search keyword first", Toast.LENGTH_LONG).show();
+                }else{
+                    mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "Started search for " + query.toUpperCase() + "...");
+                    WeTubeApplication.getSharedDataSource().searchForVideos(query, new DataSource.VideoResponseListener() {
+                        @Override
+                        public void onSuccess() {
+                            Fragment f = getFragmentManager().findFragmentByTag("Video");
+                            VideoListFragment vlf = (VideoListFragment) f;
+                            vlf.getVideoItemAdapter().notifyDataSetChanged();
+                            vlf.getRecyclerView().scrollToPosition(0);
+                        }
 
-                    @Override
-                    public void onError(String search) {
+                        @Override
+                        public void onError(String search) {
 
-                    }
-                });
+                        }
+                    });
+                }
                 return true;
             }
 

@@ -439,6 +439,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         searchViewItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
+        searchView.setQueryHint(getString(R.string.search_youtube));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -467,6 +468,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
                 return false;
             }
         });

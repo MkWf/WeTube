@@ -973,12 +973,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +
                             WeTubeApplication.getSharedDataSource().getPlaylist().size());
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_pause))) {
-                    try{
-                        mYouTubePlayer.pause();
-                    }catch(NullPointerException e){
-
-                    }
-
+                    mYouTubePlayer.pause();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_play))) {
                     mYouTubePlayer.play();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_seek))) {
@@ -1252,7 +1247,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
         String index = msgSplit.get(2);
         int ind = Integer.parseInt(index);
-        updatePlaylistIndex(ind);
 
         List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
         if(list.size() > 0){
@@ -1267,6 +1261,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if (mPlaylistIDs.size() > 0) {
             mPlaylistIDs.remove(ind);
         }
+
+        updatePlaylistIndex(ind);
     }
 
     /**

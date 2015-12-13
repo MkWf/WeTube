@@ -209,31 +209,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     @Override
-    public void onSearchButtonClicked(VideoListFragment videoListFragment, EditText searchBox) {
-        final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
-
-        if(search.isEmpty()){
-            Toast.makeText(this, "Enter a search keyword first", Toast.LENGTH_LONG).show();
-        }else{
-            mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "Started search for " + search.toUpperCase() + "...");
-            WeTubeApplication.getSharedDataSource().searchForVideos(search, this);
-        }
-    }
-
-    @Override
-    public void onPrevPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox, ImageButton prevPage) {
-        final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
-        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getPrevPageToken(), this);
-
-    }
-
-    @Override
-    public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox, ImageButton nextPage) {
-        final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
-        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getNextPageToken(), this);
-    }
-
-    @Override
     public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem) {
         if(pendingPlaylistAdditions.contains(videoItem)){
             return;

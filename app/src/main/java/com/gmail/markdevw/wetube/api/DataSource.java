@@ -285,7 +285,18 @@ public class DataSource {
                     }
                 });
     }
-
+    
+    /**
+     *  Converts YouTube Data API durations for videos into a normal format
+     *
+     *  All durations begin with 'PT' and then the time follows.
+     *  Examples:
+     *      PT1H1M -> 1:01:00
+     *      PT13M15S -> 13:15
+     *
+     * @param duration The String duration provided by YouTube Data API for a specific video
+     * @return A string that has been converted to a standard video length format
+     */
     public String durationStringConverter(String duration) {
         StringBuilder sb = new StringBuilder(10);
 
@@ -328,7 +339,7 @@ public class DataSource {
         }
         return sb.toString();
     }
-    
+
     /**
      *  Helper method for durationStringConverter(String duration) that assists in converting
      *  hours, minutes, and seconds.

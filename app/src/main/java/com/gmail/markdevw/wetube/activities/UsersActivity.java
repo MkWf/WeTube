@@ -886,7 +886,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                            WeTubeUser user = (WeTubeUser) parseUsers.get(0);
                            if (user.getLoggedStatus() && !user.getSessionStatus()) {
                                mMessageService.sendMessage(mClickedUser.getId(), mMsgSplitter
-                                       + getString(R.string.sinch_startsession)
+                                       + getString(R.string.sinch_sessionStart)
                                        + mMsgSplitter
                                        + ParseUser.getCurrentUser().getUsername()
                                        + mMsgSplitter
@@ -911,7 +911,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             case R.id.popup_add :
                 if(WeTubeApplication.getSharedDataSource().getFriends().size() < WeTubeApplication.getSharedDataSource().getMaxFriends()){
                     mMessageService.sendMessage(mClickedUser.getId(), mMsgSplitter
-                            + getString(R.string.sinch_friendadd)
+                            + getString(R.string.sinch_friendAdd)
                             + mMsgSplitter + ParseUser.getCurrentUser().getUsername()
                             + mMsgSplitter
                             + ParseUser.getCurrentUser().getObjectId());
@@ -1423,7 +1423,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 final String id = user.getId();
                 if(which == -1){
                     mMessageService.sendMessage(id, mMsgSplitter
-                            + getString(R.string.sinch_friendfull)
+                            + getString(R.string.sinch_friendFull)
                             + mMsgSplitter
                             + ParseUser.getCurrentUser().getUsername());
                 }else if(which == -2){
@@ -1458,7 +1458,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                                 WeTubeUser recip = (WeTubeUser) list.get(0);
                                 if (!recip.getSessionStatus() && recip.getLoggedStatus()) {
                                     mMessageService.sendMessage(id, mMsgSplitter
-                                            + getString(R.string.sinch_sessionaccept)
+                                            + getString(R.string.sinch_sessionAccept)
                                             + mMsgSplitter
                                             + ParseUser.getCurrentUser().getUsername()
                                             + mMsgSplitter
@@ -1487,7 +1487,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     });
                 } else if(which == -2){
                     mMessageService.sendMessage(id, mMsgSplitter
-                            + getString(R.string.sinch_sessiondecline)
+                            + getString(R.string.sinch_sessionDecline)
                             + mMsgSplitter
                             + ParseUser.getCurrentUser().getUsername());
                 } else if(which == -3){
@@ -1505,14 +1505,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 if(which == -1){
                     final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                     mMessageService.sendMessage(id, mMsgSplitter
-                            + getString(R.string.sinch_friendaccept)
+                            + getString(R.string.sinch_friendAccept)
                             + mMsgSplitter
                             + user.getUsername()
                             + mMsgSplitter
                             + user.getObjectId());
                 }else if(which == -2){
                     mMessageService.sendMessage(id, mMsgSplitter
-                            + getString(R.string.sinch_frienddecline)
+                            + getString(R.string.sinch_friendDecline)
                             + mMsgSplitter
                             + ParseUser.getCurrentUser().getUsername());
                 }else if(which == -3){
@@ -1595,19 +1595,19 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         @Override
         public void onMessageFailed(MessageClient client, Message message, MessageFailureInfo failureInfo) {
             String msg = mMessages.get(failureInfo.getMessageId());
-            if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendadd))) {
+            if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendAdd))) {
                 ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, getString(R.string.activities_usersactivity_toast_friend_request_fail_partial1) + name, Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendaccept))){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendAccept))){
                 ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, getString(R.string.activities_usersactivity_toast_friend_request_fail_partial2) + name, Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_startsession))){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionStart))){
                 ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, getString(R.string.activities_usersactivity_toast_session_request_fail_partial1) + name, Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionaccept))){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionAccept))){
                 ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String name = msgSplit.get(1);
                 Toast.makeText(UsersActivity.this, getString(R.string.activities_usersactivity_toast_session_start_fail_partial1) + name, Toast.LENGTH_LONG).show();
@@ -1643,7 +1643,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             String msg = mMessages.get(deliveryInfo.getMessageId());
             if(msg != null){
                 ArrayList<String> message = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendaccept))){
+                if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendAccept))){
                     WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()+1);
                     final WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
 
@@ -1680,7 +1680,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
                         }
                     });
-                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionaccept))){
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionAccept))){
                     Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                     startActivity(intent);
                 }
@@ -1697,7 +1697,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             Message message = mMessageQueue.poll();
             ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
 
-            if (msg.get(1).equals(getString(R.string.sinch_startsession))) {
+            if (msg.get(1).equals(getString(R.string.sinch_sessionStart))) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
 
@@ -1711,7 +1711,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         .create();
                 showDialog();
 
-            } else if (msg.get(1).equals(getString(R.string.sinch_sessionaccept))) {
+            } else if (msg.get(1).equals(getString(R.string.sinch_sessionAccept))) {
                 WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                 user.setSessionStatus(true);
                 user.saveInBackground();
@@ -1720,10 +1720,10 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                 WeTubeApplication.getSharedDataSource().setCurrentRecipient(new UserItem(msg.get(2), msg.get(3)));
                 Intent intent = new Intent(WeTubeApplication.getSharedInstance(), MainActivity.class);
                 startActivity(intent);
-            } else if (msg.get(1).equals(getString(R.string.sinch_sessiondecline))) {
+            } else if (msg.get(1).equals(getString(R.string.sinch_sessionDecline))) {
                 String name = msg.get(2);
                 createOkDialog(name + getString(R.string.activities_usersactivity_dialog_session_request_decline));
-            } else if (msg.get(1).equals(getString(R.string.sinch_friendadd))) {
+            } else if (msg.get(1).equals(getString(R.string.sinch_friendAdd))) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
 
@@ -1747,13 +1747,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                             .create();
                     showDialog();
                 }
-            } else if (msg.get(1).equals(getString(R.string.sinch_frienddecline))) {
+            } else if (msg.get(1).equals(getString(R.string.sinch_friendDecline))) {
                 String name = msg.get(2);
                  createOkDialog(name + getString(R.string.activities_usersactivity_dialog_friend_request_decline_partial));
-            } else if (msg.get(1).equals(getString(R.string.sinch_friendfull))) {
+            } else if (msg.get(1).equals(getString(R.string.sinch_friendFull))) {
                 String name = msg.get(2);
                 createOkDialog(name + getString(R.string.activities_usersactivity_dialog_friend_list_full));
-            } else if (msg.get(1).equals(getString(R.string.sinch_friendaccept))) {
+            } else if (msg.get(1).equals(getString(R.string.sinch_friendAccept))) {
                 WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()+1);
                 final String name = msg.get(2);
                 final String id = msg.get(3);
@@ -1784,7 +1784,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                         }
                     }
                 });
-            } else if (msg.get(1).equals(getString(R.string.sinch_friendremove))) {
+            } else if (msg.get(1).equals(getString(R.string.sinch_friendRemove))) {
                 WeTubeApplication.getSharedDataSource().setFriendsSize(WeTubeApplication.getSharedDataSource().getFriendsSize()-1);
                 final String id = msg.get(3);
 

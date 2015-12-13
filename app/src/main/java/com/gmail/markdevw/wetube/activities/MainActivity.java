@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,7 +28,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -1342,11 +1340,19 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
 
+    /**
+     * When a user transitions from video play to video search, the SearchView menu item
+     * returns to the toolbar
+     */
     public void enableSearch() {
         searchViewItem.setVisible(true);
         searchViewItem.setEnabled(true);
     }
 
+    /**
+     * When a user transitions from video search to video play, the SearchView menu item
+     * is no longer used
+     */
     public void disableSearch() {
         searchViewItem.setVisible(false);
         searchViewItem.setEnabled(false);

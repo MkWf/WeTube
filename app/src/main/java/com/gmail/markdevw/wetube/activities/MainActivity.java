@@ -1335,6 +1335,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         for(int i = 0; i < size; i++){
             if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
                 pendingPlaylistAdditions.remove(i);
+                size -= 1;
             }
         }
     }

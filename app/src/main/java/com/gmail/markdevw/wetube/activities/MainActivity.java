@@ -1310,8 +1310,14 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
 
-    public void addVideoToPlaylist(String msg) {
-        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
+    /**
+     * When the session controller clicks on a video to add to the playlist, a message is created that stores
+     * all the information necessary to create a new PlaylistItem and sent to the other user.
+     *
+     * @param message
+     */
+    public void addVideoToPlaylist(String message) {
+        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
         String title = msgSplit.get(2);
         String thumbnail = msgSplit.get(3);
         String id = msgSplit.get(4);

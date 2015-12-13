@@ -921,7 +921,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 } else if(msg.startsWith(mMsgSplitter + "passcontroller")){
                     passController(true);
                 } else if(msg.startsWith(mMsgSplitter + "playliststart")){
-                    startVideoPlaylist();
+                    startVideoPlayback();
                 }else if(msg.startsWith(mMsgSplitter + "playlistnext")){
                     WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
                     mCurrentPlaylistIndex++;
@@ -1061,7 +1061,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + "passcontroller")){
                     passController(false);
                 }else if(msg.startsWith(mMsgSplitter + "playliststart")) {
-                    startVideoPlaylist();
+                    startVideoPlayback();
                 }else if(msg.startsWith(mMsgSplitter + "playlistindex")) {
                     ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);
@@ -1148,7 +1148,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
 
-    public void startVideoPlaylist() {
+    /**
+     * Performs all the actions necessary to take the user from video search to watching videos
+     */
+    public void startVideoPlayback() {
         if(WeTubeApplication.getSharedDataSource().isPlayerVisible()){
             updatePlaylistForVideoPlayback();
         }else{
@@ -1181,7 +1184,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     /**
-     * Performs the necessary actions needed to go from searching videos to watching videos.
+     * Hides the video search list and displays the YouTube player
      */
     public void videoSearchToVideoPlayTransition() {
         getFragmentManager()

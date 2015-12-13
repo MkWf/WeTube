@@ -1251,15 +1251,23 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
 
-
+    /**
+     *
+     *
+     * After removing the PlaylistItem, the video ids that are passed to the YouTube Player to
+     * create a playlist must also be updated. The playlist counter is also updated.
+     *
+     * @param message  Message sent/received to delete a specific item in the playlist
+     */
     public void removeItemFromPlaylist(String message) {
         ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
         String index = msgSplit.get(2);
-        int i = Integer.parseInt(index);
+        int ind = Integer.parseInt(index);
+        updatePlaylistIndex(ind);
 
-        if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
-            WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
-            List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
+        List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
+        if(list.size() > 0){
+            list.remove(ind);
             int size = list.size();
             for(int j = 0; j < size; j++){
                 list.get(j).setIndex(j+1);
@@ -1268,15 +1276,34 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         mPlaylistItemAdapter.notifyDataSetChanged();
 
         if(mPlaylistIDs.size() > 0){
-            mPlaylistIDs.remove(Integer.parseInt(index));
+            mPlaylistIDs.remove(ind);
         }
-        
-        int item = mCurrentPlaylistIndex + 1;
-        if(i < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
+    }
+
+    /**
+     * Updates the Playlist text based on the index of the removed item and how it relates to
+     * the position of the current playlist index.
+     *
+     * Example:  The current playlist text is "7/10", meaning its on the 7th video out of a total of 10 videos
+     * in the playlist.
+     *
+     * There are 3 scenarios to consider:
+     *      1)indexRemoved has a lower index than current playlist index
+     *          7/10 -> 6/9  and mCurrentPlaylistIndex goes from 7 to 6
+     *      2)indexRemoved has a higher index than current playlist index
+     *          7/10 -> 7/9 and mCurrentPlaylistIndex is not effected
+     *      3)indexRemoved is the current playlist index
+     *          7/10 -> 0/9 since there's no longer a current index until the user selects a new video
+     *
+     * @param indexRemoved  The index of the PlaylistItem that is being removed
+     */
+    public void updatePlaylistIndex(int indexRemoved) {
+        int index = mCurrentPlaylistIndex + 1;
+        if(indexRemoved < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
             --mCurrentPlaylistIndex;
-            mPlaylistSize.setText(item + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-        }else if(i > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-            mPlaylistSize.setText(item + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+            mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        }else if(indexRemoved > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
+            mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
         }else{
             mCurrentPlaylistIndex = 0;
             mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +

@@ -11,14 +11,22 @@ import rx.Observable;
  * Created by Mark on 12/6/2015.
  */
 public interface YouTubeAPI {
-    @GET("search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk" +
-            "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=20")
+    String key = "&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk";
+
+    String searchPart = "search?part=id,snippet";
+    String type = "&type=video";
+    String searchFields = "&fields=nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)";
+    String maxResults = "&maxResults=20";
+
+    String videosPart = "videos?&part=contentDetails";
+    String videosFields = "&fields=items(contentDetails/duration)";
+
+    @GET(searchPart + type + searchFields + maxResults + key)
     Observable<VideoItemContainer> getVideos(@Query("q") String search);
 
-    @GET("search?part=id,snippet&type=video&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk" +
-            "&fields=prevPageToken,nextPageToken,items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)&maxResults=20")
+    @GET(searchPart + type + searchFields + maxResults + key)
     Observable<VideoItemContainer> getVideos(@Query("q") String search, @Query("pageToken") String pageToken);
 
-    @GET("videos?&key=AIzaSyDqalWrQoW2KoHoYLoyKl-FhncIQd2C3Rk&part=contentDetails&fields=items(contentDetails/duration)")
+    @GET(videosPart + videosFields + key)
     Observable<DurationContainer> getVideoDuration(@Query("id") String ids);
 }

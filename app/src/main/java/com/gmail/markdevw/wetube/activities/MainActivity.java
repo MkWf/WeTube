@@ -917,33 +917,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 } else if (msg.startsWith(mMsgSplitter + "linkedvideo")) {
                     addMessageToChat(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 } else if (msg.startsWith(mMsgSplitter + "deleteitemplaylist")) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int i = Integer.parseInt(index);
-                    if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
-                        WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
-                        List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = list.size();
-                        for(int j = 0; j < size; j++){
-                            list.get(j).setIndex(j+1);
-                        }
-                    }
-                    if(mPlaylistIDs.size() > 0){
-                        mPlaylistIDs.remove(Integer.parseInt(index));
-                    }
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int item = mCurrentPlaylistIndex + 1;
-
-                    if(i < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        --mCurrentPlaylistIndex;
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else if(i > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else{
-                        mCurrentPlaylistIndex = 0;
-                        mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }
+                    removeItemFromPlaylist(msg);
                 } else if(msg.startsWith(mMsgSplitter + "passcontroller")){
                     WeTubeApplication.getSharedDataSource().setSessionController(true);
                     invalidateOptionsMenu();
@@ -1134,32 +1108,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + "linkedvideo")){
                     addMessageToChat(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                 }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int i = Integer.parseInt(index);
-                    if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
-                        WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
-                        List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = list.size();
-                        for(int j = 0; j < size; j++){
-                            list.get(j).setIndex(j+1);
-                        }
-                    }
-                    if(mPlaylistIDs.size() > 0){
-                        mPlaylistIDs.remove(Integer.parseInt(index));
-                    }
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int item = mCurrentPlaylistIndex + 1;
-                    if(i < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        --mCurrentPlaylistIndex;
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else if(i > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else{
-                        mCurrentPlaylistIndex = 0;
-                        mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }
+                    removeItemFromPlaylist(msg);
                 }else if(msg.startsWith(mMsgSplitter + "passcontroller")){
                     WeTubeApplication.getSharedDataSource().setSessionController(false);
                     invalidateOptionsMenu();
@@ -1300,6 +1249,39 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+
+    public void removeItemFromPlaylist(String message) {
+        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
+        String index = msgSplit.get(2);
+        int i = Integer.parseInt(index);
+
+        if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
+            WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
+            List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
+            int size = list.size();
+            for(int j = 0; j < size; j++){
+                list.get(j).setIndex(j+1);
+            }
+        }
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        if(mPlaylistIDs.size() > 0){
+            mPlaylistIDs.remove(Integer.parseInt(index));
+        }
+        
+        int item = mCurrentPlaylistIndex + 1;
+        if(i < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
+            --mCurrentPlaylistIndex;
+            mPlaylistSize.setText(item + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        }else if(i > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
+            mPlaylistSize.setText(item + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        }else{
+            mCurrentPlaylistIndex = 0;
+            mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +
+                    WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        }
     }
 
     /**

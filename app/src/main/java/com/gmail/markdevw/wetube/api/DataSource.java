@@ -44,8 +44,6 @@ public class DataSource {
     private List<VideoItem> mVideos;
     private List<UserItem> mUsers;
     private List<UserItem> mFriends;
-    private int mCurrentPage;
-    private String mPrevPageToken;
     private String mNextPageToken;
     private String mCurrentSearch;
     private UserItem mCurrentRecipient;
@@ -102,23 +100,18 @@ public class DataSource {
     public void setSessionController(boolean isController) { this.mIsSessionController = isController; }
 
     public List<PlaylistItem> getPlaylist() { return mPlaylist; }
-
     public List<TagItem> getCommonTags() { return mCommonTags; }
     public List<TagItem> getUncommonTags() { return mUncommonTags; }
-
     public List<MessageItem> getMessages() { return mMessages;}
 
     public void setCurrentRecipient(UserItem recipient){ this.mCurrentRecipient = recipient;}
     public UserItem getCurrentRecipient() { return this.mCurrentRecipient; }
 
     public List<VideoItem> getVideos(){ return mVideos; }
-
     public List<UserItem> getUsers() { return mUsers; }
 
-    public int getCurrentPage(){ return mCurrentPage; }
-    public void setPrevPageToken(String prevPageToken){ this.mPrevPageToken = prevPageToken; }
+
     public void setNextPageToken(String nextPageToken) { this.mNextPageToken = nextPageToken; }
-    public String getPrevPageToken() { return mPrevPageToken; }
     public String getNextPageToken() { return mNextPageToken; }
 
     public void setCurrentSearch(String search) {this.mCurrentSearch = search; }

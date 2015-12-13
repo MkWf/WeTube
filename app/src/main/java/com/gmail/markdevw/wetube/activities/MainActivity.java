@@ -915,9 +915,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 if (msg.startsWith(mMsgSplitter + "addtoplaylist")) {
                     addVideoToPlaylist(msg);
                 } else if (msg.startsWith(mMsgSplitter + "linkedvideo")) {
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+                    addMessageToChat(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                 } else if (msg.startsWith(mMsgSplitter + "deleteitemplaylist")) {
                     ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);
@@ -1111,9 +1109,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                     }
                 }else{
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+                    addMessageToChat(new MessageItem(msg, MessageItem.INCOMING_MSG));
 
                     if(mIsFullscreen){
                         Toast toast = Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_LONG);
@@ -1136,9 +1132,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 if(msg.startsWith(mMsgSplitter + "addtoplaylist")){
                     addVideoToPlaylist(msg);
                 }else if(msg.startsWith(mMsgSplitter + "linkedvideo")){
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+                    addMessageToChat(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                 }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
                     ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     String index = msgSplit.get(2);
@@ -1298,9 +1292,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                         || msg.startsWith(mMsgSplitter + "seek") || msg.startsWith(mMsgSplitter + "videostart") || msg.startsWith(mMsgSplitter + "watchingad")){
                     //Do Nothing
                 }else{
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+                    addMessageToChat(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                 }
                 mMessages.remove(deliveryInfo.getMessageId());
             }
@@ -1308,6 +1300,17 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+    /**
+     * Adds a new MessageItem to the messages list to be displayed in the chat.
+     *
+     * @param messageItem   The message to be added to the messages list
+     */
+    public void addMessageToChat(MessageItem messageItem) {
+        WeTubeApplication.getSharedDataSource().getMessages().add(messageItem);
+        mMessageItemAdapter.notifyDataSetChanged();
+        mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
     }
 
     /**

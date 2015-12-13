@@ -1150,37 +1150,34 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     public void startVideoPlaylist() {
         if(WeTubeApplication.getSharedDataSource().isPlayerVisible()){
-
-            WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-            mCurrentPlaylistIndex = 0;
-            WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-            mPlaylistItemAdapter.notifyDataSetChanged();
-            mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
-            String index = String.valueOf(mCurrentPlaylistIndex + 1);
-            mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) +
-                    WeTubeApplication.getSharedDataSource().getPlaylist().size());
+            updatePlaylistForVideoPlayback();
         }else{
             disableSearch();
-
-            mPlaylistIDs.clear();
-            List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-            int size = videos.size();
-            for (int i = 0; i < size; i++) {
-                mPlaylistIDs.add(videos.get(i).getId());
-            }
-
+            updatePlaylistForVideoPlayback();
             videoSearchToVideoPlayTransition();
-
-            WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-            mCurrentPlaylistIndex = 0;
-            WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-            mPlaylistItemAdapter.notifyDataSetChanged();
-            String index = String.valueOf(mCurrentPlaylistIndex + 1);
-            mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) +
-                    WeTubeApplication.getSharedDataSource().getPlaylist().size());
-            mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
-
         }
+    }
+
+    /**
+     * Will set the playlist and YouTube player to the start of the playlist.
+     */
+    public void updatePlaylistForVideoPlayback() {
+        mPlaylistIDs.clear();
+        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
+        int size = videos.size();
+        for (int i = 0; i < size; i++) {
+            mPlaylistIDs.add(videos.get(i).getId());
+        }
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
+        mCurrentPlaylistIndex = 0;
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        String index = String.valueOf(mCurrentPlaylistIndex + 1);
+        mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
     }
 
     /**

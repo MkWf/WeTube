@@ -1,6 +1,7 @@
 package com.gmail.markdevw.wetube.api;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 
 import com.gmail.markdevw.wetube.R;
@@ -269,23 +270,52 @@ public class DataSource {
                             }
 
                             if(i == 0){
-                                mVideos.get(mVideos.size()-1).setId(id);
-                                mVideos.get(mVideos.size()-1).setTitle(items.get(i).getSnippet().getTitle());
-                                mVideos.get(mVideos.size()-1).setDescription(items.get(i).getSnippet().getDescription());
-                                mVideos.get(mVideos.size()-1).setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
+                                fillOutPlaceholderItem(items, i);
                             }else{
-                                item.setId(id);
-                                item.setTitle(items.get(i).getSnippet().getTitle());
-                                item.setDescription(items.get(i).getSnippet().getDescription());
-                                item.setThumbnailURL(items.get(i).getSnippet().getThumbnails().getDefault().getUrl());
-                                list.add(item);
+                                list.add(createVideoItem(items, i));
                             }
                         }
                         mVideos.addAll(list);
                     }
                 });
     }
-    
+
+    /**
+     * Creates a VideoItem from the response data at the provided index
+     *
+     * @param response   Response items returned from YouTube Data API
+     * @param index   Index in response
+     * @return  New VideoItem
+     */
+
+    @NonNull
+    public VideoItem createVideoItem(List<Item> response, int index) {
+        VideoItem item = new VideoItem();
+        item.setId(response.get(index).getId().getVideoId());
+        item.setTitle(response.get(index).getSnippet().getTitle());
+        item.setDescription(response.get(index).getSnippet().getDescription());
+        item.setThumbnailURL(response.get(index).getSnippet().getThumbnails().getDefault().getUrl());
+        return item;
+    }
+
+    /**
+     *  Adds data to a Dummy item that was inserted at the start of a paged search
+     *
+     *  To achieve the result where the Dummy item turns into a real item with data worth displaying,
+     *  rather than creating a new VideoItem, we insert data into the Dummy item to trigger the ProgressDialog
+     *  to disappear. Its visibility is toggled off by the addition of data in its adapter.
+     *
+     *
+     * @param response   Response items returned from YouTube Data API
+     * @param index   Index in the list
+     */
+    public void fillOutPlaceholderItem(List<Item> response, int index) {
+        mVideos.get(mVideos.size() - 1).setId(response.get(index).getId().getVideoId());
+        mVideos.get(mVideos.size() - 1).setTitle(response.get(index).getSnippet().getTitle());
+        mVideos.get(mVideos.size() - 1).setDescription(response.get(index).getSnippet().getDescription());
+        mVideos.get(mVideos.size() - 1).setThumbnailURL(response.get(index).getSnippet().getThumbnails().getDefault().getUrl());
+    }
+
     /**
      *  Converts YouTube Data API durations for videos into a normal format
      *

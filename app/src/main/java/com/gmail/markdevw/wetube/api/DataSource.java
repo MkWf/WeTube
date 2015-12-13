@@ -257,17 +257,15 @@ public class DataSource {
                         List<Item> items = videoItemContainer.getItems();
                         int size = items.size();
 
-                        List<VideoItem> list = new ArrayList<>(size);
                         for (int i = 0; i < size; i++) {
                             buildDurationSearchString(items, i, videoIdBuilder);
 
                             if(i == 0){
                                 fillOutPlaceholderItem(items, i);
                             }else{
-                                list.add(createVideoItem(items, i));
+                                mVideos.add(createVideoItem(items, i));
                             }
                         }
-                        mVideos.addAll(list);
                     }
                 });
     }

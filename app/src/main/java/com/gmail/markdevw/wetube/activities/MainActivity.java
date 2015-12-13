@@ -928,34 +928,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistPrev))) {
                     playlistPrev();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistIndex))) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int video = Integer.parseInt(index);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mCurrentPlaylistIndex = video;
-
-                    String indexItem = String.valueOf(mCurrentPlaylistIndex + 1);
-                    mPlaylistSize.setText(indexItem + getString(R.string.playlist_forward_slash) +
-                            WeTubeApplication.getSharedDataSource().getPlaylist().size());
-
-                    if (mPlayerFragment.isVisible()) {
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
-                    } else {
-                        disableSearch();
-                        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
-                        mPlaylistIDs.clear();
-                        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = videos.size();
-                        for (int i = 0; i < size; i++) {
-                            mPlaylistIDs.add(videos.get(i).getId());
-                        }
-                        videoSearchToVideoPlayTransition();
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 1);
-                    }
+                    startVideoPlaybackByIndex(msg);
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistExit))){
                     getFragmentManager().popBackStack();
 
@@ -1044,35 +1017,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistStart))) {
                     startVideoPlayback();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistIndex))) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int video = Integer.parseInt(index);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mCurrentPlaylistIndex = video;
-                    String indexItem = String.valueOf(video + 1);
-
-                    mPlaylistSize.setText(indexItem + getString(R.string.playlist_forward_slash) +
-                            WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    if(mPlayerFragment.isVisible()){
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
-                    }else{
-                        disableSearch();
-                        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
-                        mPlaylistIDs.clear();
-                        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = videos.size();
-                        for (int i = 0; i < size; i++) {
-                            mPlaylistIDs.add(videos.get(i).getId());
-                        }
-
-                        videoSearchToVideoPlayTransition();
-
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
-                    }
+                    startVideoPlaybackByIndex(msg);
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_pause))) {
                     mIsPaused = true;
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistPrev))){
@@ -1123,6 +1068,42 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+    /**
+     * Can be called either from the video search or during video play
+     *
+     * @param message  Message sent/received to start playing videos from a playlist selection
+     */
+    public void startVideoPlaybackByIndex(String message) {
+        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
+        String index = msgSplit.get(2);
+        int video = Integer.parseInt(index);
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        mCurrentPlaylistIndex = video;
+        String indexItem = String.valueOf(video + 1);
+
+        mPlaylistSize.setText(indexItem + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+
+        if(mPlayerFragment.isVisible()){
+            mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
+        }else{
+            disableSearch();
+            WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
+            mPlaylistIDs.clear();
+            List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
+            int size = videos.size();
+            for (int i = 0; i < size; i++) {
+                mPlaylistIDs.add(videos.get(i).getId());
+            }
+            videoSearchToVideoPlayTransition();
+            mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
+        }
     }
 
     /**

@@ -913,22 +913,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }
             }else{
                 if (msg.startsWith(mMsgSplitter + "addtoplaylist")) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
-                    String title = msgSplit.get(2);
-                    String thumbnail = msgSplit.get(3);
-                    String id = msgSplit.get(4);
-                    String duration = msgSplit.get(5);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int size = pendingPlaylistAdditions.size();
-                    for(int i = 0; i < size; i++){
-                        if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
-                            pendingPlaylistAdditions.remove(i);
-                        }
-                    }
+                    addVideoToPlaylist(msg);
                 } else if (msg.startsWith(mMsgSplitter + "linkedvideo")) {
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
                     mMessageItemAdapter.notifyDataSetChanged();
@@ -1149,22 +1134,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             String msg = mMessages.get(deliveryInfo.getMessageId());
             if(msg != null){
                 if(msg.startsWith(mMsgSplitter + "addtoplaylist")){
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String title = msgSplit.get(2);
-                    String thumbnail = msgSplit.get(3);
-                    String id = msgSplit.get(4);
-                    String duration = msgSplit.get(5);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int size = pendingPlaylistAdditions.size();
-                    for(int i = 0; i < size; i++){
-                        if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
-                            pendingPlaylistAdditions.remove(i);
-                        }
-                    }
+                    addVideoToPlaylist(msg);
                 }else if(msg.startsWith(mMsgSplitter + "linkedvideo")){
                     WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                     mMessageItemAdapter.notifyDataSetChanged();
@@ -1338,6 +1308,26 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+    public void addVideoToPlaylist(String msg) {
+        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
+        String title = msgSplit.get(2);
+        String thumbnail = msgSplit.get(3);
+        String id = msgSplit.get(4);
+        String duration = msgSplit.get(5);
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().add(
+                new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
+        mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        int size = pendingPlaylistAdditions.size();
+        for(int i = 0; i < size; i++){
+            if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
+                pendingPlaylistAdditions.remove(i);
+            }
+        }
     }
 
     /**

@@ -1173,8 +1173,8 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             updatePlaylistForVideoPlayback();
         }else{
             disableSearch();
-            updatePlaylistForVideoPlayback();
             videoSearchToVideoPlayTransition();
+            updatePlaylistForVideoPlayback();
         }
     }
 
@@ -1188,16 +1188,17 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         for (int i = 0; i < size; i++) {
             mPlaylistIDs.add(videos.get(i).getId());
         }
+        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
 
         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
         mCurrentPlaylistIndex = 0;
         WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
+        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
         mPlaylistItemAdapter.notifyDataSetChanged();
 
         String index = String.valueOf(mCurrentPlaylistIndex + 1);
         mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) +
                 WeTubeApplication.getSharedDataSource().getPlaylist().size());
-        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
     }
 
     /**

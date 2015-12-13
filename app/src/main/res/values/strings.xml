@@ -219,6 +219,8 @@
     <string name="youtube_baseUrl">https://www.googleapis.com/youtube/v3/</string>
     <string name="search_youtube">Search YouTube</string>
     <string name="playlist_forward_slash">/</string>
+    <string name="controller_receive">" has given you control"</string>
+    <string name="controller_pass">"You have given control to "</string>
 
 
 </resources>

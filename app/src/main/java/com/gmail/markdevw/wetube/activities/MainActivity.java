@@ -919,11 +919,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 } else if (msg.startsWith(mMsgSplitter + "deleteitemplaylist")) {
                     removeItemFromPlaylist(msg);
                 } else if(msg.startsWith(mMsgSplitter + "passcontroller")){
-                    WeTubeApplication.getSharedDataSource().setSessionController(true);
-                    invalidateOptionsMenu();
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-                    mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-                    Toast.makeText(MainActivity.this, mName + " has given you control", Toast.LENGTH_SHORT).show();
+                    passController(true);
                 } else if(msg.startsWith(mMsgSplitter + "playliststart")){
                     if(WeTubeApplication.getSharedDataSource().isPlayerVisible()){
                         mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
@@ -1110,11 +1106,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
                     removeItemFromPlaylist(msg);
                 }else if(msg.startsWith(mMsgSplitter + "passcontroller")){
-                    WeTubeApplication.getSharedDataSource().setSessionController(false);
-                    invalidateOptionsMenu();
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-                    mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-                    Toast.makeText(MainActivity.this, "You have given control to " + mName, Toast.LENGTH_SHORT).show();
+                    passController(false);
                 }else if(msg.startsWith(mMsgSplitter + "playliststart")) {
                     if(WeTubeApplication.getSharedDataSource().isPlayerVisible()){
                         mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
@@ -1249,6 +1241,25 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+    /**
+     * Updates the Toolbar and YouTube player based on the change in controller status
+     *
+     * @param isReceivingControl Are we passing the controller or receiving it
+     */
+    public void passController(boolean isReceivingControl){
+        WeTubeApplication.getSharedDataSource().setSessionController(isReceivingControl);
+        invalidateOptionsMenu();
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        if(isReceivingControl){
+            mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            Toast.makeText(MainActivity.this, mName + getString(R.string.controller_receive), Toast.LENGTH_SHORT).show();
+        }else{
+            mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+            Toast.makeText(MainActivity.this, getString(R.string.controller_pass) + mName, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

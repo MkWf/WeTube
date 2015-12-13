@@ -98,7 +98,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     private final int MAX_PLAYLIST_SIZE = 50;
 
-    private Handler mHandler;
     private YouTubePlayerFragment mPlayerFragment;
     private YouTubePlayer mYouTubePlayer;
     private boolean mIsFullscreen;
@@ -151,7 +150,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         mPlaylistIDs = new ArrayList<>();
         mMessages = new HashMap<>();
         mMessageQueue = new LinkedBlockingQueue<>();
-        mHandler = new Handler();
 
         getFragmentManager()
                 .beginTransaction()
@@ -823,7 +821,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         VideoListFragment vlf = (VideoListFragment) f;
         vlf.getVideoItemAdapter().notifyDataSetChanged();
         vlf.getRecyclerView().scrollToPosition(0);
-        mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
     }
 
     @Override

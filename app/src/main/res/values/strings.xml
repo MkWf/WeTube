@@ -218,6 +218,7 @@
     <string name="activities_usersactivity_dialog_session_request_partial">"Session request from "</string>
     <string name="youtube_baseUrl">https://www.googleapis.com/youtube/v3/</string>
     <string name="search_youtube">Search YouTube</string>
+    <string name="playlist_forward_slash">/</string>
 
 
 </resources>

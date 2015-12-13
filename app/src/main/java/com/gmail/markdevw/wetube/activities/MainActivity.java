@@ -1319,7 +1319,9 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         WeTubeApplication.getSharedDataSource().getPlaylist().add(
                 new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
-        mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        mPlaylistSize.setText(mCurrentPlaylistIndex +
+                getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
         mPlaylistItemAdapter.notifyDataSetChanged();
 
         int size = pendingPlaylistAdditions.size();

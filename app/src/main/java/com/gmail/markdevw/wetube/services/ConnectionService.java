@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.gmail.markdevw.wetube.WeTubeApplication;
 import com.gmail.markdevw.wetube.activities.UsersActivity;
@@ -55,41 +56,19 @@ public class ConnectionService extends Service {
                 .subscribe(new Observer<Long>() {
                     @Override
                     public void onCompleted() {
-
+                        //Do Nothing
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.e(getClass().getSimpleName(), e.getLocalizedMessage());
                     }
 
                     @Override
                     public void onNext(Long aLong) {
                         try {
                             updateUserLastSeen();
-
-                            if(WeTubeApplication.getSharedDataSource().getCurrentRecipient() != null){
-                                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                                query.whereEqualTo("objectId", WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId());
-                                query.findInBackground(new FindCallback<ParseUser>() {
-                                    @Override
-                                    public void done(List<ParseUser> users, ParseException e) {
-                                        if(e == null){
-                                            WeTubeUser user = (WeTubeUser) users.get(0);
-                                            long timeCheck = user.getLong("lastSeen");
-                                            if(mTime == timeCheck){
-                                                mTimesTheyMissed++;
-                                                if(mTimesTheyMissed == MAX_MISSES){
-                                                    returnUserToUsersActivity();
-                                                }
-                                            }else{
-                                                mTime = timeCheck;
-                                                mTimesTheyMissed = 0;
-                                            }
-                                        }
-                                    }
-                                });
-                            }
+                            checkSessionPartnerStatus();
                         }catch(IOException e) {
                             mTimesYouMissed++;
                             if (mTimesYouMissed >= MAX_MISSES) {
@@ -103,12 +82,53 @@ public class ConnectionService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * While in a session with another user, user1 will ping user2's lastSeen status and vice versa.
+     *
+     * If user1 notices that user2's lastSeen hasn't been updated for more than 10 seconds, we
+     * assume the that user2 is no longer connected and automatically exit the session
+     */
+    public void checkSessionPartnerStatus() {
+        if(WeTubeApplication.getSharedDataSource().getCurrentRecipient() != null){
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId", WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId());
+            query.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> users, ParseException e) {
+                    if(e == null){
+                        WeTubeUser user = (WeTubeUser) users.get(0);
+                        long timeCheck = user.getLong("lastSeen");
+                        if(mTime == timeCheck){
+                            mTimesTheyMissed++;
+                            if(mTimesTheyMissed == MAX_MISSES){
+                                returnUserToUsersActivity();
+                            }
+                        }else{
+                            mTime = timeCheck;
+                            mTimesTheyMissed = 0;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Sends the user who didn't lose connection back to UsersActivity.
+     *
+     * When two users are in a session and user1 loses connection, user2 will be sent back to
+     * UsersActivity.
+     */
     public void returnUserToUsersActivity() {
         DataSource ds = WeTubeApplication.getSharedDataSource();
         ds.getMainActivity().finish();
         ((UsersActivity) ds.getUsersActivity()).setSessionConnEnd(true);
     }
 
+    /**
+     * If the user loses connection for more than MAX_MISSES, the user is returned back to the
+     * login screen.
+     */
     public void returnUserToLoginScreen() {
         if(WeTubeApplication.getSharedDataSource().getMainActivity() != null){
             WeTubeApplication.getSharedDataSource().getMainActivity().finish();
@@ -122,6 +142,9 @@ public class ConnectionService extends Service {
         startActivity(i);
     }
 
+    /**
+     * Clears the user's login data prior to returning to the Login screen.
+     */
     public void clearSavedLoginData() {
         SharedPreferences sharedpreferences = getSharedPreferences
                 ("MyPrefs", Context.MODE_PRIVATE);
@@ -130,6 +153,15 @@ public class ConnectionService extends Service {
                 .commit();
     }
 
+    /**
+     * Updates the user's lastSeen column in Parse.
+     *
+     * Every 5 seconds this method is called to determine is the user still has a connection
+     * If the user is no longer connected an IOException gets thrown, otherwise the user's
+     * lastSeen includes the latest time.
+     *
+     * @throws IOException Alerts us when the user has lost connection
+     */
     public void updateUserLastSeen() throws IOException {
         URL url = new URL("http://m.google.com");
         url.openStream();

@@ -953,12 +953,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                            user.setSessionStatus(false);
-                            user.saveInBackground();
-
-                            mYouTubePlayer.release();
-                            MainActivity.super.onBackPressed();
+                            endOfSession();
                         }
                     });
                     builder.setCancelable(false);
@@ -1013,14 +1008,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistExit))) {
                     videoPlayToVideoSearchTransition();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionEnd))) {
-                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                    user.setSessionStatus(false);
-                    user.saveInBackground();
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().clear();
-                    WeTubeApplication.getSharedDataSource().getMessages().clear();
-                    mYouTubePlayer.release();
-                    MainActivity.super.onBackPressed();
+                    endOfSession();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_play)) ||
                         msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendAccept)) ||
                         msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendDecline)) ||
@@ -1040,6 +1028,23 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+
+    /**
+     * A user has chosen to leave the session which returns both users back to UsersActivity
+     */
+    public void endOfSession() {
+        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+        user.setSessionStatus(false);
+        user.saveInBackground();
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().clear();
+        WeTubeApplication.getSharedDataSource().getMessages().clear();
+
+        mYouTubePlayer.release();
+        
+        MainActivity.super.onBackPressed();
     }
 
     /**

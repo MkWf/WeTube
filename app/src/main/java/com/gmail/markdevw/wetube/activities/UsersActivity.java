@@ -411,6 +411,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    
     public void getLoggedInUsers(){
         if(WeTubeApplication.getSharedDataSource().getUsers().size() > 0){
             WeTubeApplication.getSharedDataSource().getUsers().clear();
@@ -443,6 +444,12 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         });
     }
 
+    /**
+     *  Generates a set of parameters that will allow us to receive a randomized list of users with each
+     *  swipe to refresh
+     *
+     * @return  A HashMap that will be passed to a method in getLoggedInUsers
+     */
     public HashMap<String, Object> generateParams(){
         HashMap<String, Object> params = new HashMap<>();
         params.put(getString(R.string.parse_userId), ParseUser.getCurrentUser().getObjectId());

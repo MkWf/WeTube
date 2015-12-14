@@ -209,6 +209,11 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
+    /**
+     * Returns the user back to the ParseLogin screen
+     *
+     * @param connectionLossCheck  Determines whether to display a dialog in the ParseLogin screen or not
+     */
     public void displayParseLoginUI(int connectionLossCheck) {
         ParseLoginBuilder builder = new ParseLoginBuilder(UsersActivity.this, connectionLossCheck);
         startActivityForResult(builder.build(), 0);
@@ -223,19 +228,14 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }else{
             toolbar.setTitle(ParseUser.getCurrentUser().getUsername());
             drawerLayout.setVisibility(View.VISIBLE);
-            mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
-            mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
+
             showSpinner();
-            startService(mMessageServiceIntent);
-            startService(mConnectionServiceIntent);
+            startServices();
 
             getLoggedInUsers();
             getFriends();
             getUserTags();
-
-            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            installation.put(getString(R.string.parse_user), WeTubeUser.getCurrentUser().getObjectId());
-            installation.saveInBackground();
+            saveParseInstallation();
 
             swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -259,8 +259,15 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
+    /**
+     * Clears login information saved by the user
+     *
+     * @param connectionLossCheck  Provided to us by intent to find out if the user couldn't login
+     *                             due to a connection issue
+     */
     public void loginFail(int connectionLossCheck) {
         Toast.makeText(UsersActivity.this, com.parse.ui.R.string.com_parse_ui_parse_login_failed_unknown_toast, Toast.LENGTH_LONG).show();
+
         SharedPreferences sharedpreferences = getSharedPreferences
                 (getString(R.string.sharedprefs_filename), Context.MODE_PRIVATE);
         sharedpreferences.edit()
@@ -270,28 +277,47 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         displayParseLoginUI(connectionLossCheck);
     }
 
+    /**
+     *  Performs all the actions needed when the user successfully logs in to Parse
+     */
     public void loginSuccess() {
         toolbar.setTitle(ParseUser.getCurrentUser().getUsername());
-        
-        mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
-        mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
-        startService(mMessageServiceIntent);
-        startService(mConnectionServiceIntent);
 
+        startServices();
         getLoggedInUsers();
         getFriends();
         getUserTags();
 
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put(getString(R.string.parse_user), WeTubeUser.getCurrentUser().getObjectId());
-        installation.saveInBackground();
+        saveParseInstallation();
 
         initSwipeRefresh();
     }
 
+    /**
+     * Saves user's installation device data in Parse
+     */
+    public void saveParseInstallation() {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put(getString(R.string.parse_user), WeTubeUser.getCurrentUser().getObjectId());
+        installation.saveInBackground();
+    }
+
+    /**
+     *  Starts the Sinch message service to allow for user interaction.
+     *  Starts the Connection service to monitor the user's connection
+     */
+    public void startServices() {
+        mMessageServiceIntent = new Intent(UsersActivity.this, MessageService.class);
+        mConnectionServiceIntent = new Intent(UsersActivity.this, ConnectionService.class);
+        startService(mMessageServiceIntent);
+        startService(mConnectionServiceIntent);
+    }
+
+
     public void initUserTagsAdapter() {
         mUserTagsAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice);
     }
+
 
     private void showSpinner() {
         mProgressDialog = new ProgressDialog(this);
@@ -1817,10 +1843,19 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         }
     }
 
-    public void clearDialogsById(String id){
+    /**
+     * Called when a user selects the Block option in any of the dialogs.
+     *
+     * This will remove any dialogs that were queued up to be displayed by the blocked user.
+     * This saves the user trouble from having to close multiple dialogs on their own if they
+     * received spam by another user.
+     *
+     * @param blockedUserId   The id for the user that is to be blocked
+     */
+    public void clearDialogsById(String blockedUserId){
         for(Message message : mMessageQueue) {
             ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
-            if(msg.get(3).equals(id)){
+            if(msg.get(3).equals(blockedUserId)){
                 mMessageQueue.remove(message);
             }
         }
@@ -1862,6 +1897,9 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
 
     }
 
+    /**
+     * Displays a ProgressDialog whenever the friends list is opened or the spinner option is changed
+     */
     public void friendsRefreshProgress(){
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle(getString(R.string.activities_usersactivity_progress_friends_refresh_title));
@@ -1869,7 +1907,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         mProgressDialog.show();
     }
 
-    public void getMoreUsers(int skip, int limit){
+    /**
+     * Queries for WeTube users that are currently loggied in
+     *
+     * @param skip   The number of users to skip
+     * @param limit  The number of users to return
+     */
+    public void getUsers(int skip, int limit){
         final WeTubeUser currentUser = (WeTubeUser) ParseUser.getCurrentUser();
 
         HashMap<String, Object> params = new HashMap<>();

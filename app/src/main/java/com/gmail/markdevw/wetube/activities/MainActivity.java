@@ -302,6 +302,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             });
             builder.setCancelable(false);
             builder.show();
+
         }else{
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(R.string.exit_session_dialog_title);
@@ -664,7 +665,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     public void clearDialogsById(String id){
-
         for(Message message : mMessageQueue) {
             ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
             if(msg.get(3).equals(id)){

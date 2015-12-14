@@ -930,21 +930,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistIndex))) {
                     startVideoPlaybackByIndex(msg);
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistExit))){
-                    getFragmentManager().popBackStack();
-
-                    mVideoList.setVisibility(View.VISIBLE);
-                    mToolbar.setVisibility(View.VISIBLE);
-                    mVideoChatDivider.setVisibility(View.GONE);
-                    enableSearch();
-                    MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-                    mCurrentPlaylistIndex = 0;
-
-                    WeTubeApplication.getSharedDataSource().setPlayerVisible(false);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +
-                            WeTubeApplication.getSharedDataSource().getPlaylist().size());
+                    videoPlayToVideoSearchTransition();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_pause))) {
                     mYouTubePlayer.pause();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_play))) {
@@ -1025,21 +1011,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistNext))) {
                     playlistNext();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistExit))) {
-                    getFragmentManager().popBackStack();
-
-                    mVideoList.setVisibility(View.VISIBLE);
-                    mToolbar.setVisibility(View.VISIBLE);
-                    mVideoChatDivider.setVisibility(View.GONE);
-                    enableSearch();
-                    MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-                    mCurrentPlaylistIndex = 0;
-
-                    WeTubeApplication.getSharedDataSource().setPlayerVisible(false);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +
-                            WeTubeApplication.getSharedDataSource().getPlaylist().size());
+                    videoPlayToVideoSearchTransition();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionEnd))) {
                     WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
                     user.setSessionStatus(false);
@@ -1068,6 +1040,26 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         @Override
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
+
+    /**
+     * Sends both users back to the video search
+     */
+    public void videoPlayToVideoSearchTransition() {
+        getFragmentManager().popBackStack();
+        enableSearch();
+
+        mVideoList.setVisibility(View.VISIBLE);
+        mToolbar.setVisibility(View.VISIBLE);
+        mVideoChatDivider.setVisibility(View.GONE);
+        MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        WeTubeApplication.getSharedDataSource().setPlayerVisible(false);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        mCurrentPlaylistIndex = 0;
+        mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
     }
 
     /**

@@ -141,7 +141,6 @@
     <string name="activities_usersactivity_dialog_request_decline">Decline</string>
     <string name="activities_usersactivity_dialog_request_block">Block</string>
 
-
     <string name="activities_usersactivity_dialog_friend_request_partial">"Friend request from "</string>
     <string name="activities_usersactivity_dialog_friend_request_accept_partial">" accepted your friend request"</string>
     <string name="activities_usersactivity_dialog_friend_request_decline_partial">" has declined your friend request"</string>
@@ -255,6 +254,7 @@
     <string name="search_start_partial1">"Started search for "</string>
     <string name="search_start_partial2">...</string>
     <string name="message_empty">Type a message first before sending</string>
+    <string name="defualt_videolistfragment_tag">Video</string>
 
 
 </resources>

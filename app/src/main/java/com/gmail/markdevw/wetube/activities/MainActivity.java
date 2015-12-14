@@ -151,7 +151,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.fl_activity_video_list, new VideoListFragment(), "Video")
+                .add(R.id.fl_activity_video_list, new VideoListFragment(), getString(R.string.defualt_videolistfragment_tag))
                 .commit();
     }
 
@@ -440,7 +440,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     WeTubeApplication.getSharedDataSource().searchForVideos(query, new DataSource.VideoResponseListener() {
                         @Override
                         public void onSuccess() {
-                            Fragment f = getFragmentManager().findFragmentByTag("Video");
+                            Fragment f = getFragmentManager().findFragmentByTag(getString(R.string.defualt_videolistfragment_tag));
                             VideoListFragment vlf = (VideoListFragment) f;
                             vlf.getVideoItemAdapter().notifyDataSetChanged();
                             vlf.getRecyclerView().scrollToPosition(0);
@@ -682,29 +682,30 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             Message message = mMessageQueue.poll();
             ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
 
-            if (msg.get(1).equals("friendadd")) {
+            if (msg.get(1).equals(getString(R.string.sinch_friendAdd))) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Friend request from " + name);
+                builder.setTitle(getString(R.string.activities_usersactivity_dialog_friend_request_partial) + name);
 
                 if(WeTubeApplication.getSharedDataSource().getFriendsSize() == WeTubeApplication.getSharedDataSource().getMaxFriends()){
-                    builder.setNegativeButton("Friends list is full", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getString(R.string.activities_usersactivity_dialog_friend_list_full2), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mMessageService.sendMessage(id,
-                                    mMsgSplitter + "friendfull" +
+                                    mMsgSplitter + getString(R.string.sinch_friendFull) +
                                     mMsgSplitter + ParseUser.getCurrentUser().getUsername());
                             dialog.cancel();
                         }
                     });
-                    builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
+                    builder.setNeutralButton(getString(R.string.activities_usersactivity_dialog_request_block), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mIsBlocking = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setTitle("Are you sure you want to block " + name + " ?");
+                            builder.setTitle(getString(R.string.activities_usersactivity_dialog_block_user_title_partial) +
+                                    name + getString(R.string.activities_usersactivity_dialog_question_mark));
 
                             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
@@ -714,7 +715,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                                         @Override
                                         public void done(ParseException e) {
                                             mMessageService.sendMessage(id,
-                                                    mMsgSplitter + "blockuser" +
+                                                    mMsgSplitter + getString(R.string.sinch_blockuser) +
                                                     mMsgSplitter + ParseUser.getCurrentUser().getUsername() +
                                                     mMsgSplitter + ParseUser.getCurrentUser().getObjectId());
                                         }
@@ -816,7 +817,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onSuccess() {
-        Fragment f = getFragmentManager().findFragmentByTag("Video");
+        Fragment f = getFragmentManager().findFragmentByTag(getString(R.string.defualt_videolistfragment_tag));
         VideoListFragment vlf = (VideoListFragment) f;
         vlf.getVideoItemAdapter().notifyDataSetChanged();
         vlf.getRecyclerView().scrollToPosition(0);
@@ -841,12 +842,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     private class MyMessageClientListener implements MessageClientListener {
-        String msg;
-        String msgId;
-
-        String title;
-        String thumbnail;
-        String id;
 
         @Override
         public void onMessageFailed(MessageClient client, Message message,
@@ -949,7 +944,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionEnd))) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle(mName + " has left the session");
-
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -959,7 +953,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     builder.setCancelable(false);
                     builder.show();
                 }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_watchingAd))){
-                    //mYouTubePlayer.pause();
                     Toast.makeText(WeTubeApplication.getSharedInstance(), getString(R.string.toast_ad_pause_partial1)
                             + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName()
                             + getString(R.string.toast_ad_pause_partial2), Toast.LENGTH_LONG).show();
@@ -968,7 +961,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     }
                 }else{
                     addMessageToChat(new MessageItem(msg, MessageItem.INCOMING_MSG));
-
                     if(mIsFullscreen){
                         Toast toast = Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.TOP, 0, 0);
@@ -1043,7 +1035,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         WeTubeApplication.getSharedDataSource().getMessages().clear();
 
         mYouTubePlayer.release();
-        
+
         MainActivity.super.onBackPressed();
     }
 

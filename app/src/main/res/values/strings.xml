@@ -141,7 +141,6 @@
     <string name="activities_usersactivity_dialog_request_decline">Decline</string>
     <string name="activities_usersactivity_dialog_request_block">Block</string>
 
-
     <string name="activities_usersactivity_dialog_friend_request_partial">"Friend request from "</string>
     <string name="activities_usersactivity_dialog_friend_request_accept_partial">" accepted your friend request"</string>
     <string name="activities_usersactivity_dialog_friend_request_decline_partial">" has declined your friend request"</string>
@@ -193,18 +192,33 @@
     <!-- Sinch Message Types -->
     <string name="sinch_message_splitter">=-=-=</string>
 
-    <string name="sinch_friendadd">friendadd</string>
-    <string name="sinch_friendremove">friendremove</string>
-    <string name="sinch_friendaccept">friendaccept</string>
-    <string name="sinch_friendfull">friendfull</string>
-    <string name="sinch_frienddecline">frienddecline</string>
+    <string name="sinch_friendAdd">friendadd</string>
+    <string name="sinch_friendRemove">friendremove</string>
+    <string name="sinch_friendAccept">friendaccept</string>
+    <string name="sinch_friendFull">friendfull</string>
+    <string name="sinch_friendDecline">frienddecline</string>
 
-    <string name="sinch_startsession">startsession</string>
-    <string name="sinch_sessiondecline">sessiondecline</string>
-    <string name="sinch_sessionaccept">"sessionaccept"</string>
+    <string name="sinch_sessionStart">startsession</string>
+    <string name="sinch_sessionDecline">sessiondecline</string>
+    <string name="sinch_sessionAccept">"sessionaccept"</string>
+    <string name="sinch_sessionEnd">sessionend</string>
 
     <string name="sinch_blockuser">blockuser</string>
     <string name="sinch_unblock">unblock</string>
+
+    <string name="sinch_playlistExit">playlistexit</string>
+    <string name="sinch_playlistNext">playlistnext</string>
+    <string name="sinch_playlistDeleteItem">deleteitemplaylist</string>
+    <string name="sinch_playlistIndex">playlistindex</string>
+    <string name="sinch_playlistStart">playliststart</string>
+    <string name="sinch_playlistPrev">playlistprev</string>
+
+    <string name="sinch_controllerReceive">passcontroller</string>
+
+    <string name="sinch_pause">pause</string>
+    <string name="sinch_play">play</string>
+    <string name="sinch_videoStart">videostart</string>
+    <string name="sinch_videoEnded">videoended</string>
 
 
     <!-- Progress Dialogs -->
@@ -218,6 +232,29 @@
     <string name="activities_usersactivity_dialog_session_request_partial">"Session request from "</string>
     <string name="youtube_baseUrl">https://www.googleapis.com/youtube/v3/</string>
     <string name="search_youtube">Search YouTube</string>
+    <string name="playlist_forward_slash">/</string>
+    <string name="controller_receive">" has given you control"</string>
+    <string name="controller_pass">"You have given control to "</string>
+    <string name="toolbar_user_in_session_with">"User: "</string>
+    <string name="video_already_in_playlist">Video already in playlist</string>
+    <string name="sinch_addToPlaylist">addtoplaylist</string>
+    <string name="sinch_linkedVideo">linkedvideo</string>
+    <string name="max_playlist_size">Max playlist size reached (50)</string>
+
+    <string name="toast_add_video_to_playlist_not_controller">Only the controller can add videos to the playlist from chat</string>
+    <string name="return_to_video_search_dialog_title">Are you sure you want to go back to the video search?</string>
+    <string name="exit_session_dialog_title">Are you sure you want to leave this session?</string>
+    <string name="youtube_init_fail">YouTubePlayer failed to initialize</string>
+    <string name="sinch_seek">seek</string>
+    <string name="sinch_watchingAd">watchingad</string>
+    <string name="toast_ad_pause_partial1">"Your video is paused while "</string>
+    <string name="toast_ad_pause_partial2">" is viewing an advertisement"</string>
+    <string name="playlist_empty">Playlist is empty</string>
+    <string name="search_empty">Enter a search keyword first</string>
+    <string name="search_start_partial1">"Started search for "</string>
+    <string name="search_start_partial2">...</string>
+    <string name="message_empty">Type a message first before sending</string>
+    <string name="defualt_videolistfragment_tag">Video</string>
 
 
 </resources>

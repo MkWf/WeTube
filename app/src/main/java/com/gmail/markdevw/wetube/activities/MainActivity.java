@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,7 +28,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,7 +96,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     private final int MAX_PLAYLIST_SIZE = 50;
 
-    private Handler mHandler;
     private YouTubePlayerFragment mPlayerFragment;
     private YouTubePlayer mYouTubePlayer;
     private boolean mIsFullscreen;
@@ -151,11 +148,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         mPlaylistIDs = new ArrayList<>();
         mMessages = new HashMap<>();
         mMessageQueue = new LinkedBlockingQueue<>();
-        mHandler = new Handler();
 
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.fl_activity_video_list, new VideoListFragment(), "Video")
+                .add(R.id.fl_activity_video_list, new VideoListFragment(), getString(R.string.defualt_videolistfragment_tag))
                 .commit();
     }
 
@@ -193,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     public void initToolbar() {
-        mToolbar.setTitle("User: " + mName);
+        mToolbar.setTitle(getString(R.string.toolbar_user_in_session_with) + mName);
         setSupportActionBar(mToolbar);
     }
 
@@ -209,31 +205,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     @Override
-    public void onSearchButtonClicked(VideoListFragment videoListFragment, EditText searchBox) {
-        final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
-
-        if(search.isEmpty()){
-            Toast.makeText(this, "Enter a search keyword first", Toast.LENGTH_LONG).show();
-        }else{
-            mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "Started search for " + search.toUpperCase() + "...");
-            WeTubeApplication.getSharedDataSource().searchForVideos(search, this);
-        }
-    }
-
-    @Override
-    public void onPrevPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox, ImageButton prevPage) {
-        final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
-        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getPrevPageToken(), this);
-
-    }
-
-    @Override
-    public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText searchBox, ImageButton nextPage) {
-        final String search = WeTubeApplication.getSharedDataSource().getCurrentSearch();
-        WeTubeApplication.getSharedDataSource().searchForVideos(search, WeTubeApplication.getSharedDataSource().getNextPageToken(), this);
-    }
-
-    @Override
     public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem) {
         if(pendingPlaylistAdditions.contains(videoItem)){
             return;
@@ -243,7 +214,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         int size = videos.size();
         for(int i = 0; i < size; i++){
             if(videos.get(i).getId().equals(videoItem.getId())){
-                Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.video_already_in_playlist, Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -252,13 +223,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             if(WeTubeApplication.getSharedDataSource().isSessionController()){
                 pendingPlaylistAdditions.add(videoItem);
                 mMessageService.sendMessage(mId,
-                        mMsgSplitter + "addtoplaylist" +
+                        mMsgSplitter + getString(R.string.sinch_addToPlaylist) +
                         mMsgSplitter + videoItem.getTitle() +
                         mMsgSplitter + videoItem.getThumbnailURL() +
                         mMsgSplitter + videoItem.getId() +
                         mMsgSplitter + videoItem.getDuration());
             }else{
-                String message = mMsgSplitter + "linkedvideo" +
+                String message = mMsgSplitter + getString(R.string.sinch_linkedVideo) +
                         mMsgSplitter + videoItem.getTitle() +
                         mMsgSplitter + videoItem.getThumbnailURL() +
                         mMsgSplitter + videoItem.getId() +
@@ -266,7 +237,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                 mMessageService.sendMessage(mId, message);
             }
         }else{
-            Toast.makeText(this, "Max playlist size reached (50)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.max_playlist_size, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -283,7 +254,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         size = videos.size();
         for(int i = 0; i < size; i++){
             if(videos.get(i).getId().equals(id)){
-                Toast.makeText(this, "Video already in playlist", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.video_already_in_playlist, Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -294,16 +265,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         if(WeTubeApplication.getSharedDataSource().getPlaylist().size() < MAX_PLAYLIST_SIZE){
             if(WeTubeApplication.getSharedDataSource().isSessionController()){
                 mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                        mMsgSplitter + "addtoplaylist" +
+                        mMsgSplitter + getString(R.string.sinch_addToPlaylist) +
                         mMsgSplitter + title +
                         mMsgSplitter + thumbnail +
                         mMsgSplitter + id +
                         mMsgSplitter + duration);
             }else{
-                Toast.makeText(this, "Only the controller can add videos to the playlist from chat", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_add_video_to_playlist_not_controller, Toast.LENGTH_SHORT).show();
             }
         }else{
-            Toast.makeText(this, "Max playlist size reached (50)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.max_playlist_size), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -311,13 +282,13 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onBackPressed() {
         if(getFragmentManager().getBackStackEntryCount() > 0){
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Are you sure you want to go back to the video search?");
+            builder.setTitle(R.string.return_to_video_search_dialog_title);
 
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                            mMsgSplitter + "playlistexit" +
+                            mMsgSplitter + getString(R.string.sinch_playlistExit) +
                             mMsgSplitter + ParseUser.getCurrentUser().getUsername() +
                             mMsgSplitter + ParseUser.getCurrentUser().getObjectId());
                     dialog.dismiss();
@@ -331,15 +302,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             });
             builder.setCancelable(false);
             builder.show();
+
         }else{
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Are you sure you want to leave this session?");
+            builder.setTitle(R.string.exit_session_dialog_title);
 
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                            mMsgSplitter + "sessionend" +
+                            mMsgSplitter + getString(R.string.sinch_sessionEnd) +
                             mMsgSplitter + ParseUser.getCurrentUser().getUsername() +
                             mMsgSplitter + ParseUser.getCurrentUser().getObjectId());
                     dialog.dismiss();
@@ -374,7 +346,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        Toast.makeText(getApplicationContext(), "YouTubePlayer failed to initialize", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), R.string.youtube_init_fail, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -443,7 +415,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     private void sendMessage() {
         if(mMessageField.getText().toString().isEmpty()){
-            Toast.makeText(getApplicationContext(), "Type a message first before sending", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.message_empty, Toast.LENGTH_LONG).show();
         }else{
             mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), mMessageField.getText().toString());
             mMessageField.setText("");
@@ -462,13 +434,14 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(query.isEmpty()){
-                    Toast.makeText(MainActivity.this, "Enter a search keyword first", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.search_empty, Toast.LENGTH_LONG).show();
                 }else{
-                    mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "Started search for " + query.toUpperCase() + "...");
+                    mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
+                            getString(R.string.search_start_partial1) + query.toUpperCase() + getString(R.string.search_start_partial2));
                     WeTubeApplication.getSharedDataSource().searchForVideos(query, new DataSource.VideoResponseListener() {
                         @Override
                         public void onSuccess() {
-                            Fragment f = getFragmentManager().findFragmentByTag("Video");
+                            Fragment f = getFragmentManager().findFragmentByTag(getString(R.string.defualt_videolistfragment_tag));
                             VideoListFragment vlf = (VideoListFragment) f;
                             vlf.getVideoItemAdapter().notifyDataSetChanged();
                             vlf.getRecyclerView().scrollToPosition(0);
@@ -517,16 +490,16 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             case R.id.action_play:
                 List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
                 if(videos.size() == 0){
-                    Toast.makeText(this, "Playlist is empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.playlist_empty, Toast.LENGTH_SHORT).show();
                     mDrawerLayout.openDrawer(Gravity.LEFT);
                 }else{
                     mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                            mMsgSplitter + "playliststart");
+                            mMsgSplitter + getString(R.string.sinch_playlistStart));
                 }
                 break;
             case R.id.action_pass_control:
                 mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                        mMsgSplitter + "passcontroller");
+                        mMsgSplitter + getString(R.string.sinch_controllerReceive));
                 break;
         }
 
@@ -543,7 +516,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onPlayListItemClicked(PlaylistItemAdapter itemAdapter, PlaylistItem playlistItem, int index, View itemView) {
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                    mMsgSplitter + "playlistindex" +
+                    mMsgSplitter + getString(R.string.sinch_playlistIndex) +
                     mMsgSplitter + String.valueOf(index));
         }
     }
@@ -553,7 +526,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         int index = WeTubeApplication.getSharedDataSource().getPlaylist().indexOf(playlistItem);
         playlistItem.setToBeDeleted(true);
         mMessageService.sendMessage(mId,
-                mMsgSplitter + "deleteitemplaylist" +
+                mMsgSplitter + getString(R.string.sinch_playlistDeleteItem) +
                 mMsgSplitter + String.valueOf(index));
     }
 
@@ -592,7 +565,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onAdStarted() {
         mIsAdPlaying = true;
         mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                mMsgSplitter + "watchingad");
+                mMsgSplitter + getString(R.string.sinch_watchingAd));
     }
 
     @Override
@@ -632,11 +605,11 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
             if(!WeTubeApplication.getSharedDataSource().isSessionController()){
                 mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                        mMsgSplitter + "videostart");
+                        mMsgSplitter + getString(R.string.sinch_videoStart));
             }
         }else if(WeTubeApplication.getSharedDataSource().isSessionController() && !mIsAdPlaying) {
             mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                    mMsgSplitter + "play" + mMsgSplitter);
+                    mMsgSplitter + getString(R.string.sinch_play) + mMsgSplitter);
         }
     }
 
@@ -647,7 +620,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         }
        else if(WeTubeApplication.getSharedDataSource().isSessionController() && !mIsAdPlaying){
             mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                    mMsgSplitter + "pause" + mMsgSplitter);
+                    mMsgSplitter + getString(R.string.sinch_pause) + mMsgSplitter);
        }
     }
 
@@ -665,7 +638,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onSeekTo(int i) {
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                    mMsgSplitter + "seek" +
+                    mMsgSplitter + getString(R.string.sinch_seek) +
                     mMsgSplitter + String.valueOf(i));
         }
     }
@@ -674,7 +647,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onPrevious() {
         if(WeTubeApplication.getSharedDataSource().isSessionController()){
             mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                    mMsgSplitter + "playlistprev");
+                    mMsgSplitter + getString(R.string.sinch_playlistPrev));
         }
     }
 
@@ -682,7 +655,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     public void onNext() {
        if(WeTubeApplication.getSharedDataSource().isSessionController() && !mHasYourVideoEnded){
            mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(),
-                   mMsgSplitter + "playlistnext");
+                   mMsgSplitter + getString(R.string.sinch_playlistNext));
        }
     }
 
@@ -692,7 +665,6 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     public void clearDialogsById(String id){
-
         for(Message message : mMessageQueue) {
             ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
             if(msg.get(3).equals(id)){
@@ -710,29 +682,30 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
             Message message = mMessageQueue.poll();
             ArrayList<String> msg = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
 
-            if (msg.get(1).equals("friendadd")) {
+            if (msg.get(1).equals(getString(R.string.sinch_friendAdd))) {
                 final String name = msg.get(2);
                 final String id = msg.get(3);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Friend request from " + name);
+                builder.setTitle(getString(R.string.activities_usersactivity_dialog_friend_request_partial) + name);
 
                 if(WeTubeApplication.getSharedDataSource().getFriendsSize() == WeTubeApplication.getSharedDataSource().getMaxFriends()){
-                    builder.setNegativeButton("Friends list is full", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getString(R.string.activities_usersactivity_dialog_friend_list_full2), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mMessageService.sendMessage(id,
-                                    mMsgSplitter + "friendfull" +
+                                    mMsgSplitter + getString(R.string.sinch_friendFull) +
                                     mMsgSplitter + ParseUser.getCurrentUser().getUsername());
                             dialog.cancel();
                         }
                     });
-                    builder.setNeutralButton("Block User", new DialogInterface.OnClickListener() {
+                    builder.setNeutralButton(getString(R.string.activities_usersactivity_dialog_request_block), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mIsBlocking = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setTitle("Are you sure you want to block " + name + " ?");
+                            builder.setTitle(getString(R.string.activities_usersactivity_dialog_block_user_title_partial) +
+                                    name + getString(R.string.activities_usersactivity_dialog_question_mark));
 
                             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
@@ -742,7 +715,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                                         @Override
                                         public void done(ParseException e) {
                                             mMessageService.sendMessage(id,
-                                                    mMsgSplitter + "blockuser" +
+                                                    mMsgSplitter + getString(R.string.sinch_blockuser) +
                                                     mMsgSplitter + ParseUser.getCurrentUser().getUsername() +
                                                     mMsgSplitter + ParseUser.getCurrentUser().getObjectId());
                                         }
@@ -844,11 +817,10 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
 
     @Override
     public void onSuccess() {
-        Fragment f = getFragmentManager().findFragmentByTag("Video");
+        Fragment f = getFragmentManager().findFragmentByTag(getString(R.string.defualt_videolistfragment_tag));
         VideoListFragment vlf = (VideoListFragment) f;
         vlf.getVideoItemAdapter().notifyDataSetChanged();
         vlf.getRecyclerView().scrollToPosition(0);
-        mToolbar.setTitle("Page: " + WeTubeApplication.getSharedDataSource().getCurrentPage() + "   User: " + mName);
     }
 
     @Override
@@ -870,26 +842,20 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
     }
 
     private class MyMessageClientListener implements MessageClientListener {
-        String msg;
-        String msgId;
-
-        String title;
-        String thumbnail;
-        String id;
 
         @Override
         public void onMessageFailed(MessageClient client, Message message,
                                     MessageFailureInfo failureInfo) {
             String msg = mMessages.get(failureInfo.getMessageId());
-            if(msg.startsWith(mMsgSplitter + "addtoplaylist")){
+            if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_addToPlaylist))){
                 ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to add " + title + " to playlist", Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + "linkedvideo")){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_linkedVideo))){
                 ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String title = msgSplit.get(1);
                 Toast.makeText(MainActivity.this, "Failed to add " + title + " to chat", Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistDeleteItem))){
                 ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                 String title = msgSplit.get(1);
                 int size = WeTubeApplication.getSharedDataSource().getPlaylist().size();
@@ -900,27 +866,27 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     }
                 }
                 Toast.makeText(MainActivity.this, "Failed to delete " + title + " from playlist", Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + "passcontroller")){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_controllerReceive))){
                 Toast.makeText(MainActivity.this, "Failed to pass controls to "
                         + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName(), Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + "playlistindex")){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistIndex))){
                 Toast.makeText(MainActivity.this, "Failed to start video", Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + "playliststart")){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistStart))){
                 Toast.makeText(MainActivity.this, "Failed to start playlist", Toast.LENGTH_LONG).show();
-            }else if(msg.startsWith(mMsgSplitter + "playlistnext")) {
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistNext))) {
                 Toast.makeText(MainActivity.this, "Failed to play next video", Toast.LENGTH_SHORT).show();
-            }else if(msg.startsWith(mMsgSplitter + "playlistprev")){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistPrev))){
                 Toast.makeText(MainActivity.this, "Failed to play previous video", Toast.LENGTH_SHORT).show();
-            }else if(msg.startsWith(mMsgSplitter + "pause")) {
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_pause))) {
                 mYouTubePlayer.play();
                 Toast.makeText(MainActivity.this, "Failed to pause video", Toast.LENGTH_SHORT).show();
-            }else if(msg.startsWith(mMsgSplitter + "play")){
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_play))){
                 mYouTubePlayer.pause();
                 Toast.makeText(MainActivity.this, "Failed to play video", Toast.LENGTH_SHORT).show();
-            }else if(msg.startsWith(mMsgSplitter + "seek")) {
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_seek))) {
                 Toast.makeText(MainActivity.this, "Failed to seek to new position", Toast.LENGTH_SHORT).show();
-            }else if(msg.startsWith(mMsgSplitter + "videostart")){
-                mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), "videostart");
+            }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_videoStart))){
+                mMessageService.sendMessage(WeTubeApplication.getSharedDataSource().getCurrentRecipient().getId(), getString(R.string.sinch_videoStart));
                 Toast.makeText(MainActivity.this, "Failed to initiate video play", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(MainActivity.this, "Failed to send message", Toast.LENGTH_SHORT).show();
@@ -931,7 +897,7 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         @Override
         public void onIncomingMessage(MessageClient client, Message message) {
             String msg = message.getTextBody();
-            if(msg.startsWith(mMsgSplitter + "friendadd")){
+            if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendAdd))){
                 mMessageQueue.add(message);
                 if(!mIsFirstMessage){
                     if(mDialog != null && !mDialog.isShowing() && !mMessageQueue.isEmpty()){
@@ -942,225 +908,59 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
                     showNextMessage();
                 }
             }else{
-                if (msg.startsWith(mMsgSplitter + "addtoplaylist")) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.getTextBody().split(mMsgSplitter)));
-                    String title = msgSplit.get(2);
-                    String thumbnail = msgSplit.get(3);
-                    String id = msgSplit.get(4);
-                    String duration = msgSplit.get(5);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int size = pendingPlaylistAdditions.size();
-                    for(int i = 0; i < size; i++){
-                        if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
-                            pendingPlaylistAdditions.remove(i);
-                            --size;
-                        }
-                    }
-                } else if (msg.startsWith(mMsgSplitter + "linkedvideo")) {
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
-                } else if (msg.startsWith(mMsgSplitter + "deleteitemplaylist")) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int i = Integer.parseInt(index);
-                    if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
-                        WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
-                        List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = list.size();
-                        for(int j = 0; j < size; j++){
-                            list.get(j).setIndex(j+1);
-                        }
-                    }
-                    if(mPlaylistIDs.size() > 0){
-                        mPlaylistIDs.remove(Integer.parseInt(index));
-                    }
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int item = mCurrentPlaylistIndex + 1;
-
-                    if(i < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        --mCurrentPlaylistIndex;
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else if(i > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else{
-                        mCurrentPlaylistIndex = 0;
-                        mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }
-                } else if(msg.startsWith(mMsgSplitter + "passcontroller")){
-                    WeTubeApplication.getSharedDataSource().setSessionController(true);
-                    invalidateOptionsMenu();
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-                    mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-                    Toast.makeText(MainActivity.this, mName + " has given you control", Toast.LENGTH_SHORT).show();
-                } else if(msg.startsWith(mMsgSplitter + "playliststart")){
-                    if(WeTubeApplication.getSharedDataSource().isPlayerVisible()){
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                        mCurrentPlaylistIndex = 0;
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                        mPlaylistItemAdapter.notifyDataSetChanged();
-                        String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                        mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else{
-                        disableSearch();
-                        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                        mCurrentPlaylistIndex = 0;
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                        mPlaylistItemAdapter.notifyDataSetChanged();
-
-                        mCurrentPlaylistIndex = 0;
-                        mPlaylistIDs.clear();
-                        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = videos.size();
-                        for(int i = 0; i < size; i++) {
-                            mPlaylistIDs.add(videos.get(i).getId());
-                        }
-
-                        getFragmentManager()
-                                .beginTransaction()
-                                .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
-                                .show(mPlayerFragment)
-                                .addToBackStack(null)
-                                .commit();
-
-                        mVideoList.setVisibility(View.GONE);
-                        mVideoChatDivider.setVisibility(View.VISIBLE);
-                        MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
-                        String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                        mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
-                    }
-                }else if(msg.startsWith(mMsgSplitter + "playlistnext")){
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    mCurrentPlaylistIndex++;
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                    mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    mYouTubePlayer.next();
-                }else if(msg.startsWith(mMsgSplitter + "playlistprev")) {
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    mCurrentPlaylistIndex--;
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                    mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-
-                    mYouTubePlayer.previous();
-                }else if(msg.startsWith(mMsgSplitter + "playlistindex")) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int video = Integer.parseInt(index);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mCurrentPlaylistIndex = video;
-
-                    String indexItem = String.valueOf(mCurrentPlaylistIndex + 1);
-                    mPlaylistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-
-                    if (mPlayerFragment.isVisible()) {
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
-                    } else {
-                        disableSearch();
-                        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
-                        mPlaylistIDs.clear();
-                        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = videos.size();
-                        for (int i = 0; i < size; i++) {
-                            mPlaylistIDs.add(videos.get(i).getId());
-                        }
-
-                        getFragmentManager()
-                                .beginTransaction()
-                                .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
-                                .show(mPlayerFragment)
-                                .addToBackStack(null)
-                                .commit();
-
-                        mVideoList.setVisibility(View.GONE);
-                        mVideoChatDivider.setVisibility(View.VISIBLE);
-                        MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 1);
-                    }
-                }else if(msg.startsWith(mMsgSplitter + "playlistexit")){
-                    getFragmentManager().popBackStack();
-
-                    mVideoList.setVisibility(View.VISIBLE);
-                    mToolbar.setVisibility(View.VISIBLE);
-                    mVideoChatDivider.setVisibility(View.GONE);
-                    enableSearch();
-                    MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-                    mCurrentPlaylistIndex = 0;
-
-                    WeTubeApplication.getSharedDataSource().setPlayerVisible(false);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                }else if(msg.startsWith(mMsgSplitter + "pause")) {
-                    try{
-                        mYouTubePlayer.pause();
-                    }catch(NullPointerException e){
-
-                    }
-
-                }else if(msg.startsWith(mMsgSplitter + "play")) {
+                if (msg.startsWith(mMsgSplitter + getString(R.string.sinch_addToPlaylist))) {
+                    addVideoToPlaylist(msg);
+                } else if (msg.startsWith(mMsgSplitter + getString(R.string.sinch_linkedVideo))) {
+                    addMessageToChat(new MessageItem(message.getTextBody(), MessageItem.INCOMING_MSG));
+                } else if (msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistDeleteItem))) {
+                    removeItemFromPlaylist(msg);
+                } else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_controllerReceive))){
+                    passController(true);
+                } else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistStart))){
+                    startVideoPlayback();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistNext))){
+                    playlistNext();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistPrev))) {
+                    playlistPrev();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistIndex))) {
+                    startVideoPlaybackByIndex(msg);
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistExit))){
+                    videoPlayToVideoSearchTransition();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_pause))) {
+                    mYouTubePlayer.pause();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_play))) {
                     mYouTubePlayer.play();
-                }else if(msg.startsWith(mMsgSplitter + "seek")) {
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_seek))) {
                     ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
                     int seek = Integer.parseInt(msgSplit.get(2));
                     mYouTubePlayer.seekToMillis(seek);
-                }else if(msg.startsWith(mMsgSplitter + "videostart")){
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_videoStart))){
                     mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-                }else if(msg.startsWith((mMsgSplitter + "videoended"))) {
+                }else if(msg.startsWith((mMsgSplitter + getString(R.string.sinch_videoEnded)))) {
                     mHasTheirVideoEnded = true;
                     if (WeTubeApplication.getSharedDataSource().isSessionController() && mHasYourVideoEnded) {
                         mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
                     }
-                }else if(msg.startsWith(mMsgSplitter + "sessionend")) {
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionEnd))) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle(mName + " has left the session");
-
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                            user.setSessionStatus(false);
-                            user.saveInBackground();
-
-                            mYouTubePlayer.release();
-                            MainActivity.super.onBackPressed();
+                            endOfSession();
                         }
                     });
                     builder.setCancelable(false);
                     builder.show();
-                }else if(msg.startsWith(mMsgSplitter + "watchingad")){
-                    //mYouTubePlayer.pause();
-                    Toast.makeText(WeTubeApplication.getSharedInstance(), "Your video is paused while "
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_watchingAd))){
+                    Toast.makeText(WeTubeApplication.getSharedInstance(), getString(R.string.toast_ad_pause_partial1)
                             + WeTubeApplication.getSharedDataSource().getCurrentRecipient().getName()
-                            + " is viewing an advertisement", Toast.LENGTH_LONG).show();
+                            + getString(R.string.toast_ad_pause_partial2), Toast.LENGTH_LONG).show();
                     if(WeTubeApplication.getSharedDataSource().isSessionController()){
                         mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                     }
                 }else{
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.INCOMING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
-
+                    addMessageToChat(new MessageItem(msg, MessageItem.INCOMING_MSG));
                     if(mIsFullscreen){
                         Toast toast = Toast.makeText(WeTubeApplication.getSharedInstance(), msg, Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.TOP, 0, 0);
@@ -1179,190 +979,40 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {
             String msg = mMessages.get(deliveryInfo.getMessageId());
             if(msg != null){
-                if(msg.startsWith(mMsgSplitter + "addtoplaylist")){
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String title = msgSplit.get(2);
-                    String thumbnail = msgSplit.get(3);
-                    String id = msgSplit.get(4);
-                    String duration = msgSplit.get(5);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().add(new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int size = pendingPlaylistAdditions.size();
-                    for(int i = 0; i < size; i++){
-                        if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
-                            pendingPlaylistAdditions.remove(i);
-                            --size;
-                        }
-                    }
-                }else if(msg.startsWith(mMsgSplitter + "linkedvideo")){
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
-                }else if(msg.startsWith(mMsgSplitter + "deleteitemplaylist")){
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int i = Integer.parseInt(index);
-                    if(WeTubeApplication.getSharedDataSource().getPlaylist().size() > 0){
-                        WeTubeApplication.getSharedDataSource().getPlaylist().remove(i);
-                        List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = list.size();
-                        for(int j = 0; j < size; j++){
-                            list.get(j).setIndex(j+1);
-                        }
-                    }
-                    if(mPlaylistIDs.size() > 0){
-                        mPlaylistIDs.remove(Integer.parseInt(index));
-                    }
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    int item = mCurrentPlaylistIndex + 1;
-                    if(i < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        --mCurrentPlaylistIndex;
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else if(i > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
-                        mPlaylistSize.setText(item + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else{
-                        mCurrentPlaylistIndex = 0;
-                        mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }
-                }else if(msg.startsWith(mMsgSplitter + "passcontroller")){
-                    WeTubeApplication.getSharedDataSource().setSessionController(false);
-                    invalidateOptionsMenu();
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-                    mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-                    Toast.makeText(MainActivity.this, "You have given control to " + mName, Toast.LENGTH_SHORT).show();
-                }else if(msg.startsWith(mMsgSplitter + "playliststart")) {
-                    if(WeTubeApplication.getSharedDataSource().isPlayerVisible()){
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                        mCurrentPlaylistIndex = 0;
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                        mPlaylistItemAdapter.notifyDataSetChanged();
-                        String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                        mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    }else{
-                        disableSearch();
-                        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                        mCurrentPlaylistIndex = 0;
-                        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                        mPlaylistItemAdapter.notifyDataSetChanged();
-
-                        mPlaylistIDs.clear();
-                        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = videos.size();
-                        for (int i = 0; i < size; i++) {
-                            mPlaylistIDs.add(videos.get(i).getId());
-                        }
-
-                        getFragmentManager()
-                                .beginTransaction()
-                                .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
-                                .show(mPlayerFragment)
-                                .addToBackStack(null)
-                                .commit();
-
-                        mVideoList.setVisibility(View.GONE);
-                        //mToolbar.setVisibility(View.GONE);
-                        mVideoChatDivider.setVisibility(View.VISIBLE);
-                        MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
-                        String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                        mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
-                    }
-                }else if(msg.startsWith(mMsgSplitter + "playlistindex")) {
-                    ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(msg.split(mMsgSplitter)));
-                    String index = msgSplit.get(2);
-                    int video = Integer.parseInt(index);
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mCurrentPlaylistIndex = video;
-                    String indexItem = String.valueOf(video + 1);
-
-                    mPlaylistSize.setText(indexItem + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                    if(mPlayerFragment.isVisible()){
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
-                    }else{
-                        disableSearch();
-                        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
-                        mPlaylistIDs.clear();
-                        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
-                        int size = videos.size();
-                        for (int i = 0; i < size; i++) {
-                            mPlaylistIDs.add(videos.get(i).getId());
-                        }
-
-                        getFragmentManager()
-                                .beginTransaction()
-                                .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
-                                .show(mPlayerFragment)
-                                .addToBackStack(null)
-                                .commit();
-
-                        mVideoList.setVisibility(View.GONE);
-                        //mToolbar.setVisibility(View.GONE);
-                        mVideoChatDivider.setVisibility(View.VISIBLE);
-                        MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
-                        mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
-                    }
-                }else if(msg.startsWith(mMsgSplitter + "pause")) {
+                if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_addToPlaylist))){
+                    addVideoToPlaylist(msg);
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_linkedVideo))){
+                    addMessageToChat(new MessageItem(msg, MessageItem.OUTGOING_MSG));
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistDeleteItem))){
+                    removeItemFromPlaylist(msg);
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_controllerReceive))){
+                    passController(false);
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistStart))) {
+                    startVideoPlayback();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistIndex))) {
+                    startVideoPlaybackByIndex(msg);
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_pause))) {
                     mIsPaused = true;
-                }else if(msg.startsWith(mMsgSplitter + "playlistprev")){
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    mCurrentPlaylistIndex--;
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                    mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                }else if(msg.startsWith(mMsgSplitter + "playlistnext")) {
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
-                    mCurrentPlaylistIndex++;
-                    WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    String index = String.valueOf(mCurrentPlaylistIndex + 1);
-                    mPlaylistSize.setText(index + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                }else if(msg.startsWith(mMsgSplitter + "playlistexit")) {
-                    getFragmentManager().popBackStack();
-
-                    mVideoList.setVisibility(View.VISIBLE);
-                    mToolbar.setVisibility(View.VISIBLE);
-                    mVideoChatDivider.setVisibility(View.GONE);
-                    enableSearch();
-                    MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-                    mCurrentPlaylistIndex = 0;
-
-                    WeTubeApplication.getSharedDataSource().setPlayerVisible(false);
-                    mPlaylistItemAdapter.notifyDataSetChanged();
-
-                    mPlaylistSize.setText(mCurrentPlaylistIndex + "/" + WeTubeApplication.getSharedDataSource().getPlaylist().size());
-                }else if(msg.startsWith(mMsgSplitter + "sessionend")) {
-                    WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
-                    user.setSessionStatus(false);
-                    user.saveInBackground();
-
-                    WeTubeApplication.getSharedDataSource().getPlaylist().clear();
-                    WeTubeApplication.getSharedDataSource().getMessages().clear();
-                    mYouTubePlayer.release();
-                    MainActivity.super.onBackPressed();
-                }else if(msg.startsWith(mMsgSplitter + "play") || msg.startsWith(mMsgSplitter + "friendaccept") || msg.startsWith(mMsgSplitter + "frienddecline")
-                        || msg.startsWith(mMsgSplitter + "sessionaccept") || msg.startsWith(mMsgSplitter +  "friendfull") || msg.startsWith(mMsgSplitter + "blockuser")
-                        || msg.startsWith(mMsgSplitter + "seek") || msg.startsWith(mMsgSplitter + "videostart") || msg.startsWith(mMsgSplitter + "watchingad")){
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistPrev))){
+                    playlistPrev();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistNext))) {
+                    playlistNext();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_playlistExit))) {
+                    videoPlayToVideoSearchTransition();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionEnd))) {
+                    endOfSession();
+                }else if(msg.startsWith(mMsgSplitter + getString(R.string.sinch_play)) ||
+                        msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendAccept)) ||
+                        msg.startsWith(mMsgSplitter + getString(R.string.sinch_friendDecline)) ||
+                        msg.startsWith(mMsgSplitter + getString(R.string.sinch_sessionAccept)) ||
+                        msg.startsWith(mMsgSplitter +  getString(R.string.sinch_friendFull)) ||
+                        msg.startsWith(mMsgSplitter + getString(R.string.sinch_blockuser)) ||
+                        msg.startsWith(mMsgSplitter + getString(R.string.sinch_seek)) ||
+                        msg.startsWith(mMsgSplitter + getString(R.string.sinch_videoStart)) ||
+                        msg.startsWith(mMsgSplitter + getString(R.string.sinch_watchingAd))){
                     //Do Nothing
                 }else{
-                    WeTubeApplication.getSharedDataSource().getMessages().add(new MessageItem(msg, MessageItem.OUTGOING_MSG));
-                    mMessageItemAdapter.notifyDataSetChanged();
-                    mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+                    addMessageToChat(new MessageItem(msg, MessageItem.OUTGOING_MSG));
                 }
                 mMessages.remove(deliveryInfo.getMessageId());
             }
@@ -1372,11 +1022,304 @@ public class MainActivity extends ActionBarActivity implements VideoListFragment
         public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
     }
 
+
+    /**
+     * A user has chosen to leave the session which returns both users back to UsersActivity
+     */
+    public void endOfSession() {
+        WeTubeUser user = (WeTubeUser) ParseUser.getCurrentUser();
+        user.setSessionStatus(false);
+        user.saveInBackground();
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().clear();
+        WeTubeApplication.getSharedDataSource().getMessages().clear();
+
+        mYouTubePlayer.release();
+
+        MainActivity.super.onBackPressed();
+    }
+
+    /**
+     * Sends both users back to the video search
+     */
+    public void videoPlayToVideoSearchTransition() {
+        getFragmentManager().popBackStack();
+        enableSearch();
+
+        mVideoList.setVisibility(View.VISIBLE);
+        mToolbar.setVisibility(View.VISIBLE);
+        mVideoChatDivider.setVisibility(View.GONE);
+        MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        WeTubeApplication.getSharedDataSource().setPlayerVisible(false);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        mCurrentPlaylistIndex = 0;
+        mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+    }
+
+    /**
+     * Can be called either from the video search or during video play
+     *
+     * @param message  Message sent/received to start playing videos from a playlist selection
+     */
+    public void startVideoPlaybackByIndex(String message) {
+        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
+        String index = msgSplit.get(2);
+        int video = Integer.parseInt(index);
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(video).setSelected(true);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        mCurrentPlaylistIndex = video;
+        String indexItem = String.valueOf(video + 1);
+
+        mPlaylistSize.setText(indexItem + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+
+        if(mPlayerFragment.isVisible()){
+            mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
+        }else{
+            disableSearch();
+            WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
+            mPlaylistIDs.clear();
+            List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
+            int size = videos.size();
+            for (int i = 0; i < size; i++) {
+                mPlaylistIDs.add(videos.get(i).getId());
+            }
+            videoSearchToVideoPlayTransition();
+            mYouTubePlayer.loadVideos(mPlaylistIDs, video, 0);
+        }
+    }
+
+    /**
+     * Moves back in the playlist by updating the playlist counter and the selected video.
+     * Notifies the YouTube Player to move to the previous video
+     */
+    public void playlistPrev() {
+        if(!WeTubeApplication.getSharedDataSource().isSessionController()){
+            mYouTubePlayer.previous();
+        }
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
+        mCurrentPlaylistIndex--;
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        String index = String.valueOf(mCurrentPlaylistIndex + 1);
+        mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+
+    }
+
+    /**
+     * Moves forward in the playlist by updating the playlist counter and the selected video.
+     * Notifies the YouTube Player to move to the next video
+     */
+    public void playlistNext() {
+        if(!WeTubeApplication.getSharedDataSource().isSessionController()){
+            mYouTubePlayer.next();
+        }
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
+        mCurrentPlaylistIndex++;
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        String index = String.valueOf(mCurrentPlaylistIndex + 1);
+        mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+
+    }
+
+    /**
+     * Performs all the actions necessary to take the user from video search to watching videos
+     */
+    public void startVideoPlayback() {
+        if(WeTubeApplication.getSharedDataSource().isPlayerVisible()){
+            updatePlaylistForVideoPlayback();
+        }else{
+            disableSearch();
+            videoSearchToVideoPlayTransition();
+            updatePlaylistForVideoPlayback();
+        }
+    }
+
+    /**
+     * Will set the playlist and YouTube player to the start of the playlist.
+     */
+    public void updatePlaylistForVideoPlayback() {
+        mPlaylistIDs.clear();
+        List<PlaylistItem> videos = WeTubeApplication.getSharedDataSource().getPlaylist();
+        int size = videos.size();
+        for (int i = 0; i < size; i++) {
+            mPlaylistIDs.add(videos.get(i).getId());
+        }
+        mYouTubePlayer.loadVideos(mPlaylistIDs, 0, 100);
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(false);
+        mCurrentPlaylistIndex = 0;
+        WeTubeApplication.getSharedDataSource().getPlaylist().get(mCurrentPlaylistIndex).setSelected(true);
+        WeTubeApplication.getSharedDataSource().setPlayerVisible(true);
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        String index = String.valueOf(mCurrentPlaylistIndex + 1);
+        mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+    }
+
+    /**
+     * Hides the video search list and displays the YouTube player
+     */
+    public void videoSearchToVideoPlayTransition() {
+        getFragmentManager()
+                .beginTransaction()
+                .hide(getFragmentManager().findFragmentById(R.id.fl_activity_video_list))
+                .show(mPlayerFragment)
+                .addToBackStack(null)
+                .commit();
+
+        mVideoList.setVisibility(View.GONE);
+        mVideoChatDivider.setVisibility(View.VISIBLE);
+        MainActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+    }
+
+    /**
+     * Updates the Toolbar and YouTube player based on the change in controller status
+     *
+     * @param isReceivingControl Are we passing the controller or receiving it
+     */
+    public void passController(boolean isReceivingControl){
+        WeTubeApplication.getSharedDataSource().setSessionController(isReceivingControl);
+        invalidateOptionsMenu();
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        if(isReceivingControl){
+            mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            Toast.makeText(MainActivity.this, mName + getString(R.string.controller_receive), Toast.LENGTH_SHORT).show();
+        }else{
+            mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+            Toast.makeText(MainActivity.this, getString(R.string.controller_pass) + mName, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     *
+     *
+     * After removing the PlaylistItem, the video ids that are passed to the YouTube Player to
+     * create a playlist must also be updated. The playlist counter is also updated.
+     *
+     * @param message  Message sent/received to delete a specific item in the playlist
+     */
+    public void removeItemFromPlaylist(String message) {
+        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
+        String index = msgSplit.get(2);
+        int ind = Integer.parseInt(index);
+
+        List<PlaylistItem> list = WeTubeApplication.getSharedDataSource().getPlaylist();
+        if(list.size() > 0){
+            list.remove(ind);
+            int size = list.size();
+            for(int j = 0; j < size; j++){
+                list.get(j).setIndex(j+1);
+            }
+        }
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        if (mPlaylistIDs.size() > 0) {
+            mPlaylistIDs.remove(ind);
+        }
+
+        updatePlaylistIndex(ind);
+    }
+
+    /**
+     * Updates the Playlist text based on the index of the removed item and how it relates to
+     * the position of the current playlist index.
+     *
+     * Example:  The current playlist text is "7/10", meaning its on the 7th video out of a total of 10 videos
+     * in the playlist.
+     *
+     * There are 3 scenarios to consider:
+     *      1)indexRemoved has a lower index than current playlist index
+     *          7/10 -> 6/9  and mCurrentPlaylistIndex goes from 7 to 6
+     *      2)indexRemoved has a higher index than current playlist index
+     *          7/10 -> 7/9 and mCurrentPlaylistIndex is not effected
+     *      3)indexRemoved is the current playlist index
+     *          7/10 -> 0/9 since there's no longer a current index until the user selects a new video
+     *
+     * @param indexRemoved  The index of the PlaylistItem that is being removed
+     */
+    public void updatePlaylistIndex(int indexRemoved) {
+        int index = mCurrentPlaylistIndex + 1;
+        if(indexRemoved < mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
+            --mCurrentPlaylistIndex;
+            mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        }else if(indexRemoved > mCurrentPlaylistIndex && mCurrentPlaylistIndex != 0){
+            mPlaylistSize.setText(index + getString(R.string.playlist_forward_slash) + WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        }else{
+            mCurrentPlaylistIndex = 0;
+            mPlaylistSize.setText(mCurrentPlaylistIndex + getString(R.string.playlist_forward_slash) +
+                    WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        }
+    }
+
+    /**
+     * Adds a new MessageItem to the messages list to be displayed in the chat.
+     *
+     * @param messageItem   The message to be added to the messages list
+     */
+    public void addMessageToChat(MessageItem messageItem) {
+        WeTubeApplication.getSharedDataSource().getMessages().add(messageItem);
+        mMessageItemAdapter.notifyDataSetChanged();
+        mMessageRecyclerView.scrollToPosition(WeTubeApplication.getSharedDataSource().getMessages().size() - 1);
+    }
+
+    /**
+     * When the session controller clicks on a video to add to the playlist, a message is created that stores
+     * all the information necessary to create a new PlaylistItem and sent to the other user.
+     *
+     * @param message
+     */
+    public void addVideoToPlaylist(String message) {
+        ArrayList<String> msgSplit = new ArrayList<>(Arrays.asList(message.split(mMsgSplitter)));
+        String title = msgSplit.get(2);
+        String thumbnail = msgSplit.get(3);
+        String id = msgSplit.get(4);
+        String duration = msgSplit.get(5);
+
+        WeTubeApplication.getSharedDataSource().getPlaylist().add(
+                new PlaylistItem(title, thumbnail, id, WeTubeApplication.getSharedDataSource().getPlaylist().size() + 1, duration));
+        mPlaylistSize.setText(mCurrentPlaylistIndex +
+                getString(R.string.playlist_forward_slash) +
+                WeTubeApplication.getSharedDataSource().getPlaylist().size());
+        mPlaylistItemAdapter.notifyDataSetChanged();
+
+        int size = pendingPlaylistAdditions.size();
+        for(int i = 0; i < size; i++){
+            if(title.equals(pendingPlaylistAdditions.get(i).getTitle())){
+                pendingPlaylistAdditions.remove(i);
+                size -= 1;
+            }
+        }
+    }
+
+    /**
+     * When a user transitions from video play to video search, the SearchView menu item
+     * returns to the toolbar
+     */
     public void enableSearch() {
         searchViewItem.setVisible(true);
         searchViewItem.setEnabled(true);
     }
 
+    /**
+     * When a user transitions from video search to video play, the SearchView menu item
+     * is no longer used
+     */
     public void disableSearch() {
         searchViewItem.setVisible(false);
         searchViewItem.setEnabled(false);

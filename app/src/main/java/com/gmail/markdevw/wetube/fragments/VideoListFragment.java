@@ -10,8 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.WeTubeApplication;
@@ -36,9 +34,6 @@ public class VideoListFragment extends Fragment implements VideoItemAdapter.Dele
 
     public static interface Delegate {
         public void onVideoItemClicked(VideoItemAdapter itemAdapter, VideoItem videoItem);
-        public void onSearchButtonClicked(VideoListFragment videoListFragment, EditText search);
-        public void onPrevPageButtonClicked(VideoListFragment videoListFragment, EditText search, ImageButton prevPage);
-        public void onNextPageButtonClicked(VideoListFragment videoListFragment, EditText search, ImageButton nextPage);
     }
 
     @Override

@@ -194,7 +194,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
                     @Override
                     public void done(ParseUser parseUser, ParseException e) {
                         if(parseUser != null){
-                            showSpinner();
+                            createSinchReceiver();
                             loginSuccess();
                         }else{
                             if(e != null){
@@ -229,7 +229,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             toolbar.setTitle(ParseUser.getCurrentUser().getUsername());
             drawerLayout.setVisibility(View.VISIBLE);
 
-            showSpinner();
+            createSinchReceiver();
             startServices();
 
             getLoggedInUsers();
@@ -318,12 +318,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         mUserTagsAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice);
     }
 
-
-    private void showSpinner() {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setTitle(getString(R.string.activities_usersactivity_progress_dialog_title));
-        mProgressDialog.setMessage(getString(R.string.activities_usersactivity_progress_dialog_message));
-        mProgressDialog.show();
+    private void createSinchReceiver() {
+        showSpinner(getString(R.string.activities_usersactivity_progress_dialog_title), getString(R.string.activities_usersactivity_progress_dialog_message));
 
         sinchReceiver = new BroadcastReceiver() {
             @Override
@@ -348,6 +344,13 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
         };
 
         LocalBroadcastManager.getInstance(this).registerReceiver(sinchReceiver, new IntentFilter(getString(R.string.activities_usersactivity_packagename)));
+    }
+
+    private void showSpinner(String title, String message) {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle(title);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.show();
     }
 
     public void initSwipeRefresh() {
@@ -1901,10 +1904,8 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
      * Displays a ProgressDialog whenever the friends list is opened or the spinner option is changed
      */
     public void friendsRefreshProgress(){
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setTitle(getString(R.string.activities_usersactivity_progress_friends_refresh_title));
-        mProgressDialog.setMessage(getString(R.string.activities_usersactivity_progress_friends_refresh_message));
-        mProgressDialog.show();
+        showSpinner(getString(R.string.activities_usersactivity_progress_friends_refresh_title),
+                getString(R.string.activities_usersactivity_progress_friends_refresh_message));
     }
 
     /**

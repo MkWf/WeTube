@@ -237,7 +237,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
             getUserTags();
             saveParseInstallation();
 
-            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.red_a200));
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -354,7 +354,7 @@ public class UsersActivity extends ActionBarActivity implements UserItemAdapter.
     }
 
     public void initSwipeRefresh() {
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.red_a200));
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

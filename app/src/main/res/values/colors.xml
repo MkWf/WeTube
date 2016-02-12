@@ -5,9 +5,14 @@
     <color name="dark_gray">#ffb3b3b3</color>
     <color name="black_26">#3A000000</color>
     <color name="black">#FF000000</color>
-    <color name="primary">#17AFCA</color>
     <color name="white">#FFFFFF</color>
     <color name="green">#FF00FF00</color>
     <color name="red">#FFFF0000</color>
+
+    <color name="red_500">#F44336</color>
+    <color name="red_700">#D32F2F</color>
+    <color name="red_a200">#FF5252</color>
+
+
 
 </resources>

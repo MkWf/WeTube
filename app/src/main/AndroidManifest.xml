@@ -36,7 +36,7 @@
         </activity>
 
         <activity
-            android:name=".activities.UsersActivity"
+            android:name=".login.LoginActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:label="@string/app_name" >

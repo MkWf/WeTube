@@ -23,7 +23,7 @@ import butterknife.OnClick;
 public class SignUpFragment extends Fragment {
 
     public interface SignUpListener {
-        void onSignUpCompleted(String name, String pass, String email);
+        void onSignUpCompleted(String name, String password, String email);
     }
 
     @Bind(R.id.signup_name) EditText name;

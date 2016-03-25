@@ -1,0 +1,1501 @@
+[
+    {
+        "outputFile": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\build\\intermediates\\res\\merged\\release\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 68,
+                    "endOffset": 119
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 10,
+                        "startColumn": 4,
+                        "startOffset": 697,
+                        "endColumn": 68,
+                        "endOffset": 761
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 124,
+                    "endColumn": 74,
+                    "endOffset": 194
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 842,
+                        "endColumn": 74,
+                        "endOffset": 912
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 199,
+                    "endColumn": 73,
+                    "endOffset": 268
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 11,
+                        "startColumn": 4,
+                        "startOffset": 767,
+                        "endColumn": 73,
+                        "endOffset": 836
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 273,
+                    "endColumn": 67,
+                    "endOffset": 336
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 78,
+                        "endColumn": 67,
+                        "endOffset": 141
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 341,
+                    "endColumn": 73,
+                    "endOffset": 410
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 221,
+                        "endColumn": 73,
+                        "endOffset": 290
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 7,
+                    "startColumn": 4,
+                    "startOffset": 415,
+                    "endColumn": 72,
+                    "endOffset": 483
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 147,
+                        "endColumn": 72,
+                        "endOffset": 215
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 8,
+                    "startColumn": 4,
+                    "startOffset": 488,
+                    "endColumn": 84,
+                    "endOffset": 568
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 9,
+                        "startColumn": 4,
+                        "startOffset": 611,
+                        "endColumn": 84,
+                        "endOffset": 691
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 9,
+                    "startColumn": 4,
+                    "startOffset": 573,
+                    "endColumn": 76,
+                    "endOffset": 645
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 296,
+                        "endColumn": 76,
+                        "endOffset": 368
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 10,
+                    "startColumn": 4,
+                    "startOffset": 650,
+                    "endColumn": 82,
+                    "endOffset": 728
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 457,
+                        "endColumn": 82,
+                        "endOffset": 535
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 733,
+                    "endColumn": 81,
+                    "endOffset": 810
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 374,
+                        "endColumn": 81,
+                        "endOffset": 451
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 815,
+                    "endColumn": 68,
+                    "endOffset": 879
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 8,
+                        "startColumn": 4,
+                        "startOffset": 541,
+                        "endColumn": 68,
+                        "endOffset": 605
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 13,
+                    "startColumn": 4,
+                    "startOffset": 884,
+                    "endColumn": 67,
+                    "endOffset": 947
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 918,
+                        "endColumn": 67,
+                        "endOffset": 981
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 14,
+                    "startColumn": 4,
+                    "startOffset": 952,
+                    "endColumn": 73,
+                    "endOffset": 1021
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 15,
+                        "startColumn": 4,
+                        "startOffset": 1061,
+                        "endColumn": 73,
+                        "endOffset": 1130
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 15,
+                    "startColumn": 4,
+                    "startOffset": 1026,
+                    "endColumn": 72,
+                    "endOffset": 1094
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\colors.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 987,
+                        "endColumn": 72,
+                        "endOffset": 1055
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 16,
+                    "startColumn": 4,
+                    "startOffset": 1099,
+                    "endColumn": 61,
+                    "endOffset": 1156
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\dimens.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 57,
+                        "endColumn": 61,
+                        "endOffset": 114
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 17,
+                    "startColumn": 4,
+                    "startOffset": 1161,
+                    "endColumn": 66,
+                    "endOffset": 1223
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\dimens.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 310,
+                        "endColumn": 66,
+                        "endOffset": 372
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 18,
+                    "startColumn": 4,
+                    "startOffset": 1228,
+                    "endColumn": 67,
+                    "endOffset": 1291
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\dimens.xml",
+                    "position": {
+                        "startLine": 8,
+                        "startColumn": 4,
+                        "startOffset": 447,
+                        "endColumn": 67,
+                        "endOffset": 510
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 19,
+                    "startColumn": 4,
+                    "startOffset": 1296,
+                    "endColumn": 65,
+                    "endOffset": 1357
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\dimens.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 181,
+                        "endColumn": 65,
+                        "endOffset": 242
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 20,
+                    "startColumn": 4,
+                    "startOffset": 1362,
+                    "endColumn": 59,
+                    "endOffset": 1417
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\dimens.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 120,
+                        "endColumn": 59,
+                        "endOffset": 175
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 21,
+                    "startColumn": 4,
+                    "startOffset": 1422,
+                    "endColumn": 60,
+                    "endOffset": 1478
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\dimens.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 248,
+                        "endColumn": 60,
+                        "endOffset": 304
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 22,
+                    "startColumn": 4,
+                    "startOffset": 1483,
+                    "endColumn": 67,
+                    "endOffset": 1546
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\dimens.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 378,
+                        "endColumn": 67,
+                        "endOffset": 441
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 23,
+                    "startColumn": 4,
+                    "startOffset": 1551,
+                    "endLine": 26,
+                    "endColumn": 14,
+                    "endOffset": 1783
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 1637,
+                        "endLine": 25,
+                        "endColumn": 14,
+                        "endOffset": 1872
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 27,
+                    "startColumn": 4,
+                    "startOffset": 1788,
+                    "endColumn": 86,
+                    "endOffset": 1870
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 796,
+                        "endColumn": 86,
+                        "endOffset": 878
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 28,
+                    "startColumn": 4,
+                    "startOffset": 1875,
+                    "endColumn": 83,
+                    "endOffset": 1954
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 947,
+                        "endColumn": 83,
+                        "endOffset": 1026
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 29,
+                    "startColumn": 4,
+                    "startOffset": 1959,
+                    "endColumn": 63,
+                    "endOffset": 2018
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 11,
+                        "startColumn": 4,
+                        "startOffset": 731,
+                        "endColumn": 63,
+                        "endOffset": 790
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 30,
+                    "startColumn": 4,
+                    "startOffset": 2023,
+                    "endColumn": 117,
+                    "endOffset": 2136
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 32,
+                        "startColumn": 4,
+                        "startOffset": 2403,
+                        "endColumn": 117,
+                        "endOffset": 2516
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 31,
+                    "startColumn": 4,
+                    "startOffset": 2141,
+                    "endColumn": 89,
+                    "endOffset": 2226
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 9,
+                        "startColumn": 4,
+                        "startOffset": 551,
+                        "endColumn": 89,
+                        "endOffset": 636
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 32,
+                    "startColumn": 4,
+                    "startOffset": 2231,
+                    "endColumn": 90,
+                    "endOffset": 2317
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 1453,
+                        "endColumn": 90,
+                        "endOffset": 1539
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 33,
+                    "startColumn": 4,
+                    "startOffset": 2322,
+                    "endColumn": 92,
+                    "endOffset": 2410
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 307,
+                        "endColumn": 92,
+                        "endOffset": 395
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 34,
+                    "startColumn": 4,
+                    "startOffset": 2415,
+                    "endColumn": 110,
+                    "endOffset": 2521
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 31,
+                        "startColumn": 4,
+                        "startOffset": 2291,
+                        "endColumn": 110,
+                        "endOffset": 2397
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 35,
+                    "startColumn": 4,
+                    "startOffset": 2526,
+                    "endColumn": 99,
+                    "endOffset": 2621
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 58,
+                        "startColumn": 4,
+                        "startOffset": 5256,
+                        "endColumn": 99,
+                        "endOffset": 5351
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 36,
+                    "startColumn": 4,
+                    "startOffset": 2626,
+                    "endColumn": 122,
+                    "endOffset": 2744
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 59,
+                        "startColumn": 4,
+                        "startOffset": 5357,
+                        "endColumn": 122,
+                        "endOffset": 5475
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 37,
+                    "startColumn": 4,
+                    "startOffset": 2749,
+                    "endColumn": 74,
+                    "endOffset": 2819
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 36,
+                        "startColumn": 4,
+                        "startOffset": 2821,
+                        "endColumn": 74,
+                        "endOffset": 2891
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 38,
+                    "startColumn": 4,
+                    "startOffset": 2824,
+                    "endColumn": 133,
+                    "endOffset": 2953
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 40,
+                        "startColumn": 4,
+                        "startOffset": 3195,
+                        "endColumn": 133,
+                        "endOffset": 3324
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 39,
+                    "startColumn": 4,
+                    "startOffset": 2958,
+                    "endColumn": 106,
+                    "endOffset": 3060
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 35,
+                        "startColumn": 4,
+                        "startOffset": 2713,
+                        "endColumn": 106,
+                        "endOffset": 2815
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 40,
+                    "startColumn": 4,
+                    "startOffset": 3065,
+                    "endColumn": 90,
+                    "endOffset": 3151
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 38,
+                        "startColumn": 4,
+                        "startOffset": 2977,
+                        "endColumn": 90,
+                        "endOffset": 3063
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 41,
+                    "startColumn": 4,
+                    "startOffset": 3156,
+                    "endColumn": 78,
+                    "endOffset": 3230
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 37,
+                        "startColumn": 4,
+                        "startOffset": 2897,
+                        "endColumn": 78,
+                        "endOffset": 2971
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 42,
+                    "startColumn": 4,
+                    "startOffset": 3235,
+                    "endColumn": 124,
+                    "endOffset": 3355
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 39,
+                        "startColumn": 4,
+                        "startOffset": 3069,
+                        "endColumn": 124,
+                        "endOffset": 3189
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 43,
+                    "startColumn": 4,
+                    "startOffset": 3360,
+                    "endColumn": 140,
+                    "endOffset": 3496
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 48,
+                        "startColumn": 4,
+                        "startOffset": 4080,
+                        "endColumn": 140,
+                        "endOffset": 4216
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 44,
+                    "startColumn": 4,
+                    "startOffset": 3501,
+                    "endColumn": 137,
+                    "endOffset": 3634
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 49,
+                        "startColumn": 4,
+                        "startOffset": 4222,
+                        "endColumn": 137,
+                        "endOffset": 4355
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 45,
+                    "startColumn": 4,
+                    "startOffset": 3639,
+                    "endColumn": 166,
+                    "endOffset": 3801
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 47,
+                        "startColumn": 4,
+                        "startOffset": 3912,
+                        "endColumn": 166,
+                        "endOffset": 4074
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 46,
+                    "startColumn": 4,
+                    "startOffset": 3806,
+                    "endColumn": 113,
+                    "endOffset": 3915
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 51,
+                        "startColumn": 4,
+                        "startOffset": 4488,
+                        "endColumn": 113,
+                        "endOffset": 4597
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 47,
+                    "startColumn": 4,
+                    "startOffset": 3920,
+                    "endColumn": 152,
+                    "endOffset": 4068
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 53,
+                        "startColumn": 4,
+                        "startOffset": 4716,
+                        "endColumn": 152,
+                        "endOffset": 4864
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 48,
+                    "startColumn": 4,
+                    "startOffset": 4073,
+                    "endColumn": 110,
+                    "endOffset": 4179
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 44,
+                        "startColumn": 4,
+                        "startOffset": 3564,
+                        "endColumn": 110,
+                        "endOffset": 3670
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 49,
+                    "startColumn": 4,
+                    "startOffset": 4184,
+                    "endColumn": 120,
+                    "endOffset": 4300
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 46,
+                        "startColumn": 4,
+                        "startOffset": 3790,
+                        "endColumn": 120,
+                        "endOffset": 3906
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 50,
+                    "startColumn": 4,
+                    "startOffset": 4305,
+                    "endColumn": 114,
+                    "endOffset": 4415
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 43,
+                        "startColumn": 4,
+                        "startOffset": 3448,
+                        "endColumn": 114,
+                        "endOffset": 3558
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 51,
+                    "startColumn": 4,
+                    "startOffset": 4420,
+                    "endColumn": 112,
+                    "endOffset": 4528
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 45,
+                        "startColumn": 4,
+                        "startOffset": 3676,
+                        "endColumn": 112,
+                        "endOffset": 3784
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 52,
+                    "startColumn": 4,
+                    "startOffset": 4533,
+                    "endColumn": 114,
+                    "endOffset": 4643
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 42,
+                        "startColumn": 4,
+                        "startOffset": 3332,
+                        "endColumn": 114,
+                        "endOffset": 3442
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 53,
+                    "startColumn": 4,
+                    "startOffset": 4648,
+                    "endColumn": 125,
+                    "endOffset": 4769
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 50,
+                        "startColumn": 4,
+                        "startOffset": 4361,
+                        "endColumn": 125,
+                        "endOffset": 4482
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 54,
+                    "startColumn": 4,
+                    "startOffset": 4774,
+                    "endColumn": 109,
+                    "endOffset": 4879
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 55,
+                        "startColumn": 4,
+                        "startOffset": 5022,
+                        "endColumn": 109,
+                        "endOffset": 5127
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 55,
+                    "startColumn": 4,
+                    "startOffset": 4884,
+                    "endColumn": 119,
+                    "endOffset": 4999
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 56,
+                        "startColumn": 4,
+                        "startOffset": 5133,
+                        "endColumn": 119,
+                        "endOffset": 5248
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 56,
+                    "startColumn": 4,
+                    "startOffset": 5004,
+                    "endColumn": 111,
+                    "endOffset": 5111
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 52,
+                        "startColumn": 4,
+                        "startOffset": 4603,
+                        "endColumn": 111,
+                        "endOffset": 4710
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 57,
+                    "startColumn": 4,
+                    "startOffset": 5116,
+                    "endColumn": 150,
+                    "endOffset": 5262
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 54,
+                        "startColumn": 4,
+                        "startOffset": 4870,
+                        "endColumn": 150,
+                        "endOffset": 5016
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 58,
+                    "startColumn": 4,
+                    "startOffset": 5267,
+                    "endColumn": 70,
+                    "endOffset": 5333
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 19,
+                        "endColumn": 70,
+                        "endOffset": 85
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 59,
+                    "startColumn": 4,
+                    "startOffset": 5338,
+                    "endColumn": 113,
+                    "endOffset": 5447
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 29,
+                        "startColumn": 4,
+                        "startOffset": 2095,
+                        "endColumn": 113,
+                        "endOffset": 2204
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 60,
+                    "startColumn": 4,
+                    "startOffset": 5452,
+                    "endColumn": 61,
+                    "endOffset": 5509
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 884,
+                        "endColumn": 61,
+                        "endOffset": 941
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 61,
+                    "startColumn": 4,
+                    "startOffset": 5514,
+                    "endColumn": 79,
+                    "endOffset": 5589
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 30,
+                        "startColumn": 4,
+                        "startOffset": 2210,
+                        "endColumn": 79,
+                        "endOffset": 2285
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 62,
+                    "startColumn": 4,
+                    "startOffset": 5594,
+                    "endColumn": 77,
+                    "endOffset": 5667
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 33,
+                        "startColumn": 4,
+                        "startOffset": 2522,
+                        "endColumn": 77,
+                        "endOffset": 2595
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 63,
+                    "startColumn": 4,
+                    "startOffset": 5672,
+                    "endColumn": 85,
+                    "endOffset": 5753
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 16,
+                        "startColumn": 4,
+                        "startOffset": 1119,
+                        "endColumn": 85,
+                        "endOffset": 1200
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 64,
+                    "startColumn": 4,
+                    "startOffset": 5758,
+                    "endColumn": 85,
+                    "endOffset": 5839
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 15,
+                        "startColumn": 4,
+                        "startOffset": 1032,
+                        "endColumn": 85,
+                        "endOffset": 1113
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 65,
+                    "startColumn": 4,
+                    "startOffset": 5844,
+                    "endColumn": 72,
+                    "endOffset": 5912
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 401,
+                        "endColumn": 72,
+                        "endOffset": 469
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 66,
+                    "startColumn": 4,
+                    "startOffset": 5917,
+                    "endColumn": 114,
+                    "endOffset": 6027
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 1337,
+                        "endColumn": 114,
+                        "endOffset": 1447
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 67,
+                    "startColumn": 4,
+                    "startOffset": 6032,
+                    "endColumn": 129,
+                    "endOffset": 6157
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 17,
+                        "startColumn": 4,
+                        "startOffset": 1206,
+                        "endColumn": 129,
+                        "endOffset": 1331
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 68,
+                    "startColumn": 4,
+                    "startOffset": 6162,
+                    "endColumn": 74,
+                    "endOffset": 6232
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 8,
+                        "startColumn": 4,
+                        "startOffset": 475,
+                        "endColumn": 74,
+                        "endOffset": 545
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 69,
+                    "startColumn": 4,
+                    "startOffset": 6237,
+                    "endColumn": 69,
+                    "endOffset": 6302
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 236,
+                        "endColumn": 69,
+                        "endOffset": 301
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 70,
+                    "startColumn": 4,
+                    "startOffset": 6307,
+                    "endColumn": 72,
+                    "endOffset": 6375
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 91,
+                        "endColumn": 72,
+                        "endOffset": 159
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 71,
+                    "startColumn": 4,
+                    "startOffset": 6380,
+                    "endColumn": 93,
+                    "endOffset": 6469
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 28,
+                        "startColumn": 4,
+                        "startOffset": 2000,
+                        "endColumn": 93,
+                        "endOffset": 2089
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 72,
+                    "startColumn": 4,
+                    "startOffset": 6474,
+                    "endColumn": 110,
+                    "endOffset": 6580
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 34,
+                        "startColumn": 4,
+                        "startOffset": 2601,
+                        "endColumn": 110,
+                        "endOffset": 2707
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 73,
+                    "startColumn": 4,
+                    "startOffset": 6585,
+                    "endColumn": 87,
+                    "endOffset": 6668
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 10,
+                        "startColumn": 4,
+                        "startOffset": 642,
+                        "endColumn": 87,
+                        "endOffset": 725
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 74,
+                    "startColumn": 4,
+                    "startOffset": 6673,
+                    "endColumn": 88,
+                    "endOffset": 6757
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 1545,
+                        "endColumn": 88,
+                        "endOffset": 1629
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 75,
+                    "startColumn": 4,
+                    "startOffset": 6762,
+                    "endColumn": 69,
+                    "endOffset": 6827
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 165,
+                        "endColumn": 69,
+                        "endOffset": 230
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 76,
+                    "startColumn": 4,
+                    "startOffset": 6832,
+                    "endColumn": 118,
+                    "endOffset": 6946
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 27,
+                        "startColumn": 4,
+                        "startOffset": 1880,
+                        "endColumn": 118,
+                        "endOffset": 1994
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 77,
+                    "startColumn": 4,
+                    "startOffset": 6951,
+                    "endColumn": 32,
+                    "endOffset": 6979
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\styles.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 78,
+                        "endColumn": 33,
+                        "endOffset": 107
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 78,
+                    "startColumn": 4,
+                    "startOffset": 6984,
+                    "endLine": 86,
+                    "endColumn": 12,
+                    "endOffset": 7458
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\styles.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 115,
+                        "endLine": 12,
+                        "endColumn": 12,
+                        "endOffset": 597
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 87,
+                    "startColumn": 4,
+                    "startOffset": 7463,
+                    "endLine": 90,
+                    "endColumn": 12,
+                    "endOffset": 7662
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\styles.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 605,
+                        "endLine": 17,
+                        "endColumn": 12,
+                        "endOffset": 807
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 91,
+                    "startColumn": 4,
+                    "startOffset": 7667,
+                    "endLine": 93,
+                    "endColumn": 12,
+                    "endOffset": 7808
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\styles.xml",
+                    "position": {
+                        "startLine": 34,
+                        "startColumn": 4,
+                        "startOffset": 1583,
+                        "endLine": 36,
+                        "endColumn": 12,
+                        "endOffset": 1726
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 94,
+                    "startColumn": 4,
+                    "startOffset": 7813,
+                    "endLine": 102,
+                    "endColumn": 12,
+                    "endOffset": 8324
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\styles.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 815,
+                        "endLine": 27,
+                        "endColumn": 12,
+                        "endOffset": 1334
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 103,
+                    "startColumn": 4,
+                    "startOffset": 8329,
+                    "endLine": 106,
+                    "endColumn": 12,
+                    "endOffset": 8559
+                },
+                "from": {
+                    "file": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\values\\styles.xml",
+                    "position": {
+                        "startLine": 29,
+                        "startColumn": 4,
+                        "startOffset": 1342,
+                        "endLine": 32,
+                        "endColumn": 12,
+                        "endOffset": 1575
+                    }
+                }
+            }
+        ]
+    }
+]

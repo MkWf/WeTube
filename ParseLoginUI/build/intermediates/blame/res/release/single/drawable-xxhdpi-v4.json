@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\build\\intermediates\\res\\merged\\release\\drawable-xxhdpi-v4\\com_parse_ui_facebook_login_logo.png",
+        "source": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\drawable-xxhdpi\\com_parse_ui_facebook_login_logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\build\\intermediates\\res\\merged\\release\\drawable-xxhdpi-v4\\com_parse_ui_app_logo.png",
+        "source": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\drawable-xxhdpi\\com_parse_ui_app_logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\build\\intermediates\\res\\merged\\release\\drawable-xxhdpi-v4\\com_parse_ui_twitter_login_logo.png",
+        "source": "C:\\Users\\Mark\\Desktop\\AD\\REPO\\WeTube\\ParseLoginUI\\res\\drawable-xxhdpi\\com_parse_ui_twitter_login_logo.png"
+    }
+]

@@ -51,4 +51,3 @@
         android:layout_marginBottom="@dimen/com_parse_ui_small_vertical_spacing"
         android:text="@string/com_parse_ui_forgot_password_button_label" />
 </LinearLayout>
-<!-- From: file:/C:/Users/Mark/Desktop/AD/REPO/WeTube/ParseLoginUI/res/layout/com_parse_ui_parse_login_form.xml -->

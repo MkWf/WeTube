@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.gmail.markdevw.wetube.R;
-import com.gmail.markdevw.wetube.data.User;
 import com.gmail.markdevw.wetube.login.fragments.LoginFragment;
 import com.gmail.markdevw.wetube.login.fragments.SignUpFragment;
 import com.gmail.markdevw.wetube.utils.Constants;
+
+import java.util.Map;
 
 /**
  * Created by Mark on 3/23/2016.
@@ -53,7 +55,16 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     @Override
     public void onSignUpCompleted(String name, String pass, String email) {
 
-        Firebase ref = new Firebase(Constants.FIREBASE_URL);
-        ref.child("users").child(name).setValue(new User(pass, email));
+        Firebase ref = new Firebase(Constants.FIREBASE_URL).child("users");
+        ref.createUser(email, pass, new Firebase.ValueResultHandler<Map<String, Object>>() {
+            public void onSuccess(Map<String, Object> result) {
+                System.out.println("Successfully created user account with uid: " + result.get("uid"));
+            }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+
+            }
+        });
     }
 }

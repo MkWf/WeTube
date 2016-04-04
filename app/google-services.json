@@ -15,20 +15,7 @@
           "certificate_hash": []
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "361578459714-mdi0fdu4s3uig5t262tenl4cdq3ih68m.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.gmail.markdevw.wetube",
-            "certificate_hash": "BF65DFB5D451C0B76DF3D37A68C4388F46E5ADAC"
-          }
-        },
-        {
-          "client_id": "361578459714-1u1f9t1reh5thmmribh0g9lhrfqbqmcq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [],
       "services": {
         "analytics_service": {
@@ -43,7 +30,7 @@
           "other_platform_oauth_client": []
         },
         "google_signin_service": {
-          "status": 2
+          "status": 1
         },
         "ads_service": {
           "status": 1

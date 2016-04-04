@@ -5,22 +5,21 @@ package com.gmail.markdevw.wetube.data;
  */
 public class User {
 
-    private String password;
+    private String userName;
     private String email;
 
     public User(){
 
     }
 
-    public User(String password, String email){
-        this.password = password;
+    public User(String userName, String email){
+        this.userName = userName;
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUserName() {
+        return userName;
     }
-
     public String getEmail() {
         return email;
     }

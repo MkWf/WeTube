@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
 
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(SearchFragment.newInstance(), "Search");
@@ -40,6 +40,39 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
         tabs.setupWithViewPager(viewPager);
+        tabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                tab.getText();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                tabs.getTabAt(position).getText();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     static class Adapter extends FragmentPagerAdapter {
@@ -50,24 +83,20 @@ public class MainActivity extends AppCompatActivity {
             super(manager);
         }
 
-
         @Override
         public Fragment getItem(int position) {
             return mFragmentList.get(position);
         }
-
 
         @Override
         public int getCount() {
             return mFragmentList.size();
         }
 
-
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
-
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -75,4 +104,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-

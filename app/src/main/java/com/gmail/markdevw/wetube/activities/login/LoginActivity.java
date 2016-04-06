@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                         /* If nothing is there ...*/
                                             if (dataSnapshot.getValue() == null) {
-                                                User newUser = new User(userName, encodedEmail);
+                                                User newUser = new User(userName, encodedEmail, true, false);
                                                 userLocation.setValue(newUser);
                                             }
                                         }

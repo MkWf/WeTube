@@ -5,20 +5,33 @@ package com.gmail.markdevw.wetube.data;
  */
 public class User {
 
-    private String userName;
+    private String name;
     private String email;
+    private boolean isLoggedIn;
+    private boolean isInSession;
 
     public User(){
 
     }
 
-    public User(String userName, String email){
-        this.userName = userName;
+    public User(String name, String email, boolean isLoggedIn, boolean isInSession){
+        this.name = name;
         this.email = email;
+        this.isLoggedIn = isLoggedIn;
+        this.isInSession = isInSession;
     }
 
-    public String getUserName() {
-        return userName;
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public boolean isInSession() {
+        return isInSession;
+    }
+
+    public String getName() {
+
+        return name;
     }
     public String getEmail() {
         return email;

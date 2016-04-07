@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            draggablePanel.getDraggableView().disableDraggableView();
             Toast.makeText(MainActivity.this, "landscape", Toast.LENGTH_SHORT)
                     .show();
             Display
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
             display.getSize(size);
             draggablePanel.getDraggableView().setTopViewHeight(size.y);
         } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            draggablePanel.getDraggableView().enableDraggableView();
             Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
                     .show();
 

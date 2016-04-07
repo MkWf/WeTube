@@ -2,7 +2,6 @@ package com.gmail.markdevw.wetube.activities.main;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,10 +11,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggablePanel;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.activities.main.fragments.ChatFragment;
@@ -156,35 +155,56 @@ public class MainActivity extends AppCompatActivity {
         draggablePanel.setTopFragment(youtubeFragment);
         ChatFragment moviePosterFragment = ChatFragment.newInstance();
         draggablePanel.setBottomFragment(moviePosterFragment);
+        draggablePanel.setDraggableListener(new DraggableListener() {
+            @Override
+            public void onMaximized() {
+
+            }
+
+            @Override
+            public void onMinimized() {
+
+            }
+
+            @Override
+            public void onClosedToLeft() {
+                draggablePanel.maximize();
+            }
+
+            @Override
+            public void onClosedToRight() {
+                draggablePanel.maximize();
+            }
+        });
         draggablePanel.initializeView();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            draggablePanel.getDraggableView().disableDraggableView();
-            Toast.makeText(MainActivity.this, "landscape", Toast.LENGTH_SHORT)
-                    .show();
-            Display
-                    display =
-                    MainActivity.this.getWindowManager()
-                            .getDefaultDisplay();
-
-            Point size = new Point();
-            display.getSize(size);
-            draggablePanel.getDraggableView().setTopViewHeight(size.y);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            draggablePanel.getDraggableView().enableDraggableView();
-            Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
-                    .show();
-
-            Resources r = getResources();
-            int px = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
-            );
-            draggablePanel.getDraggableView().setTopViewHeight(px);
-        }
+//        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            draggablePanel.getDraggableView().disableDraggableView();
+//            Toast.makeText(MainActivity.this, "landscape", Toast.LENGTH_SHORT)
+//                    .show();
+//            Display
+//                    display =
+//                    MainActivity.this.getWindowManager()
+//                            .getDefaultDisplay();
+//
+//            Point size = new Point();
+//            display.getSize(size);
+//            draggablePanel.getDraggableView().setTopViewHeight(size.y);
+//        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            draggablePanel.getDraggableView().enableDraggableView();
+//            Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
+//                    .show();
+//
+//            Resources r = getResources();
+//            int px = (int) TypedValue.applyDimension(
+//                    TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
+//            );
+//            draggablePanel.getDraggableView().setTopViewHeight(px);
+//        }
     }
 
     static class Adapter extends FragmentPagerAdapter {
@@ -214,6 +234,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(draggablePanel.getVisibility() == View.VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            draggablePanel.getDraggableView().enableDraggableView();
+            Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
+                    .show();
+
+            Resources r = getResources();
+            int px = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
+            );
+            draggablePanel.getDraggableView().setTopViewHeight(px);
             draggablePanel.minimize();
         }else{
             super.onBackPressed();

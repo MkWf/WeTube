@@ -107,11 +107,11 @@ class DraggableViewCallback extends ViewDragHelper.Callback {
    */
   @Override public int clampViewPositionHorizontal(View child, int left, int dx) {
     int newLeft = draggedView.getLeft();
-    if ((draggableView.isMinimized() && Math.abs(dx) > MINIMUM_DX_FOR_HORIZONTAL_DRAG) || (
-        draggableView.isDragViewAtBottom()
-            && !draggableView.isDragViewAtRight())) {
-      newLeft = left;
-    }
+//    if ((draggableView.isMinimized() && Math.abs(dx) > MINIMUM_DX_FOR_HORIZONTAL_DRAG) || (
+//        draggableView.isDragViewAtBottom()
+//            && !draggableView.isDragViewAtRight())) {
+//      newLeft = left;
+//    }
     return newLeft;
   }
 

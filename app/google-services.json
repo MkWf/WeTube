@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_id": "integral-melody-89319",
+    "project_number": "361578459714",
+    "name": "WeTube"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361578459714:android:b9b6d30f0ee4a158",
+        "client_id": "android:com.gmail.markdevw.wetube",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.gmail.markdevw.wetube",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "361578459714-mdi0fdu4s3uig5t262tenl4cdq3ih68m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gmail.markdevw.wetube",
+            "certificate_hash": "BF65DFB5D451C0B76DF3D37A68C4388F46E5ADAC"
+          }
+        },
+        {
+          "client_id": "361578459714-1u1f9t1reh5thmmribh0g9lhrfqbqmcq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

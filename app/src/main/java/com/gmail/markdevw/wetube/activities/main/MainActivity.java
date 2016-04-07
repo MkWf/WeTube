@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
-    private static final String VIDEO_KEY = "v9U0qMHHkSo";
+    private static final String VIDEO_KEY = "gCg33Qh_6IA";
     private YouTubePlayer youtubePlayer;
     private YouTubePlayerSupportFragment youtubeFragment;
 
@@ -141,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
                 if (!wasRestored) {
-//                    youtubePlayer = player;
-//                    youtubePlayer.loadVideo(VIDEO_KEY);
-//                    youtubePlayer.setShowFullscreenButton(true);
+                    youtubePlayer = player;
+                    youtubePlayer.loadVideo(VIDEO_KEY);
+                    youtubePlayer.setShowFullscreenButton(true);
                 }
             }
 
@@ -185,27 +185,40 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            draggablePanel.getDraggableView().disableDraggableView();
-            Toast.makeText(MainActivity.this, "landscape", Toast.LENGTH_SHORT)
-                    .show();
-            Display
-                    display =
-                    MainActivity.this.getWindowManager()
-                            .getDefaultDisplay();
+            if(!draggablePanel.isMinimized()){
+                draggablePanel.getDraggableView().disableDraggableView();
+                Toast.makeText(MainActivity.this, "landscape", Toast.LENGTH_SHORT)
+                        .show();
+                Display
+                        display =
+                        MainActivity.this.getWindowManager()
+                                .getDefaultDisplay();
 
-            Point size = new Point();
-            display.getSize(size);
-            draggablePanel.getDraggableView().setTopViewHeight(size.y);
+                Point size = new Point();
+                display.getSize(size);
+                draggablePanel.getDraggableView().setTopViewHeight(size.y);
+            }else{
+                Display
+                        display =
+                        MainActivity.this.getWindowManager()
+                                .getDefaultDisplay();
+
+                Point size = new Point();
+                display.getSize(size);
+                draggablePanel.getDraggableView().setY(20);
+            }
         } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            draggablePanel.getDraggableView().enableDraggableView();
-            Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
-                    .show();
+            if(!draggablePanel.isMinimized()) {
+                draggablePanel.getDraggableView().enableDraggableView();
+                Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
+                        .show();
 
-            Resources r = getResources();
-            int px = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
-            );
-            draggablePanel.getDraggableView().setTopViewHeight(px);
+                Resources r = getResources();
+                int px = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
+                );
+                draggablePanel.getDraggableView().setTopViewHeight(px);
+            }
         }
     }
 

@@ -283,6 +283,7 @@ public class DraggablePanel extends RelativeLayout {
     draggableView.setClickToMaximizeEnabled(enableClickToMaximize);
     draggableView.setClickToMinimizeEnabled(enableClickToMinimize);
     draggableView.setTouchEnabled(enableTouchListener);
+    draggableView.setTopViewResize(true);
   }
 
   /**

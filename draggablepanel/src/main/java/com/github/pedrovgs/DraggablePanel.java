@@ -20,7 +20,6 @@ import android.content.res.TypedArray;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 /**
@@ -163,7 +162,7 @@ public class DraggablePanel extends RelativeLayout {
    * @param width Width of nav drawer
    */
   public void slideHorizontally(float slideOffset, float drawerPosition, int width) {
-    //draggableView.slideHorizontally(slideOffset, drawerPosition, width);
+    draggableView.slideHorizontally(slideOffset, drawerPosition, width);
   }
 
   /**

@@ -190,11 +190,11 @@ public class DraggableView extends RelativeLayout {
    * @param width Width of nav drawer
    */
   public void slideHorizontally(float slideOffset, float drawerPosition, int width) {
-//    if (slideOffset > MIN_SLIDE_OFFSET && !isClosed() && isMaximized()) {
-//      minimize();
-//    }
-//    setTouchEnabled(slideOffset <= MIN_SLIDE_OFFSET);
-//    ViewHelper.setX(this, width - Math.abs(drawerPosition));
+    if (slideOffset > MIN_SLIDE_OFFSET && !isClosed() && isMaximized()) {
+      minimize();
+    }
+    setTouchEnabled(slideOffset <= MIN_SLIDE_OFFSET);
+    ViewHelper.setX(this, width - Math.abs(drawerPosition));
   }
 
   /**

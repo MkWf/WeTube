@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.pedrovgs.DraggablePanel;
@@ -38,7 +39,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
-    private static final String VIDEO_KEY = "gsjtg7m1MMM";
+    private static final String VIDEO_KEY = "v9U0qMHHkSo";
     private YouTubePlayer youtubePlayer;
     private YouTubePlayerSupportFragment youtubeFragment;
 
@@ -139,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
                 if (!wasRestored) {
-                    youtubePlayer = player;
-                    youtubePlayer.loadVideo(VIDEO_KEY);
-                    youtubePlayer.setShowFullscreenButton(true);
+//                    youtubePlayer = player;
+//                    youtubePlayer.loadVideo(VIDEO_KEY);
+//                    youtubePlayer.setShowFullscreenButton(true);
                 }
             }
 
@@ -205,6 +206,15 @@ public class MainActivity extends AppCompatActivity {
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(draggablePanel.getVisibility() == View.VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            draggablePanel.minimize();
+        }else{
+            super.onBackPressed();
         }
     }
 }

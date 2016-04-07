@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/DraggableListener.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/DraggablePanel.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/DraggableView.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/DraggableViewCallback.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/ResizeTransformer.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/ScaleTransformer.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/Transformer.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/TransformerFactory.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/draggable_panel.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/draggable_panel.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/values/attrs.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/values/attrs.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/draggablepanel" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/draggablepanel" charset="windows-1252" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

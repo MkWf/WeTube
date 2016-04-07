@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/ParseLoginUI/ParseLoginUI.iml" filepath="$PROJECT_DIR$/ParseLoginUI/ParseLoginUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/WeTube.iml" filepath="$PROJECT_DIR$/WeTube.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/draggablepanel/draggablepanel.iml" filepath="$PROJECT_DIR$/draggablepanel/draggablepanel.iml" />
     </modules>
   </component>
 </project>
-

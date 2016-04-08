@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.pedrovgs.DraggableListener;
@@ -179,6 +180,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         draggablePanel.initializeView();
+    }
+
+    private static void setLayoutSize(View view, int width, int height) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        view.setLayoutParams(params);
     }
 
     @Override

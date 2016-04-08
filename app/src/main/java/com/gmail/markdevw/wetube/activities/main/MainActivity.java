@@ -60,33 +60,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        toolbar.setTitle("Home");
+        toolbar.setTitle("Friends");
         setSupportActionBar(toolbar);
 
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(HomeFragment.newInstance(), "Home");
+        adapter.addFragment(HomeFragment.newInstance(), "Friends");
         adapter.addFragment(SearchFragment.newInstance(), "Search");
-        adapter.addFragment(FriendsFragment.newInstance(), "Friends");
+        adapter.addFragment(FriendsFragment.newInstance(), "Notifications");
         adapter.addFragment(ProfileFragment.newInstance(), "Profile");
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.selector_home_tab);
+        tabLayout.getTabAt(0).setIcon(R.drawable.selector_friends_tab);
         tabLayout.getTabAt(1).setIcon(R.drawable.selector_search_tab);
-        tabLayout.getTabAt(2).setIcon(R.drawable.selector_friends_tab);
+        tabLayout.getTabAt(2).setIcon(R.drawable.selector_notifications_tab);
         tabLayout.getTabAt(3).setIcon(R.drawable.selector_profile_tab);
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case 0:
-                        toolbar.setTitle("Home");
+                        toolbar.setTitle("Friends");
                         break;
                     case 1:
                         toolbar.setTitle("Search");
                         break;
                     case 2:
-                        toolbar.setTitle("Friends");
+                        toolbar.setTitle("Notifications");
                         break;
                     case 3:
                         toolbar.setTitle("Profile");
@@ -115,13 +115,13 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 switch (position) {
                     case 0:
-                        toolbar.setTitle("Home");
+                        toolbar.setTitle("Friends");
                         break;
                     case 1:
-                        toolbar.setTitle("Search");
+                        toolbar.setTitle("Friends");
                         break;
                     case 2:
-                        toolbar.setTitle("Friends");
+                        toolbar.setTitle("Search");
                         break;
                     case 3:
                         toolbar.setTitle("Profile");

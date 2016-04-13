@@ -10,18 +10,18 @@ import android.view.ViewGroup;
 /**
  * Created by Mark on 4/4/2016.
  */
-public class HomeFragment extends Fragment {
+public class NotificationsFragment extends Fragment {
 
-    public static HomeFragment newInstance() {
+    public static NotificationsFragment newInstance() {
 
         Bundle args = new Bundle();
 
-        HomeFragment fragment = new HomeFragment();
+        NotificationsFragment fragment = new NotificationsFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public HomeFragment() {
+    public NotificationsFragment() {
 
     }
 

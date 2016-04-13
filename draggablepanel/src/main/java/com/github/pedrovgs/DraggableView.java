@@ -97,6 +97,10 @@ public class DraggableView extends RelativeLayout {
     setEnabled(true);
   }
 
+  public Transformer getTransformer(){
+    return transformer;
+  }
+
   public void hideSecondView(){
     secondView.setVisibility(GONE);
   }

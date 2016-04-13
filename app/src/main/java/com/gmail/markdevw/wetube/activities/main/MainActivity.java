@@ -1,8 +1,6 @@
 package com.gmail.markdevw.wetube.activities.main;
 
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,21 +9,18 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.FrameLayout;
 
-import com.github.pedrovgs.DraggableListener;
+import com.firebase.client.Firebase;
 import com.github.pedrovgs.DraggablePanel;
 import com.gmail.markdevw.wetube.R;
-import com.gmail.markdevw.wetube.activities.main.fragments.ChatFragment;
 import com.gmail.markdevw.wetube.activities.main.fragments.FriendsFragment;
-import com.gmail.markdevw.wetube.activities.main.fragments.HomeFragment;
+import com.gmail.markdevw.wetube.activities.main.fragments.NotificationsFragment;
 import com.gmail.markdevw.wetube.activities.main.fragments.ProfileFragment;
 import com.gmail.markdevw.wetube.activities.main.fragments.SearchFragment;
-import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.gmail.markdevw.wetube.utils.Constants;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
@@ -44,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEO_KEY = "gCg33Qh_6IA";
     private YouTubePlayer youtubePlayer;
     private YouTubePlayerSupportFragment youtubeFragment;
+    private Firebase firebaseRef = new Firebase(Constants.FIREBASE_URL);
 
     @Bind(R.id.tb_activity_main)
     Toolbar toolbar;
@@ -53,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
     @Bind(R.id.dp_activity_main)
     DraggablePanel draggablePanel;
+    @Bind(R.id.fl_root)
+    FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +61,23 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Friends");
         setSupportActionBar(toolbar);
 
+//        Firebase ref = new Firebase(Constants.FIREBASE_URL_FRIENDS).child("markwassefdev@gmail,com");
+//        ref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                dataSnapshot.getChildren();
+//            }
+//
+//            @Override
+//            public void onCancelled(FirebaseError firebaseError) {
+//
+//            }
+//        });
+
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(HomeFragment.newInstance(), "Friends");
+        adapter.addFragment(FriendsFragment.newInstance(), "Friends");
         adapter.addFragment(SearchFragment.newInstance(), "Search");
-        adapter.addFragment(FriendsFragment.newInstance(), "Notifications");
+        adapter.addFragment(NotificationsFragment.newInstance(), "Notifications");
         adapter.addFragment(ProfileFragment.newInstance(), "Profile");
 
         viewPager.setAdapter(adapter);
@@ -135,51 +146,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //LOAD FRIENDS
+//        Friend f = new Friend("Mark", "Email");
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("friendEmail1").setValue(f);
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("friendEmail2").setValue(f);
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("friendEmail3").setValue(f);
 
-        youtubeFragment = new YouTubePlayerSupportFragment();
-        youtubeFragment.initialize(YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
 
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
-                if (!wasRestored) {
-                    youtubePlayer = player;
-                    youtubePlayer.loadVideo(VIDEO_KEY);
-                    youtubePlayer.setShowFullscreenButton(true);
-                }
-            }
 
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult error) {
 
-            }
-        });
 
-        draggablePanel.setFragmentManager(getSupportFragmentManager());
-        draggablePanel.setTopFragment(youtubeFragment);
-        ChatFragment moviePosterFragment = ChatFragment.newInstance();
-        draggablePanel.setBottomFragment(moviePosterFragment);
-        draggablePanel.setDraggableListener(new DraggableListener() {
-            @Override
-            public void onMaximized() {
-
-            }
-
-            @Override
-            public void onMinimized() {
-
-            }
-
-            @Override
-            public void onClosedToLeft() {
-                draggablePanel.maximize();
-            }
-
-            @Override
-            public void onClosedToRight() {
-                draggablePanel.maximize();
-            }
-        });
-        draggablePanel.initializeView();
+//
+//        youtubeFragment = new YouTubePlayerSupportFragment();
+//        youtubeFragment.initialize(YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+//
+//            @Override
+//            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
+//                if (!wasRestored) {
+//                    youtubePlayer = player;
+//                    youtubePlayer.loadVideo(VIDEO_KEY);
+//                    youtubePlayer.setShowFullscreenButton(true);
+//                }
+//            }
+//
+//            @Override
+//            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult error) {
+//
+//            }
+//        });
+//
+//        draggablePanel.setFragmentManager(getSupportFragmentManager());
+//        draggablePanel.setTopFragment(youtubeFragment);
+//        ChatFragment moviePosterFragment = ChatFragment.newInstance();
+//        draggablePanel.setBottomFragment(moviePosterFragment);
+//        draggablePanel.setDraggableListener(new DraggableListener() {
+//            @Override
+//            public void onMaximized() {
+//
+//            }
+//
+//            @Override
+//            public void onMinimized() {
+//
+//            }
+//
+//            @Override
+//            public void onClosedToLeft() {
+//
+//            }
+//
+//            @Override
+//            public void onClosedToRight() {
+//
+//            }
+//        });
+//        draggablePanel.initializeView();
     }
 
     private static void setLayoutSize(View view, int width, int height) {
@@ -192,42 +213,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if(!draggablePanel.isMinimized()){
-                draggablePanel.getDraggableView().disableDraggableView();
-                Toast.makeText(MainActivity.this, "landscape", Toast.LENGTH_SHORT)
-                        .show();
-                Display
-                        display =
-                        MainActivity.this.getWindowManager()
-                                .getDefaultDisplay();
-
-                Point size = new Point();
-                display.getSize(size);
-                draggablePanel.getDraggableView().setTopViewHeight(size.y);
-            }else{
-                Display
-                        display =
-                        MainActivity.this.getWindowManager()
-                                .getDefaultDisplay();
-
-                Point size = new Point();
-                display.getSize(size);
-                draggablePanel.getDraggableView().setY(20);
-            }
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if(!draggablePanel.isMinimized()) {
-                draggablePanel.getDraggableView().enableDraggableView();
-                Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
-                        .show();
-
-                Resources r = getResources();
-                int px = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
-                );
-                draggablePanel.getDraggableView().setTopViewHeight(px);
-            }
-        }
+//        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            draggablePanel.getDraggableView().disableDraggableView();
+//            if(draggablePanel.isMaximized()) {
+//                Display
+//                        display =
+//                        MainActivity.this.getWindowManager()
+//                                .getDefaultDisplay();
+//
+//                Point size = new Point();
+//                display.getSize(size);
+//                draggablePanel.getDraggableView().setTopViewHeight(size.y);
+//            }else if(draggablePanel.isMinimized()){
+//
+//            }else if(!draggablePanel.isMinimized() && !draggablePanel.isMaximized()){
+////                ViewHelper.setScaleX(draggablePanel.getDraggableView(), 4);
+////                ViewHelper.setScaleY(draggablePanel.getDraggableView(), 4);
+//                draggablePanel.getDraggableView().getTransformer().updateScale(0);
+//                draggablePanel.getDraggableView().getTransformer().updatePosition(0);
+//                Display
+//                        display =
+//                        MainActivity.this.getWindowManager()
+//                                .getDefaultDisplay();
+//
+//                Point size = new Point();
+//                display.getSize(size);
+//                draggablePanel.getDraggableView().setTopViewHeight(size.y);
+//            }
+//        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            if(!draggablePanel.isMinimized()) {
+//                draggablePanel.getDraggableView().enableDraggableView();
+//
+//                Resources r = getResources();
+//                int px = (int) TypedValue.applyDimension(
+//                        TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
+//                );
+//                draggablePanel.getDraggableView().setTopViewHeight(px);
+//            }
+//        }
     }
 
     static class Adapter extends FragmentPagerAdapter {
@@ -254,21 +277,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if(draggablePanel.getVisibility() == View.VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            draggablePanel.getDraggableView().enableDraggableView();
-            Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
-                    .show();
-
-            Resources r = getResources();
-            int px = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
-            );
-            draggablePanel.getDraggableView().setTopViewHeight(px);
-            draggablePanel.minimize();
-        }else{
-            super.onBackPressed();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if(draggablePanel.getVisibility() == View.VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+//            draggablePanel.getDraggableView().enableDraggableView();
+//            Toast.makeText(MainActivity.this, "portraite", Toast.LENGTH_SHORT)
+//                    .show();
+//
+//            Resources r = getResources();
+//            int px = (int) TypedValue.applyDimension(
+//                    TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
+//            );
+//            draggablePanel.getDraggableView().setTopViewHeight(px);
+//            draggablePanel.minimize();
+//        }else{
+//            super.onBackPressed();
+//        }
+//    }
 }

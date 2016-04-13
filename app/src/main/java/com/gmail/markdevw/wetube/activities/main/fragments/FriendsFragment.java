@@ -1,8 +1,23 @@
 package com.gmail.markdevw.wetube.activities.main.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.firebase.client.Firebase;
+import com.firebase.ui.FirebaseRecyclerAdapter;
+import com.gmail.markdevw.wetube.R;
+import com.gmail.markdevw.wetube.data.models.Friend;
+import com.gmail.markdevw.wetube.data.viewholders.FriendViewHolder;
+import com.gmail.markdevw.wetube.utils.Constants;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -23,16 +38,37 @@ public class FriendsFragment extends Fragment{
 
     }
 
-    //@Bind(R.id.rv_fragment_friends)
-   // RecyclerView recyclerView;
+    @Bind(R.id.rv_fragment_friends)
+    RecyclerView recyclerView;
 
-//    @Nullable
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.fragment_friends, container, false);
-//        ButterKnife.bind(this, view);
-//        return view;
-//    }
+    private FirebaseRecyclerAdapter<Friend, FriendViewHolder> friendAdapter;
+    private Firebase firebaseFriendsRef;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        firebaseFriendsRef = new Firebase(Constants.FIREBASE_URL_FRIENDS).child("markwassefdev@gmail,com");
+        friendAdapter = new FirebaseRecyclerAdapter<Friend, FriendViewHolder>(Friend.class, R.layout.friend_item, FriendViewHolder.class, firebaseFriendsRef) {
+            @Override
+            protected void populateViewHolder(FriendViewHolder friendViewHolder, Friend friend, int i) {
+                friendViewHolder.name.setText(friend.getName());
+            }
+        };
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_friends, container, false);
+        ButterKnife.bind(this, view);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(friendAdapter);
+
+        return view;
+    }
 
     @Override
     public void onDestroyView() {

@@ -61,19 +61,6 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Friends");
         setSupportActionBar(toolbar);
 
-//        Firebase ref = new Firebase(Constants.FIREBASE_URL_FRIENDS).child("markwassefdev@gmail,com");
-//        ref.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                dataSnapshot.getChildren();
-//            }
-//
-//            @Override
-//            public void onCancelled(FirebaseError firebaseError) {
-//
-//            }
-//        });
-
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(FriendsFragment.newInstance(), "Friends");
         adapter.addFragment(SearchFragment.newInstance(), "Search");
@@ -147,10 +134,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //LOAD FRIENDS
-//        Friend f = new Friend("Mark", "Email");
-//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("friendEmail1").setValue(f);
-//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("friendEmail2").setValue(f);
-//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("friendEmail3").setValue(f);
+
 
 
 

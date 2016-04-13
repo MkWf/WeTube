@@ -1,8 +1,10 @@
 package com.gmail.markdevw.wetube.activities.main.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.firebase.client.Firebase;
 import com.firebase.ui.FirebaseRecyclerAdapter;
+import com.gmail.markdevw.wetube.DividerItemDecoration;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.data.models.Friend;
 import com.gmail.markdevw.wetube.data.viewholders.FriendViewHolder;
@@ -65,6 +68,10 @@ public class FriendsFragment extends Fragment{
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        Drawable dividerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.divider);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+
         recyclerView.setAdapter(friendAdapter);
 
         return view;

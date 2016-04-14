@@ -1,10 +1,8 @@
 package com.gmail.markdevw.wetube.activities.main.fragments;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +14,7 @@ import com.firebase.client.Firebase;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.gmail.markdevw.wetube.DividerItemDecoration;
 import com.gmail.markdevw.wetube.R;
-import com.gmail.markdevw.wetube.data.models.Friend;
+import com.gmail.markdevw.wetube.data.models.User;
 import com.gmail.markdevw.wetube.data.viewholders.FriendViewHolder;
 import com.gmail.markdevw.wetube.utils.Constants;
 
@@ -44,7 +42,7 @@ public class FriendsFragment extends Fragment{
     @Bind(R.id.rv_fragment_friends)
     RecyclerView recyclerView;
 
-    private FirebaseRecyclerAdapter<Friend, FriendViewHolder> friendAdapter;
+    private FirebaseRecyclerAdapter<User, FriendViewHolder> friendAdapter;
     private Firebase firebaseFriendsRef;
 
     @Override
@@ -52,10 +50,11 @@ public class FriendsFragment extends Fragment{
         super.onCreate(savedInstanceState);
 
         firebaseFriendsRef = new Firebase(Constants.FIREBASE_URL_FRIENDS).child("markwassefdev@gmail,com");
-        friendAdapter = new FirebaseRecyclerAdapter<Friend, FriendViewHolder>(Friend.class, R.layout.friend_item, FriendViewHolder.class, firebaseFriendsRef) {
+        friendAdapter = new FirebaseRecyclerAdapter<User, FriendViewHolder>(User.class, R.layout.friend_item, FriendViewHolder.class, firebaseFriendsRef) {
             @Override
-            protected void populateViewHolder(FriendViewHolder friendViewHolder, Friend friend, int i) {
+            protected void populateViewHolder(FriendViewHolder friendViewHolder, User friend, int i) {
                 friendViewHolder.name.setText(friend.getName());
+                friendViewHolder.logged.setText(Boolean.toString(friend.isLoggedIn()));
             }
         };
     }
@@ -68,10 +67,7 @@ public class FriendsFragment extends Fragment{
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        Drawable dividerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.divider);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-
         recyclerView.setAdapter(friendAdapter);
 
         return view;

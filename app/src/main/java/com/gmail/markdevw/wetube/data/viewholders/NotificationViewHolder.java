@@ -13,14 +13,11 @@ import butterknife.ButterKnife;
  * Created by Mark on 4/13/2016.
  */
 
-public class FriendViewHolder extends RecyclerView.ViewHolder {
-    @Bind(R.id.friend_name)
+public class NotificationViewHolder extends RecyclerView.ViewHolder {
+    @Bind(R.id.notification_name)
     public TextView name;
 
-    @Bind(R.id.friend_logged)
-    public TextView logged;
-
-    public FriendViewHolder(View itemView) {
+    public NotificationViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }

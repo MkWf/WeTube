@@ -13,13 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.github.pedrovgs.DraggablePanel;
 import com.gmail.markdevw.wetube.R;
 import com.gmail.markdevw.wetube.activities.main.fragments.FriendsFragment;
 import com.gmail.markdevw.wetube.activities.main.fragments.NotificationsFragment;
 import com.gmail.markdevw.wetube.activities.main.fragments.ProfileFragment;
 import com.gmail.markdevw.wetube.activities.main.fragments.SearchFragment;
+import com.gmail.markdevw.wetube.data.models.Notification;
 import com.gmail.markdevw.wetube.utils.Constants;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -71,7 +75,30 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.selector_friends_tab);
         tabLayout.getTabAt(1).setIcon(R.drawable.selector_search_tab);
-        tabLayout.getTabAt(2).setIcon(R.drawable.selector_notifications_tab);
+
+        firebaseRef.child("notifications").child("markwassefdev@gmail,com").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot == null){
+                    tabLayout.getTabAt(2).setIcon(R.drawable.selector_notifications_tab);
+                }else{
+                    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                        Notification post = postSnapshot.getValue(Notification.class);
+                        if(!post.isRead()){
+                            tabLayout.getTabAt(2).setIcon(R.drawable.selector_notifications_active_tab);
+                            return;
+                        }
+                        tabLayout.getTabAt(2).setIcon(R.drawable.selector_notifications_tab);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
         tabLayout.getTabAt(3).setIcon(R.drawable.selector_profile_tab);
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -134,7 +161,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //LOAD FRIENDS
+        //FRIENDS
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user1@gmail,com").setValue(new User("User1", "user1@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user2@gmail,com").setValue(new User("User2", "user2@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user3@gmail,com").setValue(new User("User3", "user3@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user4@gmail,com").setValue(new User("User4", "user4@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user5@gmail,com").setValue(new User("User5", "user5@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user6@gmail,com").setValue(new User("User6", "user6@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user7@gmail,com").setValue(new User("User7", "user7@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user8@gmail,com").setValue(new User("User8", "user8@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user9@gmail,com").setValue(new User("User9", "user9@gmail.com", true, true));
+//        firebaseRef.child("friends").child("markwassefdev@gmail,com").child("user10@gmail,com").setValue(new User("User10", "user10@gmail.com", true, true));
 
 
 

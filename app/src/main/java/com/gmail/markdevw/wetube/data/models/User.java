@@ -6,14 +6,16 @@ package com.gmail.markdevw.wetube.data.models;
 public class User {
     private String email;
     private String name;
-    private boolean isLoggedIn;
-    private boolean isInSession;
+    private boolean loggedIn;
+    private boolean inSession;
 
     public User(){}
 
-    public User(String name, String email) {
+    public User(String name, String email, boolean loggedIn, boolean inSession) {
         this.name = name;
         this.email = email;
+        this.loggedIn = loggedIn;
+        this.inSession = inSession;
     }
 
     public String getEmail() {
@@ -25,10 +27,10 @@ public class User {
     }
 
     public boolean isLoggedIn() {
-        return isLoggedIn;
+        return loggedIn;
     }
 
     public boolean isInSession() {
-        return isInSession;
+        return inSession;
     }
 }
